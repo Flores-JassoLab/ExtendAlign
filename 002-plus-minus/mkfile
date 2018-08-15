@@ -1,0 +1,72 @@
+MKSHELL=/bin/bash
+
+< config.mk
+
+results/%.realign.txt:	results/%.minus.rev-comp.blastn.txt	results/%.plus.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	minus='results/'$stem'.minus.rev-comp.blastn.txt'
+	plus='results/'$stem'.plus.txt'
+	cat $minus $plus \
+	| awk 'BEGIN{FS=OFS="\t"} {print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' \
+	> $target'.build' \
+	&& mv $target'.build' $target
+
+results/%.minus.rev-comp.blastn.txt:	results/%.minus.rev-comp.fa
+	set -x
+	mkdir -p `dirname "$target"`
+	blastn \
+		-query $prereq \
+		-db $REFERENCE \
+		-task blastn \
+		-reward 1 \
+		-penalty -1 \
+		-gapopen 2 \
+		-gapextend 2 \
+		-word_size 7 \
+		-dust no \
+		-soft_masking false \
+		-max_target_seqs 100 \
+		-num_threads $NT \
+		-evalue 10 \
+		-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sstrand" \
+	| bin/choose-best-alignment \
+	| bin/add-header \
+	> $target'.build' \
+	&& mv $target'.build' $target
+
+results/%.minus.rev-comp.fa:	results/%.minus.fa
+	set -x
+	mkdir -p `dirname "$target"`
+	fastx_reverse_complement \
+		-i $prereq \
+		-o /dev/fd/1 \
+		> $target'.build' \
+		&& mv $target'.build' $target
+
+results/%.minus.fa:	results/%.minus.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	grep -A1 -f <(awk '{print $1}' \
+			$prereq) \
+		$QUERYFASTA \
+	| sed '/--/d' \
+	| sed 's/U/T/g' \
+	> $target'.build' \
+	&& mv $target'.build' $target
+
+'results/(.*)\.(plus|minus).txt':R:	'results/\1.best-alignment.txt'
+	set -x
+	mkdir -p `dirname "$target"`
+	TMPFILE="${target}.build"
+	grep "$stem2" $prereq  \
+	> "${target}.build" \
+	|| test 1 -eq "$?" && true \
+	&& mv "${TMPFILE}" "${target}"
+
+results/%.best-alignment.txt:	data/%.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	bin/choose-best-alignment $prereq \
+	> $target'.build' \
+	&& mv $target'.build' $target

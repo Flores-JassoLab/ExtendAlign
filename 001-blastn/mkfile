@@ -1,0 +1,30 @@
+< config.mk
+
+results/%.mmu10p4.blastn.txt:	data/%.fa
+	set -x
+	mkdir -p "$(dirname "$target")"
+	blastn \
+		-query $prereq \
+		-db $REFERENCE \
+		-task blastn \
+		-reward 1 \
+		-penalty -1 \
+		-gapopen 2 \
+		-gapextend 2 \
+		-word_size 7 \
+		-dust no \
+		-soft_masking false \
+		-max_target_seqs 100 \
+		-num_threads $NT \
+		-evalue 10 \
+		-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sstrand" \
+	| bin/add-header \
+		> $target'.build' \
+		&& mv $target'.build' $target
+#
+#$ blastn -query data/1+MMpre-miR.seq.fa  -db ref-hg38/hg38.fa -task blastn-short -penalty -1 -gapopen 2 -gapextend 2 -num_threads 20 -outfmt 6 | sort -rk12 | awk '!seen[$1]++' | sort | bin/add-header  > results/1+MMpre-miR.Hg38blastn-April2018.txt
+#$ blastn -query data/0MMpre-miR.seq.fa  -db ref-hg38/hg38.fa -task blastn-short -penalty -1 -gapopen 2 -gapextend 2 -num_threads 20 -outfmt 6 | sort -rk12 | awk '!seen[$1]++' | sort | bin/add-header   > results/0MMpre-miR.Hg38blastn-April2018.txt
+#
+#$ blastn -query data/0MMpre-miR.seq.fa  -db ref-hg38/hg38.fa -task blastn-short -penalty -1 -gapopen 2 -gapextend 2 -num_threads 20 -outfmt "0" > results/0MMpre-miR.Hg38blastnAlign-April2018.tsv
+#$ blastn -query data/1+MMpre-miR.seq.fa  -db ref-hg38/hg38.fa -task blastn-short -penalty -1 -gapopen 2 -gapextend 2 -num_threads 20 -outfmt "0" > results/1+MMpre-miR.Hg38blastnAlign-April2018.tsv
+# blastn -query $prereq -db $REFERENCE -task blastn-short -reward 1 -penalty -1 -gapopen 2 -gapextend 2 -word_size 7 -dust yes -num_threads $NT  -outfmt "6" >

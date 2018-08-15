@@ -1,0 +1,6 @@
+data
+results
+reference
+ref-*/
+.*.sw?
+.*.vis.*

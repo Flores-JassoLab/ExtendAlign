@@ -1,7 +1,0 @@
-#!/usr/bin/awk -f
-
-BEGIN{
-	OFS="\t"
-	print "bta", "pre-hsa", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "sstrand"
-}
-1

@@ -7,9 +7,9 @@ MKSHELL=/bin/bash
 ## Add a column for: Total mismatches (will be the sum of blastn reported mm + gapopen + extended mismatches)
 ## Add a column for: extended mismatches (produced by comparing char by char, the concantenated query 5+3 extensions vs the concatenated subject 5+3 extensions )
 %.total_mismatches.txt:Q: %.extended.txt
-	awk ' BEGIN { FS=OFS="\t"} 
+	awk ' BEGIN { FS=OFS="\t"}
 		NR == 1 {print "total_mismatches(extended+mismatch+gapopen)","extended_mismatches", $0 }
-		NR != 1 { 
+		NR != 1 {
 			## concatenate extended nucleotides by query, or by subject
 			Q_EXTENSION=$1$2
 			S_EXTENSION=$3$4
@@ -24,7 +24,7 @@ MKSHELL=/bin/bash
 					extended_mismatch++
 			}
 			total_mismatch=(extended_mismatch + $8 + $9)
-			print total_mismatch, extended_mismatch, $0 
+			print total_mismatch, extended_mismatch, $0
 		} ' $prereq > $target.build \
 		&& mv $target.build $target
 
@@ -106,7 +106,6 @@ MKSHELL=/bin/bash
 					QHANG_5="NA"
 					SHANG_5="NA"
 				} else {
-					
 					QHANG_5_start=1
 					QHANG_5_end=$6-1
 					## use substring to split column 26 (query fasta seq), into characters, and recover bases from 1 to query end 5 prime extension

@@ -1,0 +1,113 @@
+#! /usr/bin/awk -f
+#
+# blastn does not align the complete sequence
+# and calculates the mismatch between it's aligned region and the reference.
+#
+# As we are interested in knowing the real mismatch in the whole sequence
+# we need to extend the alignment and calculate the real mismatch.
+#
+# The extended alignment script is declared at `results/%.sequenceadded.txt` target
+# on the mkfile.
+#
+# **FIXME**: Make the extended alignment script standalone and remove this notice
+#
+# In order to obtain the correct mismatch
+# the extended alignment script adds columns
+# containing the sequence that were added to the alignment
+# in both the query and the subject:
+#
+#   - query_5seq
+#   - subject_5seq
+#
+#   - query_3seq
+#   - subject_3seq
+#
+# Each query–subject pair should match on length.
+#
+#
+# This script fixes counts unaligned regions as mismatches
+# --------------------------------------------------------
+#
+# Short query sequences may align to the edges of the subject_sequences
+# and thus we need to consider the unaligned regions as mismatches
+#
+#
+BEGIN {
+	FS = OFS = "\t"
+#
+# The input file contains those columns:
+#
+	bta = 1
+	pre_hsa = 2
+	pident = 3
+	alignment_length = 4
+	mismatch = 5
+	gap_open = 6
+	qstart = 7
+	qend = 8
+	sstart = 9
+	send = 10
+	evalue = 11
+	bitscore = 12
+	query_length = 13
+	subject_length = 14
+	query_5seq = 15
+	query_3seq = 16
+	subject_5seq = 17
+	subject_3seq = 18
+	complete_query_seq = 19
+	complete_subject_seq = 20
+	extended_mismatch = 21
+	total_mismatch = 22
+}
+#
+function length_if_not_na(sequence) {
+#        -----------------
+#
+# The alignment cannot be extended outside the bounds of the subject sequence,
+# in the case where the alignment exceeds or stops at those bounds,
+# `extend_alignment` adds the special value "NA".
+#
+# Where that value is present, a length of 0 is assumed.
+#
+# **FIXME**: There could be a query sequence containing "NA",
+# so we should rethink this convention.
+#
+	return (sequence == "NA") ? 0 : length(sequence)
+}
+
+# The filename has a title, so we print it and skip processing
+NR == 1 {
+  print $0
+  next
+}
+
+{
+#
+# The region accounted by our pipeline so far is
+  accounted_length = $alignment_length + length_if_not_na($query_5seq) + length_if_not_na($query_3seq)
+#
+}
+
+# That length should be equal or less than the query_length, where
+accounted_length > $query_length {
+# we should report the following
+  print $0, "error: accounted_length is greater than input sequence length"
+  next
+}
+#
+# Where the accounted_length is equal to the query_length we do not need further processing.
+#
+# The case we are interested to fix is where
+accounted_length < $query_length {
+#
+# The length of the query sequence that exceeds the bounds of subject sequence
+# should be added to the
+ $total_mismatch += ($query_length - accounted_length)
+}
+#
+# Finally, we should print all lines
+#
+{
+	print $0
+}

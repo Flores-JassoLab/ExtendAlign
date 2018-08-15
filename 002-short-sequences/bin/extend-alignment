@@ -1,0 +1,67 @@
+#!/bin/bash
+
+while read BLAST_RESULT
+do
+#Calculando valores de posicion para el QUERY, para posteriormente extraer del fasta
+QUERYID=`echo "$BLAST_RESULT" | cut -f1 `
+QUERYSTART=`echo "$BLAST_RESULT" | cut -f7 `
+QUERYEND=`echo "$BLAST_RESULT" | cut -f8 `
+QUERYLENGTH=`echo "$BLAST_RESULT" | cut -f13 `
+QUERY5LENGTH=$(( $QUERYSTART - 1 ))
+QUERY3LENGTH=$(( $QUERYLENGTH - $QUERYEND ))
+#Calculando valores de posicion para el SUBJECT, para posteriormente extraer del fasta de referencia
+SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
+SUBJECTSTART=`echo "$BLAST_RESULT" | cut -f9 `
+SUBJECTEND=`echo "$BLAST_RESULT" | cut -f10 `
+SUBJECTLENGTH=`echo "$BLAST_RESULT" | cut -f14 `
+SUBJECT5LENGTH=$(( $SUBJECTSTART - 1 ))
+SUBJECT3LENGTH=$(( $SUBJECTLENGTH - $SUBJECTEND ))
+#Comparando longitudes de secuencias para ajustar tamaños y comparar posiciones equivalentes en el 5' y 3'
+if [ "$QUERY5LENGTH" -ne "$SUBJECT5LENGTH" ]; then
+	MIN5LENGTH=`echo $QUERY5LENGTH $SUBJECT5LENGTH | tr " " "\n" | sort -n | head -n1`
+else
+	MIN5LENGTH="1"
+fi
+if [ "$QUERY3LENGTH" -ne "$SUBJECT3LENGTH" ]; then
+	MIN3LENGTH=`echo $QUERY3LENGTH $SUBJECT3LENGTH | tr " " "\n" | sort -n | head -n1`
+else
+	MIN3LENGTH=$QUERY3LENGTH
+fi
+#Extrayendo secuencias
+if [ "$QUERYSTART" -eq 1 ] || [ "$SUBJECTSTART" -eq 1 ]; then
+	QUERY5SEQ="NA"
+else
+	QUERY5SEQ=`samtools faidx $QUERYFASTA "$QUERYID":"$(( $QUERYSTART - $MIN5LENGTH ))"-"$(( $QUERYSTART - 1 ))" | tail -n 1`
+fi
+if [ "$QUERYEND" -eq "$QUERYLENGTH" ] || [ "$SUBJECTEND" -eq "$SUBJECTLENGTH" ] ; then
+	QUERY3SEQ="NA"
+else
+	QUERY3SEQ=`samtools faidx $QUERYFASTA "$QUERYID":"$(( $QUERYEND + 1 ))"-"$(( $QUERYEND + $MIN3LENGTH ))" | tail -n 1`
+fi
+if [ "$QUERY5SEQ" = "NA" ]; then
+	SUBJECT5SEQ="NA"
+else
+	SUBJECT5SEQ=`samtools faidx $SUBJECTFASTA "$SUBJECTID":"$(( $SUBJECTSTART - $MIN5LENGTH ))"-"$(( $SUBJECTSTART - 1 ))" | tail -n 1`
+fi
+if [ "$QUERY3SEQ" = "NA" ]; then
+	SUBJECT3SEQ="NA"
+else
+	SUBJECT3SEQ=`samtools faidx $SUBJECTFASTA "$SUBJECTID":"$(( $SUBJECTEND + 1 ))"-"$(( $SUBJECTEND + $MIN3LENGTH))" | tail -n 1`
+fi
+#Se agrega un bloque para cambiar U por T, lo cual permite comparar con resultados de RNA
+QUERY5SEQ=`echo -n $QUERY5SEQ | tr "U" "T"`
+QUERY3SEQ=`echo -n $QUERY3SEQ | tr "U" "T"`
+SUBJECT5SEQ=`echo -n $SUBJECT5SEQ | tr "U" "T"`
+SUBJECT3SEQ=`echo -n $SUBJECT3SEQ | tr "U" "T"`
+COMPLETEQUERYSEQ="$QUERY5SEQ$QUERY3SEQ"
+COMPLETESUBJECTSEQ="$SUBJECT5SEQ$SUBJECT3SEQ"
+QUERYSEQ=`echo "$COMPLETEQUERYSEQ" | sed 's/./&\n/g'`
+SUBJECTSEQ=`echo "$COMPLETESUBJECTSEQ" | sed 's/./&\n/g'`
+EXTENDEDMISMATCH=`paste <(echo "$QUERYSEQ")  <(echo "$SUBJECTSEQ") | awk '$1 != $2 {print "MISMATCH"}' | grep -c "MISMATCH"`
+BLASTMISMATCH=`echo "$BLAST_RESULT" | cut -f5`
+GAPMISMATCH=`echo "$BLAST_RESULT" | cut -f6`
+#Calculo numero total de mismatches
+#TOTALMISMATCH=$(( $EXTENDEDMISMATCH + $BLASTMISMATCH + $GAPMISMATCH ))
+#echo "$BLAST_RESULT	$QUERY5SEQ	$QUERY3SEQ	$SUBJECT5SEQ	$SUBJECT3SEQ	$COMPLETEQUERYSEQ	$COMPLETESUBJECTSEQ	$EXTENDEDMISMATCH	$TOTALMISMATCH"
+echo "$BLAST_RESULT	$QUERY5SEQ	$QUERY3SEQ	$SUBJECT5SEQ	$SUBJECT3SEQ	$COMPLETEQUERYSEQ	$COMPLETESUBJECTSEQ	$EXTENDEDMISMATCH"
+done

@@ -4,4 +4,4 @@ find -L data/ \
 	-name '*.fa' \
 | sed -r \
 	-e 's#^data/#results/#g' \
-	-e 's#\.fa$#.mmu10p4.blastn.txt#g'
+	-e 's#\.fa$#.pre-mat.blastn.txt#g'

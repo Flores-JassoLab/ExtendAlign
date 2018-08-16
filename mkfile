@@ -1,4 +1,4 @@
-< config.mk
+<| emptyenv s6-envdir config env
 
 results/%.pre-mat.blastn.txt:	data/%.fa
 	set -x
@@ -21,9 +21,6 @@ results/%.pre-mat.blastn.txt:	data/%.fa
 	| bin/add-header \
 		> "${target}.build" \
 		&& mv "${target}.build" "${target}"
-MKSHELL=/bin/bash
-
-< config.mk
 
 results/%.realign.txt:	results/%.minus.rev-comp.blastn.txt	results/%.plus.txt
 	set -x
@@ -93,9 +90,7 @@ results/%.best-alignment.txt:	data/%.txt
 	bin/choose-best-alignment $prereq \
 	> $target'.build' \
 	&& mv $target'.build' $target
-MKSHELL=/bin/bash
 
-< config.mk
 #Añadiendo aquellas secuencias que no alinearon en blastn
 results/%.final_mismatch.txt:	results/%.extended_mismatches.debug1.txt
 	set -x
@@ -265,34 +260,6 @@ results/%.subjectlength.txt:	$SUBJECTFASTA
 	> $target'.build' \
         && mv $target'.build' $target
 
-# Quality Control
-# ===============
-#
-# Here you should describe why you choose this qc.
-#
-qc:VQ:
-	cd qc
-	bin/targets | xargs mk
-
-# Unit tests
-# ==========
-#
-# Verify everything works correctly.
-#
-test	tests:QV:
-	cd test
-	rm -f tests.log
-	./run_tests \
-	|| less tests.log
-
-# Clean up generated files
-# ========================
-#
-clean:V:
-	bin/targets | xargs rm -f
-MKSHELL=/bin/bash
-
-< config.mk
 #Añadiendo aquellas secuencias que no alinearon en blastn
 results/%.final_mismatch.txt:	results/%.extended_mismatches.debug1.txt
 	set -x
@@ -461,37 +428,6 @@ results/%.subjectlength.txt:	$SUBJECTFASTA
 	| tr " " "\t" \
 	> $target'.build' \
         && mv $target'.build' $target
-
-# Quality Control
-# ===============
-#
-# Here you should describe why you choose this qc.
-#
-qc:VQ:
-	cd qc
-	bin/targets | xargs mk
-
-# Unit tests
-# ==========
-#
-# Verify everything works correctly.
-#
-test	tests:QV:
-	cd test
-	rm -f tests.log
-	./run_tests \
-	|| less tests.log
-
-# Clean up generated files
-# ========================
-#
-clean:V:
-	bin/targets | xargs rm -f
-##Stablish bash as the default shell for this script
-MKSHELL=/bin/bash
-
-## Read variables from config
-< config.mk
 
 ## Add a column for: Total mismatches (will be the sum of blastn reported mm + gapopen + extended mismatches)
 ## Add a column for: extended mismatches (produced by comparing char by char, the concantenated query 5+3 extensions vs the concatenated subject 5+3 extensions )

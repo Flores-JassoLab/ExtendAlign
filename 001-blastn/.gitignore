@@ -1,7 +1,0 @@
-data/*
-ignore/*
-results*
-condor*
-config.mk
-reference/*
-ref-prehsa/

@@ -306,3 +306,14 @@
 	query-length "${prereq}" \
 	> "${target}.build" \
         && mv "${target}.build" $target
+
+# Unit tests
+# ==========
+#
+# Verify everything works correctly.
+#
+test	tests:QV:
+	cd test
+	rm -f tests.log
+	./run_tests \
+	|| less tests.log

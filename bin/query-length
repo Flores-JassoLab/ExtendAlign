@@ -1,0 +1,11 @@
+#!/bin/execlineb -S0
+pipeline {
+	infoseq
+		-name
+		-length
+		-only ${@}
+}
+pipeline {
+	tr -s " "
+}
+tr " " "\t"

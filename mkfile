@@ -134,12 +134,7 @@
 	&& mv $target'.build' $target
 
 002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
-	infoseq \
-		-name \
-		-length \
-		-only $prereq \
-	| tr -s " " \
-	| tr " " "\t" \
+	query-length ${prereq} \
 	> $target'.build' \
         && mv $target'.build' $target
 
@@ -213,12 +208,7 @@
 	&& mv $target'.build' $target
 
 002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
-	infoseq \
-		-name \
-		-length \
-		-only $prereq \
-	| tr -s " " \
-	| tr " " "\t" \
+	query-length "${prereq}" \
 	> $target'.build' \
         && mv $target'.build' $target
 
@@ -320,11 +310,6 @@
 	&& mv $target'.build' $target
 
 003-long-sequences/%.subjectlength.txt:	$SUBJECTFASTA
-	infoseq \
-		-name \
-		-length \
-		-only $prereq \
-	| tr -s " " \
-	| tr " " "\t" \
+	query-length "${prereq}" \
 	> $target'.build' \
         && mv $target'.build' $target

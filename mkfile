@@ -4,7 +4,7 @@
 	set -x
 	mkdir -p "$(dirname "${target}")"
 	query-sequences \
-	| bin/add-header \
+	| add-header \
 	> "${target}.build" \
 	&& mv "${target}.build" "${target}"
 
@@ -23,8 +23,8 @@
 	set -x
 	mkdir -p `dirname "$target"`
 	query-sequences \
-	| bin/choose-best-alignment \
-	| bin/add-header \
+	| choose-best-alignment \
+	| add-header \
 	> $target'.build' \
 	&& mv $target'.build' $target
 
@@ -60,7 +60,7 @@
 002-plus-minus/%.best-alignment.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	bin/choose-best-alignment $prereq \
+	choose-best-alignment $prereq \
 	> $target'.build' \
 	&& mv $target'.build' $target
 #Añadiendo aquellas secuencias que no alinearon en blastn
@@ -90,7 +90,7 @@
 002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	bin/correct-mismatches \
+	correct-mismatches \
 		$prereq \
 	| sort -nk 22 \
 	> $target'.build' \
@@ -99,7 +99,7 @@
 002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	#bin/sum-mismatches ${prereq} \
+	#sum-mismatches ${prereq} \
 	{
 	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send 11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq \
@@ -194,7 +194,7 @@
 002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	bin/correct-mismatches \
+	correct-mismatches \
 		$prereq \
 	| sort -nk 22 \
 	> $target'.build' \
@@ -203,7 +203,7 @@
 002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	#bin/sum-mismatches ${prereq} \
+	#sum-mismatches ${prereq} \
 	{
 	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send 11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq \
@@ -428,7 +428,7 @@
 	| awk '!seen[$17]++' \
 	> $target.build \
 	&& mv $target.build $target
-MKSHELL=/bin/bash
+MKSHELL=/bash
 
 < config.mk
 ###ExtendAlign-Long Sequences###

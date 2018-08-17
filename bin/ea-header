@@ -1,0 +1,10 @@
+#!/usr/bin/awk -f
+#
+# Add header as described in
+@include "ea_format"
+#
+BEGIN {
+	ea_header()
+}
+#
+1

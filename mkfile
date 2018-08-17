@@ -4,7 +4,7 @@
 	set -x
 	mkdir -p "$(dirname "${target}")"
 	query-sequences \
-	| add-header \
+	| blast-header \
 	> "${target}.build" \
 	&& mv "${target}.build" "${target}"
 
@@ -24,7 +24,7 @@
 	mkdir -p `dirname "$target"`
 	query-sequences \
 	| choose-best-alignment \
-	| add-header \
+	| blast-header \
 	> $target'.build' \
 	&& mv $target'.build' $target
 
@@ -86,14 +86,14 @@
 	set -x
 	mkdir -p `dirname "$target"`
 	{
-	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send 11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq \
 	| grep -v ">" \
 	| awk \
 		'BEGIN{FS=OFS="\t"} \
 		{print $0, $5+$6+$21}' \
 	| awk '!seen[$1]++' \
-	| sort-by-least-mismatch
+	| sort-by-least-mismatch \
+	| ea-header
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
@@ -160,15 +160,16 @@
 	set -x
 	mkdir -p `dirname "$target"`
 	{
-	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send 11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq \
 	| grep -v ">" \
 	| awk \
 		'BEGIN{FS=OFS="\t"} \
 		{print $0, $5+$6+$21}' \
 	| awk '!seen[$1]++' \
-	| sort-by-least-mismatch
-	} > $target'.build' \
+	| sort-by-least-mismatch \
+	| ea-header \
+	} \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 002-short-sequences/%.sequenceadded.txt:	002-short-sequences/%.forprocessing.txt
@@ -263,13 +264,13 @@
 	set -x
 	mkdir -p `dirname "$target"`
 	{
-	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send	11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq | grep -v ">" \
 	| awk \
 		'BEGIN{FS=OFS="\t"} \
 		{print $0, $5+$6+$21}' \
 	| awk '!seen[$1]++' \
-	| sort-by-least-mismatch
+	| sort-by-least-mismatch \
+	| ea-header
 	} > $target'.build' \
 	&& mv $target'.build' $target
 

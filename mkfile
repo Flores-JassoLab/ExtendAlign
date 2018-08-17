@@ -34,14 +34,14 @@
 	fastx_reverse_complement \
 		-i $prereq \
 		-o /dev/fd/1 \
-		> $target'.build' \
-		&& mv $target'.build' $target
+	> $target'.build' \
+	&& mv $target'.build' $target
 
 002-plus-minus/%.minus.fa:	002-plus-minus/%.minus.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	grep -A1 -f <(awk '{print $1}' \
-			$prereq) \
+	grep -A1 \
+		-f <(awk '{print $1}' $prereq) \
 		$QUERYFASTA \
 	| sed '/--/d' \
 	| sed 's/U/T/g' \
@@ -121,19 +121,10 @@
 002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	{
-	while read BLAST_RESULT
-	do
-	##		echo "estoy procesando.."
-	##		echo "$BLAST_RESULT"
-		MIRNAID=`echo "$BLAST_RESULT" | cut -f1 `
-		QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
-		QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
-		SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
-		SUBJECTLENGTH=`grep ^$SUBJECTID 002-short-sequences/$stem.subjectlength.txt | cut -f2`
-		echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
-	done < 002-short-sequences/$stem.noheader.txt
-	} > $target'.build' \
+	SUBJECT="002-short-sequences/${stem}.subjectlength.txt"
+	SEQUENCES="002-short-sequences/${stem}.noheader.txt"
+	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 002-short-sequences/%.noheader.txt:	data/%.txt
@@ -173,7 +164,6 @@
 002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	#sum-mismatches ${prereq} \
 	{
 	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send 11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq \
@@ -210,19 +200,10 @@
 002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	{
-	while read BLAST_RESULT
-	do
-	##		echo "estoy procesando.."
-	##		echo "$BLAST_RESULT"
-		MIRNAID=`echo "$BLAST_RESULT" | cut -f1 `
-		QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
-		QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
-		SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
-		SUBJECTLENGTH=`grep ^$SUBJECTID 002-short-sequences/$stem.subjectlength.txt | cut -f2`
-		echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
-	done < 002-short-sequences/$stem.noheader.txt
-	} > $target'.build' \
+	SUBJECT="002-short-sequences/${stem}.subjectlength.txt"
+	SEQUENCES="002-short-sequences/${stem}.noheader.txt"
+	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 002-short-sequences/%.noheader.txt:	data/%.txt
@@ -326,19 +307,10 @@
 003-long-sequences/%.querylength.txt: 003-long-sequences/%.noheader.txt $QUERYFASTA 003-long-sequences/%.subjectlength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	{
-	while read BLAST_RESULT
-	do
-	##		echo "estoy procesando.."
-	##		echo "$BLAST_RESULT"
-		MIRNAID=`echo "$BLAST_RESULT" | cut -f1 `
-		QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
-		QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
-		SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
-		SUBJECTLENGTH=`grep ^$SUBJECTID 003-long-sequences/$stem.subjectlength.txt | cut -f2`
-		echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
-	done < 003-long-sequences/$stem.noheader.txt
-	} > $target'.build' \
+	SUBJECT="003-long-sequences/${stem}.subjectlength.txt"
+	SEQUENCES="003-long-sequences/${stem}.noheader.txt"
+	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 003-long-sequences/%.noheader.txt:	data/%.txt

@@ -1,0 +1,13 @@
+SUBJECT="$1"
+SEQUENCES="$2"
+while read BLAST_RESULT
+do
+##		echo "estoy procesando.."
+##		echo "$BLAST_RESULT"
+	MIRNAID=`echo "$BLAST_RESULT" | cut -f1 `
+	QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
+	QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
+	SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
+	SUBJECTLENGTH=`grep ^$SUBJECTID "${SUBJECT}" | cut -f2`
+	echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
+done < "${SEQUENCES}"

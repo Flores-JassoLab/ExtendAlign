@@ -1,0 +1,21 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas prereq prereq
+	importas REFERENCE REFERENCE
+	importas NT NT
+}
+blastn
+	-query ${prereq}
+	-db ${REFERENCE}
+	-task blastn
+	-reward 1
+	-penalty -1
+	-gapopen 2
+	-gapextend 2
+	-word_size 7
+	-dust no
+	-soft_masking false
+	-max_target_seqs 100
+	-num_threads ${NT}
+	-evalue 10
+	-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sstrand"

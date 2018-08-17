@@ -3,24 +3,10 @@
 001-blastn/%.pre-mat.blastn.txt:	data/%.fa
 	set -x
 	mkdir -p "$(dirname "${target}")"
-	blastn \
-		-query "${prereq}" \
-		-db "${REFERENCE}" \
-		-task blastn \
-		-reward 1 \
-		-penalty -1 \
-		-gapopen 2 \
-		-gapextend 2 \
-		-word_size 7 \
-		-dust no \
-		-soft_masking false \
-		-max_target_seqs 100 \
-		-num_threads "${NT}" \
-		-evalue 10 \
-		-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sstrand" \
+	query-sequences \
 	| bin/add-header \
-		> "${target}.build" \
-		&& mv "${target}.build" "${target}"
+	> "${target}.build" \
+	&& mv "${target}.build" "${target}"
 
 002-plus-minus/%.realign.txt:	002-plus-minus/%.minus.rev-comp.blastn.txt	002-plus-minus/%.plus.txt
 	set -x
@@ -36,21 +22,7 @@
 002-plus-minus/%.minus.rev-comp.blastn.txt:	002-plus-minus/%.minus.rev-comp.fa
 	set -x
 	mkdir -p `dirname "$target"`
-	blastn \
-		-query $prereq \
-		-db $REFERENCE \
-		-task blastn \
-		-reward 1 \
-		-penalty -1 \
-		-gapopen 2 \
-		-gapextend 2 \
-		-word_size 7 \
-		-dust no \
-		-soft_masking false \
-		-max_target_seqs 100 \
-		-num_threads $NT \
-		-evalue 10 \
-		-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sstrand" \
+	query-sequences \
 	| bin/choose-best-alignment \
 	| bin/add-header \
 	> $target'.build' \

@@ -428,9 +428,7 @@
 	| awk '!seen[$17]++' \
 	> $target.build \
 	&& mv $target.build $target
-MKSHELL=/bash
 
-< config.mk
 ###ExtendAlign-Long Sequences###
 #
 #Añadiendo aquellas secuencias que no alinearon en blastn

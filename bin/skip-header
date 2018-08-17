@@ -1,0 +1,2 @@
+#!/bin/execlineb -S
+tail -n +2 ${@}

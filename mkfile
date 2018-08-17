@@ -12,10 +12,8 @@
 	set -x
 	TMPDIR="`dirname ${target}`"
 	mkdir -p "${TMPDIR}"
-	minus="${TMPDIR}/${stem}.minus.rev-comp.blastn.txt"
-	plus="${TMPDIR}/${stem}.plus.txt"
-	cat $minus $plus \
-	| awk 'BEGIN{FS=OFS="\t"} {print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' \
+	remove-strand-column \
+		${prereq} \
 	> $target'.build' \
 	&& mv $target'.build' $target
 
@@ -114,7 +112,8 @@
 002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	awk 'BEGIN {FS="\t"; OFS="\t"} $4 < $13 {print $0}' $prereq \
+	sequences-with-incorrect-mismatch \
+		$prereq \
 	> $target'.build' \
         && mv $target'.build' $target
 
@@ -130,7 +129,8 @@
 002-short-sequences/%.noheader.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	tail -n+2 $prereq > $target'.build' \
+	skip-header ${prereq} \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
@@ -189,7 +189,8 @@
 002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	awk 'BEGIN {FS="\t"; OFS="\t"} $4 < $13 {print $0}' $prereq \
+	sequences-with-incorrect-mismatch \
+		$prereq \
 	> $target'.build' \
         && mv $target'.build' $target
 
@@ -205,7 +206,8 @@
 002-short-sequences/%.noheader.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	tail -n+2 $prereq > $target'.build' \
+	skip-header ${prereq} \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
@@ -291,7 +293,8 @@
 003-long-sequences/%.forprocessing.txt:	003-long-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	awk 'BEGIN {FS="\t"; OFS="\t"} $4 < $13 {print $0}' $prereq \
+	sequences-with-incorrect-mismatch \
+		$prereq \
 	> $target'.build' \
         && mv $target'.build' $target
 
@@ -307,7 +310,8 @@
 003-long-sequences/%.noheader.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	tail -n+2 $prereq > $target'.build' \
+	skip-header $prereq \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 003-long-sequences/%.subjectlength.txt:	$SUBJECTFASTA

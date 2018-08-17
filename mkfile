@@ -78,7 +78,7 @@
 	mkdir -p `dirname "$target"`
 	correct-mismatches \
 		$prereq \
-	| sort -nk 22 \
+	| sort-by-least-mismatch \
 	> $target'.build' \
 	&& mv $target'.build' $target
 
@@ -93,7 +93,7 @@
 		'BEGIN{FS=OFS="\t"} \
 		{print $0, $5+$6+$21}' \
 	| awk '!seen[$1]++' \
-	| sort -nk 22
+	| sort-by-least-mismatch
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
@@ -152,7 +152,7 @@
 	mkdir -p `dirname "$target"`
 	correct-mismatches \
 		$prereq \
-	| sort -nk 22 \
+	| sort-by-least-mismatch \
 	> $target'.build' \
 	&& mv $target'.build' $target
 
@@ -167,7 +167,7 @@
 		'BEGIN{FS=OFS="\t"} \
 		{print $0, $5+$6+$21}' \
 	| awk '!seen[$1]++' \
-	| sort -nk 22
+	| sort-by-least-mismatch
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
@@ -269,7 +269,7 @@
 		'BEGIN{FS=OFS="\t"} \
 		{print $0, $5+$6+$21}' \
 	| awk '!seen[$1]++' \
-	| sort -nk 22
+	| sort-by-least-mismatch
 	} > $target'.build' \
 	&& mv $target'.build' $target
 

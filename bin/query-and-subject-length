@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SUBJECT="$1"
 SEQUENCES="$2"
 while read BLAST_RESULT

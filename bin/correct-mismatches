@@ -3,8 +3,8 @@
 # blastn does not align the complete sequence
 # and calculates the mismatch between it's aligned region and the reference.
 #
-# As we are interested in knowing the real mismatch in the whole sequence
-# we need to extend the alignment and calculate the real mismatch.
+# As we are interested in knowing the real mismatch number between the whole sequence
+# and the reference we need to extend the alignment and calculate the real mismatch.
 #
 # The `extend_alignment` is declared at `bin`
 # and it's output format is described in
@@ -35,29 +35,24 @@ function length_if_not_na(sequence) {
 #
 # The alignment cannot be extended outside the bounds of the subject sequence,
 # in the case where the alignment exceeds or stops at those bounds,
-# `extend_alignment` adds the special value "NA".
-#
-# Where that value is present, a length of 0 is assumed.
-#
-# **FIXME**: There could be a query sequence containing "NA",
-# so we should rethink this convention.
+# `extend_alignment` adds the special value NA as defined in `ea_format`.
 #
 	return (sequence == NA) ? 0 : length(sequence)
 }
-
+#
 # The filename has a title, so we print it and skip processing
 NR == 1 {
   print $0
   next
 }
-
+#
 {
 #
 # The region accounted by our pipeline so far is
   accounted_length = $alignment_length + length_if_not_na($query_5_seq) + length_if_not_na($query_3_seq)
 #
 }
-
+#
 # That length should be equal or less than the query_length, where
 accounted_length > $query_length {
 # we should report the following
@@ -72,7 +67,7 @@ accounted_length < $query_length {
 #
 # The length of the query sequence that exceeds the bounds of subject sequence
 # should be added to the
- $total_mismatch += ($query_length - accounted_length)
+ $total_mismatch = $mismatch + $gapopen + extended_mismatch + ($query_length - accounted_length)
 }
 #
 # Finally, we should print all lines

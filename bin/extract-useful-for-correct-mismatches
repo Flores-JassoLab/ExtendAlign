@@ -1,34 +1,9 @@
 #! /usr/bin/awk -f
-BEGIN {
-	FS = OFS = "\t"
 #
-# The input file contains those columns:
-#
-	bta = 1
-	pre_hsa = 2
-	pident = 3
-	alignment_length = 4
-	mismatch = 5
-	gap_open = 6
-	qstart = 7
-	qend = 8
-	sstart = 9
-	send = 10
-	evalue = 11
-	bitscore = 12
-	query_length = 13
-	subject_length = 14
-	q5seq = 15
-	q3seq = 16
-	s5seq = 17
-	s3seq = 18
-	complete_query_seq = 19
-	complete_subject_seq = 20
-	extended_mismatch = 21
-	total_mismatch = 22
-}
+# The input format is described at
+@include "ea_format"
 
 # we are interested in
 {
-	print $bta, $query_length, ($query_length - $alignment_length), $qstart, $qend, $q5seq, $s5seq, $q3seq, $s3seq, $total_mismatch
+	print $query_name, $mismatch, $gapopen, $extended_mismatch, $total_mismatch, $query_start, $query_end, $query_length, ($query_length - $alignment_length),  $query_5_seq, $subj_5_seq, $query_3_seq, $subj_3_seq
 }

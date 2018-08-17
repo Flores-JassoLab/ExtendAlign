@@ -31,7 +31,12 @@ BEGIN {
 	complete_subj_seq = 20
 	extended_mismatch = 21
 	total_mismatch = 22
-
+#
+# When a column does not have a value, we use the special value NA.
+#
+# **FIXME**: There could be a query sequence containing "NA",
+# so we should rethink this convention.
+#
 	NA = "NA"
 }
 

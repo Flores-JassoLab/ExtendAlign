@@ -63,27 +63,13 @@
 	choose-best-alignment $prereq \
 	> $target'.build' \
 	&& mv $target'.build' $target
+
 #Añadiendo aquellas secuencias que no alinearon en blastn
 002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	{
-	echo "#1_bta	2_bta-length	3_pre-hsa	4_pident	5_length	6_mismatch	7_gapopen	8_qstart	9_qend	10_sstart	11_send	12_evalue	13_bitscore	14_QUERYLENGTH	15_SUBJECTLENGTH	16_QUERY5SEQ	17_QUERY3SEQ	18_SUBJECT5SEQ	19_SUBJECT3SEQ	20_COMPLETEQUERYSEQ	21_COMPLETESUBJECTSEQ	22_EXTENDEDMISMATCH	#23_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
-	join \
-		-a 1 \
-		<(awk '$0 ~ /^>/ {name=$0; next}; $0 !~ /^>/ {print name "\t" length($0)}' \
-			$QUERYFASTA \
-			| sort \
-			| sed 's/^>//g' \
-			| sed -e '1i\#1_bta\t2_bta-length') \
-		<(sort $prereq) \
-	| sed 's/ /\t/g' \
-	| sed '1d' \
-	| awk 'BEGIN {FS="\t"; OFS="\t"} \
-		{if (!$3) {print $0,"NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA", $2} \
-		else {print $0}}' \
-	| sort -nk 23
-	} > $target'.build' \
+	handle-unaligned "${prereq}" \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 #Solucion temporal a los casos cuando el query alinea en los extremos del subject
@@ -99,7 +85,6 @@
 002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	#sum-mismatches ${prereq} \
 	{
 	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send 11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq \
@@ -171,23 +156,8 @@
 002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	{
-	echo "#1_bta	2_bta-length	3_pre-hsa	4_pident	5_length	6_mismatch	7_gapopen	8_qstart	9_qend	10_sstart	11_send	12_evalue	13_bitscore	14_QUERYLENGTH	15_SUBJECTLENGTH	16_QUERY5SEQ	17_QUERY3SEQ	18_SUBJECT5SEQ	19_SUBJECT3SEQ	20_COMPLETEQUERYSEQ	21_COMPLETESUBJECTSEQ	22_EXTENDEDMISMATCH	#23_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
-	join \
-		-a 1 \
-			<(awk '$0 ~ /^>/ {name=$0; next}; $0 !~ /^>/ {print name "\t" length($0)}' \
-			$QUERYFASTA \
-			| sort \
-			| sed 's/^>//g' \
-			| sed -e '1i\#1_bta\t2_bta-length') \
-			<(sort $prereq) \
-	| sed 's/ /\t/g' \
-	| sed '1d' \
-	| awk 'BEGIN {FS="\t"; OFS="\t"} \
-		{if (!$3) {print $0,"NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA", $2} \
-		else {print $0}}' \
-	| sort -nk 23
-	} > $target'.build' \
+	handle-unaligned "${prereq}" \
+	> $target'.build' \
 	&& mv $target'.build' $target
 
 #Solucion temporal a los casos cuando el query alinea en los extremos del subject
@@ -314,30 +284,13 @@
 003-long-sequences/%.final_mismatch.txt:	003-long-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	{
-	echo "#1_bta	2_bta-length	3_pre-hsa	4_pident	5_length	6_mismatch	7_gapopen	8_qstart	9_qend	10_sstart	11_send	12_evalue	13_bitscore	14_QUERYLENGTH	15_SUBJECTLENGTH	16_QUERY5SEQ	17_QUERY3SEQ	18_SUBJECT5SEQ	19_SUBJECT3SEQ	20_COMPLETEQUERYSEQ	21_COMPLETESUBJECTSEQ	22_EXTENDEDMISMATCH	#23_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
-	join \
-		-a 1 \
-			<(awk '$0 ~ /^>/ {name=$0; next}; $0 !~ /^>/ {print name "\t" length($0)}' \
-			$QUERYFASTA \
-			| sort \
-			| sed 's/^>//g' \
-			| sed -e '1i\#1_bt1\t2_bta-length') \
-			<(sort $prereq) \
-	| sed 's/ /\t/g' \
-	| sed '1d' \
-	| awk 'BEGIN {FS="\t"; OFS="\t"} \
-		{if (!$3) {print $0,"NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA", $2} \
-		else {print $0}}' \
-	| sort -nk 23
-	} > $target'.build' \
+	handle-unaligned "${prereq}" \
+	 > $target'.build' \
 	&& mv $target'.build' $target
 
 003-long-sequences/%.extended_mismatches.txt:	003-long-sequences/%.noprocessing.txt 003-long-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	#cat $prereq | grep ">" > $target.samtools-failed.txt.build || echo "No errors found" \
-	#&& mv $target.samtools-failed.txt.build $target.samtools-failed.txt
 	{
 	echo "#1_bta	2_pre-hsa	3_pident	4_length	5_mismatch	6_gapopen	7_qstart	8_qend	9_sstart	10_send	11_evalue	12_bitscore	13_QUERYLENGTH	14_SUBJECTLENGTH	15_QUERY5SEQ	16_QUERY3SEQ	17_SUBJECT5SEQ	18_SUBJECT3SEQ	19_COMPLETEQUERYSEQ	20_COMPLETESUBJECTSEQ	21_EXTENDEDMISMATCH	#22_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
 	cat $prereq | grep -v ">" \

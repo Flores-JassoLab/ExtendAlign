@@ -1,0 +1,19 @@
+#!/bin/bash
+INPUT="$@"
+
+echo "#1_bta	2_bta-length	3_pre-hsa	4_pident	5_length	6_mismatch	7_gapopen	8_qstart	9_qend	10_sstart	11_send	12_evalue	13_bitscore	14_QUERYLENGTH	15_SUBJECTLENGTH	16_QUERY5SEQ	17_QUERY3SEQ	18_SUBJECT5SEQ	19_SUBJECT3SEQ	20_COMPLETEQUERYSEQ	21_COMPLETESUBJECTSEQ	22_EXTENDEDMISMATCH	#23_TOTALMISMATCH" | tr '[:upper:]' '[:lower:]'
+join \
+	-a 1 \
+	<(awk '$0 ~ /^>/ {name=$0; next}; $0 !~ /^>/ {print name "\t" length($0)}' \
+		$QUERYFASTA \
+		| sort \
+		| sed 's/^>//g' \
+		| sed -e '1i\#1_bta\t2_bta-length') \
+	<(sort "${INPUT}") \
+| sed \
+	-e 's/ /\t/g' \
+	-e '1d' \
+| awk 'BEGIN {FS="\t"; OFS="\t"} \
+	{if (!$3) {print $0,"NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA","NA", $2} \
+	else {print $0}}' \
+| sort -nk 23

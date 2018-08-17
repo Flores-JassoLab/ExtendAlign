@@ -1,6 +1,6 @@
 <| emptyenv s6-envdir config env
 
-results/%.pre-mat.blastn.txt:	data/%.fa
+001-blastn/%.pre-mat.blastn.txt:	data/%.fa
 	set -x
 	mkdir -p "$(dirname "${target}")"
 	blastn \
@@ -22,17 +22,18 @@ results/%.pre-mat.blastn.txt:	data/%.fa
 		> "${target}.build" \
 		&& mv "${target}.build" "${target}"
 
-results/%.realign.txt:	results/%.minus.rev-comp.blastn.txt	results/%.plus.txt
+002-plus-minus/%.realign.txt:	002-plus-minus/%.minus.rev-comp.blastn.txt	002-plus-minus/%.plus.txt
 	set -x
-	mkdir -p `dirname "$target"`
-	minus='results/'$stem'.minus.rev-comp.blastn.txt'
-	plus='results/'$stem'.plus.txt'
+	TMPDIR="`dirname ${target}`"
+	mkdir -p "${TMPDIR}"
+	minus="${TMPDIR}/${stem}.minus.rev-comp.blastn.txt"
+	plus="${TMPDIR}/${stem}.plus.txt"
 	cat $minus $plus \
 	| awk 'BEGIN{FS=OFS="\t"} {print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' \
 	> $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.minus.rev-comp.blastn.txt:	results/%.minus.rev-comp.fa
+002-plus-minus/%.minus.rev-comp.blastn.txt:	002-plus-minus/%.minus.rev-comp.fa
 	set -x
 	mkdir -p `dirname "$target"`
 	blastn \
@@ -55,7 +56,7 @@ results/%.minus.rev-comp.blastn.txt:	results/%.minus.rev-comp.fa
 	> $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.minus.rev-comp.fa:	results/%.minus.fa
+002-plus-minus/%.minus.rev-comp.fa:	002-plus-minus/%.minus.fa
 	set -x
 	mkdir -p `dirname "$target"`
 	fastx_reverse_complement \
@@ -64,7 +65,7 @@ results/%.minus.rev-comp.fa:	results/%.minus.fa
 		> $target'.build' \
 		&& mv $target'.build' $target
 
-results/%.minus.fa:	results/%.minus.txt
+002-plus-minus/%.minus.fa:	002-plus-minus/%.minus.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	grep -A1 -f <(awk '{print $1}' \
@@ -75,7 +76,7 @@ results/%.minus.fa:	results/%.minus.txt
 	> $target'.build' \
 	&& mv $target'.build' $target
 
-'results/(.*)\.(plus|minus).txt':R:	'results/\1.best-alignment.txt'
+'002-plus-minus/(.*)\.(plus|minus).txt':R:	'002-plus-minus/\1.best-alignment.txt'
 	set -x
 	mkdir -p `dirname "$target"`
 	TMPFILE="${target}.build"
@@ -84,15 +85,14 @@ results/%.minus.fa:	results/%.minus.txt
 	|| test 1 -eq "$?" && true \
 	&& mv "${TMPFILE}" "${target}"
 
-results/%.best-alignment.txt:	data/%.txt
+002-plus-minus/%.best-alignment.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	bin/choose-best-alignment $prereq \
 	> $target'.build' \
 	&& mv $target'.build' $target
-
 #Añadiendo aquellas secuencias que no alinearon en blastn
-results/%.final_mismatch.txt:	results/%.extended_mismatches.debug1.txt
+002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -115,7 +115,7 @@ results/%.final_mismatch.txt:	results/%.extended_mismatches.debug1.txt
 	&& mv $target'.build' $target
 
 #Solucion temporal a los casos cuando el query alinea en los extremos del subject
-results/%.extended_mismatches.debug1.txt:	results/%.extended_mismatches.txt
+002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	bin/correct-mismatches \
@@ -124,7 +124,7 @@ results/%.extended_mismatches.debug1.txt:	results/%.extended_mismatches.txt
 	> $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.extended_mismatches.txt:	results/%.noprocessing.txt	results/%.sequenceadded.txt
+002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	#bin/sum-mismatches ${prereq} \
@@ -140,7 +140,7 @@ results/%.extended_mismatches.txt:	results/%.noprocessing.txt	results/%.sequence
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.sequenceadded.txt:	results/%.forprocessing.txt
+002-short-sequences/%.sequenceadded.txt:	002-short-sequences/%.forprocessing.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -212,21 +212,21 @@ results/%.sequenceadded.txt:	results/%.forprocessing.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.noprocessing.txt: results/%.querylength.txt
+002-short-sequences/%.noprocessing.txt: 002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
         awk 'BEGIN {FS="\t"; OFS="\t"} $4 == $13 {print $0,"NA","NA","NA","NA", "NA", "NA", 0}' $prereq \
         | tr -s "\t" > $target'.build' \
         && mv $target'.build' $target
 
-results/%.forprocessing.txt:	results/%.querylength.txt
+002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	awk 'BEGIN {FS="\t"; OFS="\t"} $4 < $13 {print $0}' $prereq \
 	> $target'.build' \
         && mv $target'.build' $target
 
-results/%.querylength.txt: results/%.noheader.txt $QUERYFASTA results/%.subjectlength.txt
+002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -238,19 +238,19 @@ results/%.querylength.txt: results/%.noheader.txt $QUERYFASTA results/%.subjectl
 		QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
 		QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
 		SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
-		SUBJECTLENGTH=`grep ^$SUBJECTID results/$stem.subjectlength.txt | cut -f2`
+		SUBJECTLENGTH=`grep ^$SUBJECTID 002-short-sequences/$stem.subjectlength.txt | cut -f2`
 		echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
-	done < results/$stem.noheader.txt
+	done < 002-short-sequences/$stem.noheader.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.noheader.txt:	data/%.txt
+002-short-sequences/%.noheader.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	tail -n+2 $prereq > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.subjectlength.txt:	$SUBJECTFASTA
+002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
 	infoseq \
 		-name \
 		-length \
@@ -261,7 +261,7 @@ results/%.subjectlength.txt:	$SUBJECTFASTA
         && mv $target'.build' $target
 
 #Añadiendo aquellas secuencias que no alinearon en blastn
-results/%.final_mismatch.txt:	results/%.extended_mismatches.debug1.txt
+002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -284,7 +284,7 @@ results/%.final_mismatch.txt:	results/%.extended_mismatches.debug1.txt
 	&& mv $target'.build' $target
 
 #Solucion temporal a los casos cuando el query alinea en los extremos del subject
-results/%.extended_mismatches.debug1.txt:	results/%.extended_mismatches.txt
+002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	bin/correct-mismatches \
@@ -293,7 +293,7 @@ results/%.extended_mismatches.debug1.txt:	results/%.extended_mismatches.txt
 	> $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.extended_mismatches.txt:	results/%.noprocessing.txt	results/%.sequenceadded.txt
+002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	#bin/sum-mismatches ${prereq} \
@@ -309,7 +309,7 @@ results/%.extended_mismatches.txt:	results/%.noprocessing.txt	results/%.sequence
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.sequenceadded.txt:	results/%.forprocessing.txt
+002-short-sequences/%.sequenceadded.txt:	002-short-sequences/%.forprocessing.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -381,21 +381,21 @@ results/%.sequenceadded.txt:	results/%.forprocessing.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.noprocessing.txt: results/%.querylength.txt
+002-short-sequences/%.noprocessing.txt: 002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
         awk 'BEGIN {FS="\t"; OFS="\t"} $4 == $13 {print $0,"NA","NA","NA","NA", "NA", "NA", 0}' $prereq \
         | tr -s "\t" > $target'.build' \
         && mv $target'.build' $target
 
-results/%.forprocessing.txt:	results/%.querylength.txt
+002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	awk 'BEGIN {FS="\t"; OFS="\t"} $4 < $13 {print $0}' $prereq \
 	> $target'.build' \
         && mv $target'.build' $target
 
-results/%.querylength.txt: results/%.noheader.txt $QUERYFASTA results/%.subjectlength.txt
+002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -407,19 +407,19 @@ results/%.querylength.txt: results/%.noheader.txt $QUERYFASTA results/%.subjectl
 		QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
 		QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
 		SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
-		SUBJECTLENGTH=`grep ^$SUBJECTID results/$stem.subjectlength.txt | cut -f2`
+		SUBJECTLENGTH=`grep ^$SUBJECTID 002-short-sequences/$stem.subjectlength.txt | cut -f2`
 		echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
-	done < results/$stem.noheader.txt
+	done < 002-short-sequences/$stem.noheader.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.noheader.txt:	data/%.txt
+002-short-sequences/%.noheader.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	tail -n+2 $prereq > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.subjectlength.txt:	$SUBJECTFASTA
+002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
 	infoseq \
 		-name \
 		-length \
@@ -431,7 +431,7 @@ results/%.subjectlength.txt:	$SUBJECTFASTA
 
 ## Add a column for: Total mismatches (will be the sum of blastn reported mm + gapopen + extended mismatches)
 ## Add a column for: extended mismatches (produced by comparing char by char, the concantenated query 5+3 extensions vs the concatenated subject 5+3 extensions )
-%.total_mismatches.txt:Q: %.extended.txt
+003-long-sequences-extend-blast/%.total_mismatches.txt:Q: 003-long-sequences-extend-blast/%.extended.txt
 	awk ' BEGIN { FS=OFS="\t"}
 		NR == 1 {print "total_mismatches(extended+mismatch+gapopen)","extended_mismatches", $0 }
 		NR != 1 {
@@ -454,7 +454,7 @@ results/%.subjectlength.txt:	$SUBJECTFASTA
 		&& mv $target.build $target
 
 ## Create columns wih the nucleotide sequences of the 5' and 3' extended regions, both for the query sequence and the subject sequence
-%.extended.txt:Q: %.best_hit.txt
+003-long-sequences-extend-blast/%.extended.txt:Q: 003-long-sequences-extend-blast/%.best_hit.txt
 #	echo "extending mismatchs"
 	## check if alignment length is equal to query length, then, nothing needs to be recalculated
 	## query legnth is column $16
@@ -580,7 +580,7 @@ results/%.subjectlength.txt:	$SUBJECTFASTA
 	' $prereq > $target.build \
 	&& mv $target.build $target
 
-%.best_hit.txt: %.txt
+003-long-sequences-extend-blast/%.best_hit.txt: 003-long-sequences-extend-blast/%.txt
 	echo "getting best hits"
 	sort -k17,17 $prereq \
 	| awk '!seen[$17]++' \
@@ -592,7 +592,7 @@ MKSHELL=/bin/bash
 ###ExtendAlign-Long Sequences###
 #
 #Añadiendo aquellas secuencias que no alinearon en blastn
-results/%.final_mismatch.txt:	results/%.extended_mismatches.txt
+003-long-sequences/%.final_mismatch.txt:	003-long-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -614,7 +614,7 @@ results/%.final_mismatch.txt:	results/%.extended_mismatches.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.extended_mismatches.txt:	results/%.noprocessing.txt results/%.sequenceadded.txt
+003-long-sequences/%.extended_mismatches.txt:	003-long-sequences/%.noprocessing.txt 003-long-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	#cat $prereq | grep ">" > $target.samtools-failed.txt.build || echo "No errors found" \
@@ -630,7 +630,7 @@ results/%.extended_mismatches.txt:	results/%.noprocessing.txt results/%.sequence
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.sequenceadded.txt:	results/%.forprocessing.txt
+003-long-sequences/%.sequenceadded.txt:	003-long-sequences/%.forprocessing.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -702,21 +702,21 @@ results/%.sequenceadded.txt:	results/%.forprocessing.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.noprocessing.txt: results/%.querylength.txt
+003-long-sequences/%.noprocessing.txt: 003-long-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
         awk 'BEGIN {FS="\t"; OFS="\t"} $4 == $13 {print $0,"NA","NA","NA","NA", "NA", "NA", 0}' $prereq \
         | tr -s "\t" > $target'.build' \
         && mv $target'.build' $target
 
-results/%.forprocessing.txt:	results/%.querylength.txt
+003-long-sequences/%.forprocessing.txt:	003-long-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	awk 'BEGIN {FS="\t"; OFS="\t"} $4 < $13 {print $0}' $prereq \
 	> $target'.build' \
         && mv $target'.build' $target
 
-results/%.querylength.txt: results/%.noheader.txt $QUERYFASTA results/%.subjectlength.txt
+003-long-sequences/%.querylength.txt: 003-long-sequences/%.noheader.txt $QUERYFASTA 003-long-sequences/%.subjectlength.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	{
@@ -728,19 +728,19 @@ results/%.querylength.txt: results/%.noheader.txt $QUERYFASTA results/%.subjectl
 		QUERYSEQUENCE=`grep -A1 "^>$MIRNAID" $QUERYFASTA | tail -n 1`
 		QUERYLENGTH=`echo -n $QUERYSEQUENCE | wc -c`
 		SUBJECTID=`echo "$BLAST_RESULT" | cut -f2 `
-		SUBJECTLENGTH=`grep ^$SUBJECTID results/$stem.subjectlength.txt | cut -f2`
+		SUBJECTLENGTH=`grep ^$SUBJECTID 003-long-sequences/$stem.subjectlength.txt | cut -f2`
 		echo "$BLAST_RESULT	$QUERYLENGTH	$SUBJECTLENGTH"
-	done < results/$stem.noheader.txt
+	done < 003-long-sequences/$stem.noheader.txt
 	} > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.noheader.txt:	data/%.txt
+003-long-sequences/%.noheader.txt:	data/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	tail -n+2 $prereq > $target'.build' \
 	&& mv $target'.build' $target
 
-results/%.subjectlength.txt:	$SUBJECTFASTA
+003-long-sequences/%.subjectlength.txt:	$SUBJECTFASTA
 	infoseq \
 		-name \
 		-length \

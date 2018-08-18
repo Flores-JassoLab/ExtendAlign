@@ -49,10 +49,10 @@ else
 	SUBJECT3SEQ=`samtools faidx $SUBJECTFASTA "$SUBJECTID":"$(( $SUBJECTEND + 1 ))"-"$(( $SUBJECTEND + $MIN3LENGTH))" | tail -n 1`
 fi
 #Se agrega un bloque para cambiar U por T, lo cual permite comparar con resultados de RNA
-QUERY5SEQ=`echo -n $QUERY5SEQ | tr "U" "T"`
-QUERY3SEQ=`echo -n $QUERY3SEQ | tr "U" "T"`
-SUBJECT5SEQ=`echo -n $SUBJECT5SEQ | tr "U" "T"`
-SUBJECT3SEQ=`echo -n $SUBJECT3SEQ | tr "U" "T"`
+QUERY5SEQ=`echo -n $QUERY5SEQ | rna2dna`
+QUERY3SEQ=`echo -n $QUERY3SEQ | rna2dna`
+SUBJECT5SEQ=`echo -n $SUBJECT5SEQ | rna2dna`
+SUBJECT3SEQ=`echo -n $SUBJECT3SEQ | rna2dna`
 COMPLETEQUERYSEQ="$QUERY5SEQ$QUERY3SEQ"
 COMPLETESUBJECTSEQ="$SUBJECT5SEQ$SUBJECT3SEQ"
 QUERYSEQ=`echo "$COMPLETEQUERYSEQ" | sed 's/./&\n/g'`

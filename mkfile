@@ -42,7 +42,7 @@
 		-Ff <(awk '{print $1}' $prereq) \
 		$QUERYFASTA \
 	| sed '/--/d' \
-	| sed 's/U/T/g' \
+	| rna2dna \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 

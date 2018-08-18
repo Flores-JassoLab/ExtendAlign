@@ -1,7 +1,5 @@
 <| emptyenv s6-envdir config env
 
-ALIGNED_AND_UNALIGNED=analysis/006-aligned-and-unaligned
-
 $ALIGNED_AND_UNALIGNED/%.final_mismatch.txt:	$CORRECT_MISMATCHES/%.txt
 	set -x
 	outdir="$(dirname ${target})"
@@ -9,8 +7,6 @@ $ALIGNED_AND_UNALIGNED/%.final_mismatch.txt:	$CORRECT_MISMATCHES/%.txt
 	add-unaligned-sequences "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-CORRECT_MISMATCHES=analysis/005-correct-mismatches
 
 $CORRECT_MISMATCHES/%.txt:	$FULLY_ALIGNED/%.txt	$EXTENDED_ALIGNMENT/%.txt
 	set -x
@@ -24,8 +20,6 @@ $CORRECT_MISMATCHES/%.txt:	$FULLY_ALIGNED/%.txt	$EXTENDED_ALIGNMENT/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-EXTENDED_ALIGNMENT=analysis/004-extend-alignment
-
 $EXTENDED_ALIGNMENT/%.txt:	$INCORRECT_MISMATCH/%.txt
 	set -x
 	outdir="$(dirname ${target})"
@@ -33,8 +27,6 @@ $EXTENDED_ALIGNMENT/%.txt:	$INCORRECT_MISMATCH/%.txt
 	extend-alignment $prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-FULLY_ALIGNED=analysis/003-fully-aligned
 
 $FULLY_ALIGNED/%.txt:	$QUERY_LENGTH/%.txt
 	set -x
@@ -46,8 +38,6 @@ $FULLY_ALIGNED/%.txt:	$QUERY_LENGTH/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-INCORRECT_MISMATCH=analysis/003-incorrect-mismatch
-
 $INCORRECT_MISMATCH/%.txt:	$QUERY_LENGTH/%.txt
 	set -x
 	outdir="$(dirname ${target})"
@@ -56,8 +46,6 @@ $INCORRECT_MISMATCH/%.txt:	$QUERY_LENGTH/%.txt
 		$prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-QUERYLENGTH=analysis/002-query-length
 
 $QUERY_LENGTH/%.txt:	$NO_HEADER/%.txt	$QUERYFASTA	$SUBJECT_LENGHT/%.subjectlength.txt
 	set -x
@@ -69,8 +57,6 @@ $QUERY_LENGTH/%.txt:	$NO_HEADER/%.txt	$QUERYFASTA	$SUBJECT_LENGHT/%.subjectlengt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-NO_HEADER=analysis/001-noheader
-
 $NO_HEADER/%.txt:	$JOINT_STRANDS/%.txt
 	set -x
 	outdir="$(dirname ${target})"
@@ -79,8 +65,6 @@ $NO_HEADER/%.txt:	$JOINT_STRANDS/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-SUBJECT_LENGTH=analysis/subject-length
-
 $SUBJECT_LENGTH/%.txt:	$SUBJECTFASTA
 	set -x
 	outdir="$(dirname ${target})"
@@ -88,8 +72,6 @@ $SUBJECT_LENGTH/%.txt:	$SUBJECTFASTA
 	query-length "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-JOINT_STRANDS=analysis/007-joint-strands
 
 $JOINT_STRANDS/%.txt:	$REQUERY_MINUS_STRAND/%.txt	$SPLIT_STRANDS/%.plus.txt
 	set -x
@@ -100,8 +82,6 @@ $JOINT_STRANDS/%.txt:	$REQUERY_MINUS_STRAND/%.txt	$SPLIT_STRANDS/%.plus.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-REQUERY_MINUS_STRAND=analysis/006-requery-minus
-
 $REQUERY_MINUS_STRAND/%.txt:	$MINUS_STRAND_REVERSE_COMPLEMENT/%.fa
 	set -x
 	mkdir -p `dirname "$target"`
@@ -111,7 +91,6 @@ $REQUERY_MINUS_STRAND/%.txt:	$MINUS_STRAND_REVERSE_COMPLEMENT/%.fa
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-MINUS_STRAND_REVERSE_COMPLEMENT=analysis/005-minus-complement
 $MINUS_STRAND_REVERSE_COMPLEMENT/%.fa:	$MINUS_STRAND_SEQUENCES/%.fa
 	set -x
 	mkdir -p `dirname "$target"`
@@ -120,8 +99,6 @@ $MINUS_STRAND_REVERSE_COMPLEMENT/%.fa:	$MINUS_STRAND_SEQUENCES/%.fa
 		-o /dev/fd/1 \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-MINUS_STRAND_SEQUENCES=analysis/004-minus-strand
 
 $MINUS_STRAND_SEQUENCES/%.fa:	$SPLIT_STRANDS/%.minus.txt
 	set -x
@@ -134,8 +111,6 @@ $MINUS_STRAND_SEQUENCES/%.fa:	$SPLIT_STRANDS/%.minus.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-SPLIT_STRANDS=analysis/003-split-strands
-
 '$SPLIT_STRANDS/(.*)\.(plus|minus).txt':R:	'$BEST_BLAST_ALIGNMENT/\1\.txt'
 	set -x
 	mkdir -p `dirname "$target"`
@@ -145,17 +120,12 @@ SPLIT_STRANDS=analysis/003-split-strands
 	|| test 1 -eq "$?" && true \
 	&& mv "${TMPFILE}" "${target}"
 
-BEST_BLAST_ALIGNMENT=analysis/002-best-blast-alignment
-
 $BEST_BLAST_ALIGNMENT/%.txt:	$BLAST_OUTPUT/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	choose-best-alignment $prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-INPUT_FILES=data
-BLAST_OUTPUT=analysis/001-blast
 
 $BLAST_OUTPUT/%.txt:	$INPUT_FILES/%.fa
 	set -x

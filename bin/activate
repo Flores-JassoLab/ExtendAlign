@@ -1,5 +1,6 @@
-#!/bin/execlineb -P
+#!/bin/execlineb -S0
 emptyenv -p
 s6-envdir config
+s6-envdir lib/dirs
 bash
 	--rcfile lib/activate.sh

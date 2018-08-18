@@ -1,6 +1,6 @@
 <| emptyenv s6-envdir config env
 
-$ALIGNED_AND_UNALIGNED/%.final_mismatch.txt:	$CORRECT_MISMATCHES/%.txt
+$ALIGNED_AND_UNALIGNED/%.txt:	$CORRECT_MISMATCHES/%.txt
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
@@ -47,7 +47,7 @@ $INCORRECT_MISMATCH/%.txt:	$QUERY_LENGTH/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-$QUERY_LENGTH/%.txt:	$NO_HEADER/%.txt	$QUERYFASTA	$SUBJECT_LENGHT/%.subjectlength.txt
+$QUERY_LENGTH/%.txt:	$NO_HEADER/%.txt	$QUERYFASTA	$SUBJECT_LENGTH/%.txt
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"

@@ -66,7 +66,7 @@
 002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	handle-unaligned "${prereq}" \
+	add-unaligned-sequences "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -85,8 +85,8 @@
 	mkdir -p `dirname "$target"`
 	correct-mismatches \
 		"${prereq}" \
-	| choose-first-query \
 	| sort-by-least-mismatch \
+	| choose-first-query \
 	| ea-header
 	> "${target}.build" \
 	&& mv "${target}.build" $target
@@ -113,7 +113,7 @@
 	sequences-with-incorrect-mismatch \
 		$prereq \
 	> "${target}.build" \
-        && mv "${target}.build" $target
+	&& mv "${target}.build" $target
 
 002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
 	set -x
@@ -134,13 +134,13 @@
 002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
 	query-length ${prereq} \
 	> "${target}.build" \
-        && mv "${target}.build" $target
+	&& mv "${target}.build" $target
 
 #Añadiendo aquellas secuencias que no alinearon en blastn
 002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	handle-unaligned "${prereq}" \
+	add-unaligned-sequences "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -187,7 +187,7 @@
 	sequences-with-incorrect-mismatch \
 		$prereq \
 	> "${target}.build" \
-        && mv "${target}.build" $target
+	&& mv "${target}.build" $target
 
 002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
 	set -x
@@ -208,7 +208,7 @@
 002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
 	query-length "${prereq}" \
 	> "${target}.build" \
-        && mv "${target}.build" $target
+	&& mv "${target}.build" $target
 
 ###ExtendAlign-Long Sequences###
 #
@@ -216,7 +216,7 @@
 003-long-sequences/%.final_mismatch.txt:	003-long-sequences/%.extended_mismatches.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	handle-unaligned "${prereq}" \
+	add-unaligned-sequences "${prereq}" \
 	 > "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -225,10 +225,10 @@
 	mkdir -p `dirname "$target"`
 	correct-mismatches \
 		"${prereq}" \
-	| choose-first-query \
 	| sort-by-least-mismatch \
-	| ea-header
-	} > "${target}.build" \
+	| choose-first-query \
+	| ea-header \
+	> "${target}.build" \
 	&& mv "${target}.build" $target
 
 003-long-sequences/%.sequenceadded.txt:	003-long-sequences/%.forprocessing.txt
@@ -253,7 +253,7 @@
 	sequences-with-incorrect-mismatch \
 		$prereq \
 	> "${target}.build" \
-        && mv "${target}.build" $target
+	&& mv "${target}.build" $target
 
 003-long-sequences/%.querylength.txt: 003-long-sequences/%.noheader.txt $QUERYFASTA 003-long-sequences/%.subjectlength.txt
 	set -x
@@ -274,7 +274,7 @@
 003-long-sequences/%.subjectlength.txt:	$SUBJECTFASTA
 	query-length "${prereq}" \
 	> "${target}.build" \
-        && mv "${target}.build" $target
+	&& mv "${target}.build" $target
 
 # Unit tests
 # ==========

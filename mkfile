@@ -101,9 +101,11 @@
 002-short-sequences/%.noprocessing.txt: 002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-        awk 'BEGIN {FS="\t"; OFS="\t"} $4 == $13 {print $0,"NA","NA","NA","NA", "NA", "NA", 0}' $prereq \
-        | tr -s "\t" > "${target}.build" \
-        && mv "${target}.build" $target
+	format-fully-aligned-sequences \
+		 $prereq \
+	| tr -s "\t" \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
 
 002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
 	set -x
@@ -173,9 +175,11 @@
 002-short-sequences/%.noprocessing.txt: 002-short-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-        awk 'BEGIN {FS="\t"; OFS="\t"} $4 == $13 {print $0,"NA","NA","NA","NA", "NA", "NA", 0}' $prereq \
-        | tr -s "\t" > "${target}.build" \
-        && mv "${target}.build" $target
+	format-fully-aligned-sequences \
+		 $prereq \
+	| tr -s "\t" \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
 
 002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
 	set -x
@@ -237,9 +241,11 @@
 003-long-sequences/%.noprocessing.txt: 003-long-sequences/%.querylength.txt
 	set -x
 	mkdir -p `dirname "$target"`
-        awk 'BEGIN {FS="\t"; OFS="\t"} $4 == $13 {print $0,"NA","NA","NA","NA", "NA", "NA", 0}' $prereq \
-        | tr -s "\t" > "${target}.build" \
-        && mv "${target}.build" $target
+	format-fully-aligned-sequences \
+		$prereq \
+	| tr -s "\t" \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
 
 003-long-sequences/%.forprocessing.txt:	003-long-sequences/%.querylength.txt
 	set -x

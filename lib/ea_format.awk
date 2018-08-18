@@ -11,7 +11,7 @@ BEGIN {
 #
 	query_name = 1
 	subj_name = 2
-	pindent = 3
+	identity = 3
 	alignment_length = 4
 	mismatch = 5
 	gapopen = 6
@@ -41,7 +41,7 @@ BEGIN {
 }
 
 function ea_header() {
-	print "query_name", "subj_name", "pindent", "alignment_length", "mismatch", \
+	print "query_name", "subj_name", "identity", "alignment_length", "mismatch", \
 	"gapopen", "query_start", "query_end", "subj_start", "subj_end", "e_value", \
 	"bit_score", "query_length", "subj_length", "query_3_seq", "query_5_seq", \
 	"subj_3_seq", "subj_5_seq", "complete_query_seq", "complete_subj_seq", \

@@ -57,7 +57,7 @@ COMPLETEQUERYSEQ="$QUERY5SEQ$QUERY3SEQ"
 COMPLETESUBJECTSEQ="$SUBJECT5SEQ$SUBJECT3SEQ"
 QUERYSEQ=`echo "$COMPLETEQUERYSEQ" | sed 's/./&\n/g'`
 SUBJECTSEQ=`echo "$COMPLETESUBJECTSEQ" | sed 's/./&\n/g'`
-EXTENDEDMISMATCH=`paste <(echo "$QUERYSEQ")  <(echo "$SUBJECTSEQ") | awk '$1 != $2 {print "MISMATCH"}' | grep -c "MISMATCH"`
+EXTENDEDMISMATCH=`paste <(echo "$QUERYSEQ")  <(echo "$SUBJECTSEQ") | awk '$1 != $2 {print "MISMATCH"}' | grep -Fc "MISMATCH"`
 BLASTMISMATCH=`echo "$BLAST_RESULT" | cut -f5`
 GAPMISMATCH=`echo "$BLAST_RESULT" | cut -f6`
 #Calculo numero total de mismatches

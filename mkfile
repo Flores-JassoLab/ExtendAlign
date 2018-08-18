@@ -39,7 +39,7 @@
 	set -x
 	mkdir -p `dirname "$target"`
 	grep -A1 \
-		-f <(awk '{print $1}' $prereq) \
+		-Ff <(awk '{print $1}' $prereq) \
 		$QUERYFASTA \
 	| sed '/--/d' \
 	| sed 's/U/T/g' \
@@ -50,7 +50,7 @@
 	set -x
 	mkdir -p `dirname "$target"`
 	TMPFILE="${target}.build"
-	grep "$stem2" $prereq  \
+	grep  -F "$stem2" $prereq  \
 	> "${target}.build" \
 	|| test 1 -eq "$?" && true \
 	&& mv "${TMPFILE}" "${target}"

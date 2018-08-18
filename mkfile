@@ -206,43 +206,6 @@
 	> "${target}.build" \
         && mv "${target}.build" $target
 
-## Add a column for: Total mismatches (will be the sum of blastn reported mm + gapopen + extended mismatches)
-## Add a column for: extended mismatches (produced by comparing char by char, the concantenated query 5+3 extensions vs the concatenated subject 5+3 extensions )
-003-long-sequences-extend-blast/%.total_mismatches.txt:Q: 003-long-sequences-extend-blast/%.extended.txt
-	awk ' BEGIN { FS=OFS="\t"}
-		NR == 1 {print "total_mismatches(extended+mismatch+gapopen)","extended_mismatches", $0 }
-		NR != 1 {
-			## concatenate extended nucleotides by query, or by subject
-			Q_EXTENSION=$1$2
-			S_EXTENSION=$3$4
-			## Split the extended nucleotides by character into an array
-			split(Q_EXTENSION, Qnucleotides, "")
-			split(S_EXTENSION, Snucleotides, "")
-			## restart the mismatch variable
-			extended_mismatch=0
-			## loop trough the nucleotide arrays and compare by position
-			for (i=1; i <= length(Q_EXTENSION); i++) {
-				if ( Qnucleotides[i] != Snucleotides[i] )
-					extended_mismatch++
-			}
-			total_mismatch=(extended_mismatch + $8 + $9)
-			print total_mismatch, extended_mismatch, $0
-		} ' $prereq > $target.build \
-		&& mv $target.build $target
-
-## Create columns wih the nucleotide sequences of the 5' and 3' extended regions, both for the query sequence and the subject sequence
-003-long-sequences-extend-blast/%.extended.txt:Q: 003-long-sequences-extend-blast/%.best_hit.txt
-	extend-mismatches $prereq \
-	> $target.build \
-	&& mv $target.build $target
-
-003-long-sequences-extend-blast/%.best_hit.txt: 003-long-sequences-extend-blast/%.txt
-	echo "getting best hits"
-	sort -k17,17 $prereq \
-	| awk '!seen[$17]++' \
-	> $target.build \
-	&& mv $target.build $target
-
 ###ExtendAlign-Long Sequences###
 #
 #Añadiendo aquellas secuencias que no alinearon en blastn

@@ -4,8 +4,8 @@
 @include "ea_format"
 #
 # Sequences where
- $alignment_length == $query_length {
-# are fully aligned and therefore they
+ !($alignment_length) {
+# are unaligned and therefore they
 # must not be futher processed to account for extended alignment mismatches.
 #
 # We fill the incomplete fields to comply with formatting rules:

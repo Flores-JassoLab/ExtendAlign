@@ -1,127 +1,21 @@
 <| emptyenv s6-envdir config env
 
-001-blastn/%.pre-mat.blastn.txt:	data/%.fa
-	set -x
-	mkdir -p "$(dirname "${target}")"
-	query-sequences \
-	| blast-header \
-	> "${target}.build" \
-	&& mv "${target}.build" "${target}"
+ALIGNED_AND_UNALIGNED=analysis/006-aligned-and-unaligned
 
-002-plus-minus/%.realign.txt:	002-plus-minus/%.minus.rev-comp.blastn.txt	002-plus-minus/%.plus.txt
+$ALIGNED_AND_UNALIGNED/%.final_mismatch.txt:	$CORRECT_MISMATCHES/%.txt
 	set -x
-	TMPDIR="`dirname ${target}`"
-	mkdir -p "${TMPDIR}"
-	remove-strand-column \
-		${prereq} \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-plus-minus/%.minus.rev-comp.blastn.txt:	002-plus-minus/%.minus.rev-comp.fa
-	set -x
-	mkdir -p `dirname "$target"`
-	query-sequences \
-	| choose-best-alignment \
-	| blast-header \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-plus-minus/%.minus.rev-comp.fa:	002-plus-minus/%.minus.fa
-	set -x
-	mkdir -p `dirname "$target"`
-	fastx_reverse_complement \
-		-i $prereq \
-		-o /dev/fd/1 \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-plus-minus/%.minus.fa:	002-plus-minus/%.minus.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	grep -A1 \
-		-Ff <(awk '{print $1}' $prereq) \
-		$QUERYFASTA \
-	| sed '/--/d' \
-	| rna2dna \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-'002-plus-minus/(.*)\.(plus|minus).txt':R:	'002-plus-minus/\1.best-alignment.txt'
-	set -x
-	mkdir -p `dirname "$target"`
-	TMPFILE="${target}.build"
-	grep  -F "$stem2" $prereq  \
-	> "${target}.build" \
-	|| test 1 -eq "$?" && true \
-	&& mv "${TMPFILE}" "${target}"
-
-002-plus-minus/%.best-alignment.txt:	data/%.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	choose-best-alignment $prereq \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-#Añadiendo aquellas secuencias que no alinearon en blastn
-002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
-	set -x
-	mkdir -p `dirname "$target"`
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	add-unaligned-sequences "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-#Añadiendo aquellas secuencias que no alinearon en blastn
-002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	add-unaligned-sequences "${prereq}" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
+CORRECT_MISMATCHES=analysis/005-correct-mismatches
 
-###ExtendAlign-Long Sequences###
-#
-#Añadiendo aquellas secuencias que no alinearon en blastn
-003-long-sequences/%.final_mismatch.txt:	003-long-sequences/%.extended_mismatches.txt
+$CORRECT_MISMATCHES/%.txt:	$FULLY_ALIGNED/%.txt	$EXTENDED_ALIGNMENT/%.txt
 	set -x
-	mkdir -p `dirname "$target"`
-	add-unaligned-sequences "${prereq}" \
-	 > "${target}.build" \
-	&& mv "${target}.build" $target
-
-#Solucion temporal a los casos cuando el query alinea en los extremos del subject
-002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	correct-mismatches \
-		$prereq \
-	| sort-by-least-mismatch \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-#Solucion temporal a los casos cuando el query alinea en los extremos del subject
-002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	correct-mismatches \
-		$prereq \
-	| sort-by-least-mismatch \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	correct-mismatches \
-		"${prereq}" \
-	| sort-by-least-mismatch \
-	| choose-first-query \
-	| ea-header
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
-	set -x
-	mkdir -p `dirname "$target"`
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	correct-mismatches \
 		"${prereq}" \
 	| sort-by-least-mismatch \
@@ -130,20 +24,9 @@
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-003-long-sequences/%.extended_mismatches.txt:	003-long-sequences/%.noprocessing.txt 003-long-sequences/%.sequenceadded.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	correct-mismatches \
-		"${prereq}" \
-	| sort-by-least-mismatch \
-	| choose-first-query \
-	| ea-header \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
+EXTENDED_ALIGNMENT=analysis/004-extend-alignment
 
-EXTEND_ALIGNMENT=analysis/004-extend-alignment
-
-$EXTEND_ALIGNMENT/%.txt:	$INCORRECT_MISMATCH/%.txt
+$EXTENDED_ALIGNMENT/%.txt:	$INCORRECT_MISMATCH/%.txt
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
@@ -155,7 +38,8 @@ FULLY_ALIGNED=analysis/003-fully-aligned
 
 $FULLY_ALIGNED/%.txt:	$QUERY_LENGTH/%.txt
 	set -x
-	mkdir -p `dirname "$target"`
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	format-fully-aligned-sequences \
 		$prereq \
 	| fix-malformed-fields \
@@ -187,13 +71,14 @@ $QUERY_LENGTH/%.txt:	$NO_HEADER/%.txt	$QUERYFASTA	$SUBJECT_LENGHT/%.subjectlengt
 
 NO_HEADER=analysis/001-noheader
 
-$NO_HEADER/%.txt:	data/%.txt
+$NO_HEADER/%.txt:	$JOINT_STRANDS/%.txt
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
 	skip-header $prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
+
 SUBJECT_LENGTH=analysis/subject-length
 
 $SUBJECT_LENGTH/%.txt:	$SUBJECTFASTA
@@ -203,6 +88,82 @@ $SUBJECT_LENGTH/%.txt:	$SUBJECTFASTA
 	query-length "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
+
+JOINT_STRANDS=analysis/007-joint-strands
+
+$JOINT_STRANDS/%.txt:	$REQUERY_MINUS_STRAND/%.txt	$SPLIT_STRANDS/%.plus.txt
+	set -x
+	TMPDIR="`dirname ${target}`"
+	mkdir -p "${TMPDIR}"
+	remove-strand-column \
+		${prereq} \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
+REQUERY_MINUS_STRAND=analysis/006-requery-minus
+
+$REQUERY_MINUS_STRAND/%.txt:	$MINUS_STRAND_REVERSE_COMPLEMENT/%.fa
+	set -x
+	mkdir -p `dirname "$target"`
+	query-sequences \
+	| choose-best-alignment \
+	| blast-header \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
+MINUS_STRAND_REVERSE_COMPLEMENT=analysis/005-minus-complement
+$MINUS_STRAND_REVERSE_COMPLEMENT/%.fa:	$MINUS_STRAND_SEQUENCES/%.fa
+	set -x
+	mkdir -p `dirname "$target"`
+	fastx_reverse_complement \
+		-i $prereq \
+		-o /dev/fd/1 \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
+MINUS_STRAND_SEQUENCES=analysis/004-minus-strand
+
+$MINUS_STRAND_SEQUENCES/%.fa:	$SPLIT_STRANDS/%.minus.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	grep -A1 \
+		-Ff <(awk '{print $1}' $prereq) \
+		$QUERYFASTA \
+	| sed '/--/d' \
+	| rna2dna \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
+SPLIT_STRANDS=analysis/003-split-strands
+
+'$SPLIT_STRANDS/(.*)\.(plus|minus).txt':R:	'$BEST_BLAST_ALIGNMENT/\1\.txt'
+	set -x
+	mkdir -p `dirname "$target"`
+	TMPFILE="${target}.build"
+	grep  -F "$stem2" $prereq  \
+	> "${target}.build" \
+	|| test 1 -eq "$?" && true \
+	&& mv "${TMPFILE}" "${target}"
+
+BEST_BLAST_ALIGNMENT=analysis/002-best-blast-alignment
+
+$BEST_BLAST_ALIGNMENT/%.txt:	$BLAST_OUTPUT/%.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	choose-best-alignment $prereq \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
+INPUT_FILES=data
+BLAST_OUTPUT=analysis/001-blast
+
+$BLAST_OUTPUT/%.txt:	$INPUT_FILES/%.fa
+	set -x
+	mkdir -p "$(dirname "${target}")"
+	query-sequences \
+	| blast-header \
+	> "${target}.build" \
+	&& mv "${target}.build" "${target}"
 
 # Unit tests
 # ==========

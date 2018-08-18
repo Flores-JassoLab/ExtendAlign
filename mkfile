@@ -70,6 +70,34 @@
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
+#Añadiendo aquellas secuencias que no alinearon en blastn
+002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	add-unaligned-sequences "${prereq}" \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
+###ExtendAlign-Long Sequences###
+#
+#Añadiendo aquellas secuencias que no alinearon en blastn
+003-long-sequences/%.final_mismatch.txt:	003-long-sequences/%.extended_mismatches.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	add-unaligned-sequences "${prereq}" \
+	 > "${target}.build" \
+	&& mv "${target}.build" $target
+
+#Solucion temporal a los casos cuando el query alinea en los extremos del subject
+002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
+	set -x
+	mkdir -p `dirname "$target"`
+	correct-mismatches \
+		$prereq \
+	| sort-by-least-mismatch \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
 #Solucion temporal a los casos cuando el query alinea en los extremos del subject
 002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
 	set -x
@@ -91,69 +119,6 @@
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-002-short-sequences/%.sequenceadded.txt:	002-short-sequences/%.forprocessing.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	extend-alignment $prereq \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.noprocessing.txt: 002-short-sequences/%.querylength.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	format-fully-aligned-sequences \
-		 $prereq \
-	| tr -s "\t" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	sequences-with-incorrect-mismatch \
-		$prereq \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	SUBJECT="002-short-sequences/${stem}.subjectlength.txt"
-	SEQUENCES="002-short-sequences/${stem}.noheader.txt"
-	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.noheader.txt:	data/%.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	skip-header ${prereq} \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
-	query-length ${prereq} \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-#Añadiendo aquellas secuencias que no alinearon en blastn
-002-short-sequences/%.final_mismatch.txt:	002-short-sequences/%.extended_mismatches.debug1.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	add-unaligned-sequences "${prereq}" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-#Solucion temporal a los casos cuando el query alinea en los extremos del subject
-002-short-sequences/%.extended_mismatches.debug1.txt:	002-short-sequences/%.extended_mismatches.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	correct-mismatches \
-		$prereq \
-	| sort-by-least-mismatch \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
 002-short-sequences/%.extended_mismatches.txt:	002-short-sequences/%.noprocessing.txt	002-short-sequences/%.sequenceadded.txt
 	set -x
 	mkdir -p `dirname "$target"`
@@ -163,61 +128,6 @@
 	| choose-first-query \
 	| ea-header \
 	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.sequenceadded.txt:	002-short-sequences/%.forprocessing.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	extend-alignment $prereq \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.noprocessing.txt: 002-short-sequences/%.querylength.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	format-fully-aligned-sequences \
-		 $prereq \
-	| tr -s "\t" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.forprocessing.txt:	002-short-sequences/%.querylength.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	sequences-with-incorrect-mismatch \
-		$prereq \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.querylength.txt: 002-short-sequences/%.noheader.txt $QUERYFASTA 002-short-sequences/%.subjectlength.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	SUBJECT="002-short-sequences/${stem}.subjectlength.txt"
-	SEQUENCES="002-short-sequences/${stem}.noheader.txt"
-	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.noheader.txt:	data/%.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	skip-header ${prereq} \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-002-short-sequences/%.subjectlength.txt:	$SUBJECTFASTA
-	query-length "${prereq}" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-###ExtendAlign-Long Sequences###
-#
-#Añadiendo aquellas secuencias que no alinearon en blastn
-003-long-sequences/%.final_mismatch.txt:	003-long-sequences/%.extended_mismatches.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	add-unaligned-sequences "${prereq}" \
-	 > "${target}.build" \
 	&& mv "${target}.build" $target
 
 003-long-sequences/%.extended_mismatches.txt:	003-long-sequences/%.noprocessing.txt 003-long-sequences/%.sequenceadded.txt
@@ -231,47 +141,65 @@
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-003-long-sequences/%.sequenceadded.txt:	003-long-sequences/%.forprocessing.txt
+EXTEND_ALIGNMENT=analysis/004-extend-alignment
+
+$EXTEND_ALIGNMENT/%.txt:	$INCORRECT_MISMATCH/%.txt
 	set -x
-	mkdir -p `dirname "$target"`
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	extend-alignment $prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-003-long-sequences/%.noprocessing.txt: 003-long-sequences/%.querylength.txt
+FULLY_ALIGNED=analysis/003-fully-aligned
+
+$FULLY_ALIGNED/%.txt:	$QUERY_LENGTH/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
 	format-fully-aligned-sequences \
 		$prereq \
-	| tr -s "\t" \
+	| fix-malformed-fields \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-003-long-sequences/%.forprocessing.txt:	003-long-sequences/%.querylength.txt
+INCORRECT_MISMATCH=analysis/003-incorrect-mismatch
+
+$INCORRECT_MISMATCH/%.txt:	$QUERY_LENGTH/%.txt
 	set -x
-	mkdir -p `dirname "$target"`
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	sequences-with-incorrect-mismatch \
 		$prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-003-long-sequences/%.querylength.txt: 003-long-sequences/%.noheader.txt $QUERYFASTA 003-long-sequences/%.subjectlength.txt
+QUERYLENGTH=analysis/002-query-length
+
+$QUERY_LENGTH/%.txt:	$NO_HEADER/%.txt	$QUERYFASTA	$SUBJECT_LENGHT/%.subjectlength.txt
 	set -x
-	mkdir -p `dirname "$target"`
-	SUBJECT="003-long-sequences/${stem}.subjectlength.txt"
-	SEQUENCES="003-long-sequences/${stem}.noheader.txt"
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
+	SUBJECT="${outdir}/${stem}.subjectlength.txt"
+	SEQUENCES="${outdir}/${stem}.noheader.txt"
 	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-003-long-sequences/%.noheader.txt:	data/%.txt
+NO_HEADER=analysis/001-noheader
+
+$NO_HEADER/%.txt:	data/%.txt
 	set -x
-	mkdir -p `dirname "$target"`
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	skip-header $prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
+SUBJECT_LENGTH=analysis/subject-length
 
-003-long-sequences/%.subjectlength.txt:	$SUBJECTFASTA
+$SUBJECT_LENGTH/%.txt:	$SUBJECTFASTA
+	set -x
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
 	query-length "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target

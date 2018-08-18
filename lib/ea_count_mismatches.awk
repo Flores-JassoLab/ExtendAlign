@@ -11,7 +11,7 @@ function count_mismatches(str_a, str_b) {
 		split(str_a, a, "")
 		split(str_b, b, "")
 		for (i = 1; i <= n; i++) {
-			if a[i] != b[i] {
+			if (a[i] != b[i]) {
 				_diff++
 			}
 		}

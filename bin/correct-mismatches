@@ -10,6 +10,9 @@
 # and it's output format is described in
 @include "ea_format"
 #
+# And the logic to count at
+@include "ea_count_mismatches"
+#
 # In order to obtain the correct mismatch
 # the extended alignment script adds columns
 # containing the sequence that were added to the alignment
@@ -45,33 +48,26 @@ NR == 1 {
   print $0
   next
 }
-#
 {
 #
 # The region accounted by our pipeline so far is
   accounted_length = $alignment_length + length_if_not_na($query_5_seq) + length_if_not_na($query_3_seq)
 #
-}
-#
-# That length should be equal or less than the query_length, where
-accounted_length > $query_length {
+# That length should be equal or less than the query_length
+  if(accounted_length > $query_length) {
 # we should report the following
-  print $0, "error: accounted_length is greater than input sequence length"
-  next
-}
+  print $0, "error:" NR ": accounted_length is greater than input sequence length"
+  }
 #
-# Where the accounted_length is equal to the query_length we do not need further processing.
-#
-# The case we are interested to fix is where
-accounted_length < $query_length {
+# We calculate the mismatch in the extended regions
+$extended_mismatch = count_mismatches($query_3_seq, $subj_3_seq) + \
+	count_mismatches($query_5_seq, $subj_5_seq)
 #
 # The length of the query sequence that exceeds the bounds of subject sequence
 # should be added to the
- $total_mismatch = $mismatch + $gapopen + extended_mismatch + ($query_length - accounted_length)
-}
+ $total_mismatch = $mismatch + $gapopen + $extended_mismatch + ($query_length - accounted_length)
 #
-# Finally, we should print all lines
-#
-{
-	print $0
+# Finally, we should
+  print $0
+# our result.
 }

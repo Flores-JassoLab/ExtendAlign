@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+pipeline {
+	targets.best_blast_alignment
+}
+i2t.split_strands

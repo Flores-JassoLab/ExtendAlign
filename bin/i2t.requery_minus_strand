@@ -1,0 +1,7 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${REQUERY_MINUS_STRAND}	${REQUERY_MINUS_STRAND}
+	importas	${MINUS_STRAND_REVERSE_COMPLEMENT}	${MINUS_STRAND_REVERSE_COMPLEMENT}
+}
+pipeline { change-path	${MINUS_STRAND_REVERSE_COMPLEMENT}	${REQUERY_MINUS_STRAND} }
+change-ext	".fa"	".txt"

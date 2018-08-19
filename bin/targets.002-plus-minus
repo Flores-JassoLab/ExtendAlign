@@ -1,7 +1,0 @@
-#!/bin/bash
-find -L data/ \
-	-type f \
-	-name "*.txt" \
-| sed \
-	-e 's#data/#results/#' \
-	-e 's#\.txt#.realign.txt#'

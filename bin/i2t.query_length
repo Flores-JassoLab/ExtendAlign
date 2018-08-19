@@ -1,0 +1,11 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${QUERY_LENGTH}	${QUERY_LENGTH}
+	importas	${NO_HEADER}	${NO_HEADER}
+	importas	${QUERYFASTA}	${QUERYFASTA}
+	importas	${SUBJECT_LENGTH}	${SUBJECT_LENGTH}
+}
+change-path	${NO_HEADER}	${QUERY_LENGTH}
+change-path	${QUERYFASTA}	${QUERY_LENGTH}
+change-ext	""	".txt"
+change-path	${SUBJECT_LENGTH}	${QUERY_LENGTH}

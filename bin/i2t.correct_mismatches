@@ -1,0 +1,8 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${CORRECT_MISMATCHES}	${CORRECT_MISMATCHES}
+	importas	${FULLY_ALIGNED}	${FULLY_ALIGNED}
+	importas	${EXTENDED_ALIGNMENT}	${EXTENDED_ALIGNMENT}
+}
+pipeline { change-path	${FULLY_ALIGNED}	${CORRECT_MISMATCHES} }
+change-path	${EXTENDED_ALIGNMENT}	${CORRECT_MISMATCHES}

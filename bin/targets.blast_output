@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+pipeline {
+	targets.input_files
+}
+i2t.blast_output

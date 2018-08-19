@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${FULLY_ALIGNED}	${FULLY_ALIGNED}
+	importas	${QUERY_LENGTH}	${QUERY_LENGTH}
+}
+change-path	${QUERY_LENGTH}	${FULLY_ALIGNED}

@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${INCORRECT_MISMATCH}	${INCORRECT_MISMATCH}
+	importas	${QUERY_LENGTH}	${QUERY_LENGTH}
+}
+change-path	${QUERY_LENGTH}	${INCORRECT_MISMATCH}

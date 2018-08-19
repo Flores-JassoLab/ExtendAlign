@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${NO_HEADER}	${NO_HEADER}
+	importas	${JOINT_STRANDS}	${JOINT_STRANDS}
+}
+change-path	${JOINT_STRANDS}	${NO_HEADER}

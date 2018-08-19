@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${BEST_BLAST_ALIGNMENT}	${BEST_BLAST_ALIGNMENT}
+	importas	${BLAST_OUTPUT}	${BLAST_OUTPUT}
+}
+change-path	${BLAST_OUTPUT}	${BEST_BLAST_ALIGNMENT}

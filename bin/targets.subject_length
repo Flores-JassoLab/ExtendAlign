@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+pipeline {
+	targets.subjectfasta
+}
+i2t.subject_length

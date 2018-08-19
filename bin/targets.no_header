@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+pipeline {
+	targets.joint_strands
+}
+i2t.no_header

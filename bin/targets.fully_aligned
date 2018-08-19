@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+pipeline {
+	targets.query_length
+}
+i2t.fully_aligned

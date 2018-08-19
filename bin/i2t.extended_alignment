@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${EXTENDED_ALIGNMENT}	${EXTENDED_ALIGNMENT}
+	importas	${INCORRECT_MISMATCH}	${INCORRECT_MISMATCH}
+}
+change-path	${INCORRECT_MISMATCH}	${EXTENDED_ALIGNMENT}

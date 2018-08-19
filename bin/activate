@@ -1,6 +1,7 @@
-#!/bin/execlineb -S0
-emptyenv -p
+#!/bin/execlineb
+importas -D config confdir 1
+emptyenv
 s6-envdir lib/dirs
-s6-envdir config
+s6-envdir ${confdir}
 bash
 	--rcfile lib/activate.sh

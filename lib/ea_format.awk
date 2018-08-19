@@ -9,6 +9,31 @@ BEGIN {
 #
 # 2. The columns are for handling the following information:
 #
+	HEADER = "query_name" OFS \
+		"subj_name" OFS \
+		"identity" OFS \
+		"alignment_length" OFS \
+		"mismatch" OFS \
+		"gapopen" OFS \
+		"query_start" OFS \
+		"query_end" OFS \
+		"subj_start" OFS \
+		"subj_end" OFS \
+		"e_value" OFS \
+		"bit_score" OFS \
+		"query_length" OFS \
+		"subj_length" OFS \
+		"query_3_seq" OFS \
+		"query_5_seq" OFS \
+		"subj_3_seq" OFS \
+		"subj_5_seq" OFS \
+		"complete_query_seq" OFS \
+		"complete_subj_seq" OFS \
+		"extended_mismatch" OFS \
+		"total_mismatch"
+
+	split(HEADER, columns, OFS)
+
 	query_name = 1
 	subj_name = 2
 	identity = 3
@@ -41,9 +66,5 @@ BEGIN {
 }
 
 function ea_header() {
-	print "query_name", "subj_name", "identity", "alignment_length", "mismatch", \
-	"gapopen", "query_start", "query_end", "subj_start", "subj_end", "e_value", \
-	"bit_score", "query_length", "subj_length", "query_3_seq", "query_5_seq", \
-	"subj_3_seq", "subj_5_seq", "complete_query_seq", "complete_subj_seq", \
-	 "extended_mismatch", "total_mismatch"
+	print HEADER
 }

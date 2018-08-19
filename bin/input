@@ -1,0 +1,7 @@
+#!/bin/execlineb -P
+importas -i INPUT_FILES INPUT_FILES
+find
+	-L
+	${INPUT_FILES}
+	-type f
+	-name *.fa

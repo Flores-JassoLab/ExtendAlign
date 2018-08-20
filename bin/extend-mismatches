@@ -18,64 +18,58 @@ $alignment_length == $query_length {
 #
 # As we have the complete query sequence, we can just get the missing substrings
 #
-function get_query_5_seq() {
-	_seq = substr($complete_query_seq, 1, ($query_start - 1))
+function get_5_ext(seq) {
+	_seq = substr(seq, 1, len_5_ext)
 	return _seq ? _seq : NA
 }
-function get_query_3_seq() {
-	_seq = substr($complete_query_seq, ($query_end + 1), $query_length)
+function get_3_ext(seq) {
+	_seq = substr(seq, ($query_end + 1), len_3_ext)
 	return _seq ? _seq : NA
 }
 #
 # Subject sequences
 # =================
-
-$strand == "plus" {
-	subj_5_seq_start = $subj_start - ($query_start - 1)
-	subj_5_seq_end = ($subj_start - 1)
-	cmd = (" samtools faidx $REFERENCE "$subj_name":"subj_5_seq_start"-"subj_5_seq_end" | tail -n1 | tr '[:lower:]' '[:upper:]'")
-	cmd | getline $subj_5_seq
-	close (cmd)
-
-	subj_3_seq_start = $subj_end + 1
-	subj_3_seq_end = $subj_end + length($query_3_seq)
-	cmd = (" samtools faidx $REFERENCE "$subj_name":"subj_3_seq_start"-"subj_3_seq_end" | tail -n1 | tr '[:lower:]' '[:upper:]'")
-	cmd | getline subj_3_seq
-	close (cmd)
+#
+BEGIN {
+#
+# Those are commands for interrogating the subject database
+#
+  cmd_plus = "seq-from-indexed-fasta $REFERENCE"
+  cmd_minus = "seq-from-indexed-fasta $REFERENCE | dna-reverse-complement"
 }
-$strand == "minus" {
-## For minus strand, query hangs both 5 and 3, are calculated the same as for plus strand
-## For minus strand, subject extension should be extracted differently... not sure how yet
-# Define 5 prime overhang
-
-# must get creative with how to extract the correct 5 overhang for subjects in the minus strand
-# The secret is in extracting the reference plus 3overhang, and reverse complement it
-# That makes it comparable to the reported query 5sequence
-subj_5_seq_start = ($subj_start + 1)
-subj_5_seq_end = ($subj_start + length($query_5_seq) )
-##subj_5_seq = "Shang5_calculated" ## calculating with samtools faidx
-## Reference contig is column 1
-## Build samtools faidx command
-cmd = (" samtools faidx $REFERENCE "$subj_name":"subj_5_seq_start"-"subj_5_seq_end" | tail -n1 | tr '[:lower:]' '[:upper:]' | rev | tr 'ATCG' 'TAGC' ")
-cmd | getline $subj_5_seq
-close (cmd)
-
-# Define 3 prime overhang
-# must get creative again to extract subject 3 overhang from the minus strand
-# The secret is in extracting the reference plus 5overhang, and reverse complement it
-# That makes it comparable to the reported query 3sequence
-
-subj_3_seq_start = ($subj_end - length($query_3_seq) )
-subj_3_seq_end = ($subj_end - 1)
-cmd = (" samtools faidx $REFERENCE "$subj_name":"subj_3_seq_start"-"subj_3_seq_end" | tail -n1 | tr '[:lower:]' '[:upper:]' | rev | tr 'ATCG' 'TAGC' ")
-cmd | getline $subj_3_seq
-close (cmd)
+#
+function get_complete_subj_seq() {
+#
+# We assume the majority of the sequences are plus
+# even if not declared.
+#
+	if ($strand == "minus") {	
+		_pos = $subj_name ":" ($subj_start - len_3_ext) "-" ($subj_end + len_5_ext)
+		print _pos \
+		| cmd_minus \
+		| getline $complete_subj_seq
+	} else {
+		_pos = $subj_name ":" ($subj_start - len_5_ext) "-" ($subj_end + len_3_ext)
+		print _pos \
+		| cmd_plus \
+		| getline $complete_subj_seq
+	}
+	print _pos > /dev/fd/2
+	unset _pos
 }
 #
 # MAIN
 # ====
 #
 {
-	$query_5_seq = get_query_5_seq()
-	$query_3_seq = get_query_3_seq()
+	len_5_ext = ($query_start - 1)
+	len_3_ext = ($query_length - $query_end)
+
+	$query_5_seq = get_5_ext($complete_query_seq)
+	$query_3_seq = get_3_ext($complete_query_seq)
+
+	$complete_subj_seq = get_complete_subj_seq()
+
+	$subj_5_seq = get_5_ext($complete_subj_seq)
+	$subj_3_seq = get_3_ext($complete_subj_seq)
 }

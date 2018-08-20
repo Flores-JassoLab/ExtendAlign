@@ -1,0 +1,4 @@
+#!/bin/execlineb -S0
+xargs -I @
+pipeline { samtools faidx ${@} @ }
+tail -n 1

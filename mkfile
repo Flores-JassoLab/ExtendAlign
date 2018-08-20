@@ -17,13 +17,11 @@ ${EXTENDED_ALIGNMENT}'/(.+):(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FAST
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
 	extend-alignment \
-		-v QUERY="${QUERY_FASTA}/${stem1}.fa" \
-		-v SUBJECT="${SUBJECT_FASTA}/${stem2}.fa" \
-		"${BEST_BLAST_ALIGNMENT}/${stem1}:${stem2}.txt" \
+		${prereq} \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${QUERY_AND_SUBJECT_LENGTH}'/(.+):(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BEST_BLAST_ALIGNMENT}'/\1\.txt'
+${QUERY_AND_SUBJECT_LENGTH}'/(.+):(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BEST_BLAST_ALIGNMENT}'/\1:\2\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"

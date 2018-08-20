@@ -4,4 +4,5 @@ multisubstitute {
 	importas	${SUBJECT_FASTA}	${SUBJECT_FASTA}
 }
 pipeline { change-path	${SUBJECT_FASTA}	${SUBJECT_LENGTH} }
-change-ext	""	".txt"
+pipeline { change-ext	".fa"	".txt" }
+change-ext	".fna"	".txt"

@@ -1,0 +1,8 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	NO_HEADER	NO_HEADER
+	importas	QUERY_LENGTH	QUERY_LENGTH
+	importas	QUERY_FASTA	QUERY_FASTA
+	importas	SUBJECT_LENGTH	SUBJECT_LENGTH
+}
+change-path	${NO_HEADER}	${QUERY_AND_SUBJECT_LENGTH}

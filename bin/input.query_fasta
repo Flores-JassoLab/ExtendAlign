@@ -4,4 +4,4 @@ find
 	-L
 	${QUERY_FASTA}
 	-type f
-	-name *.fa
+	( -name "*.fa" -o -name "*.fna" )

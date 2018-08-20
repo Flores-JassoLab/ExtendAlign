@@ -1,11 +1,8 @@
 #!/bin/execlineb -P
 multisubstitute {
 	importas	${QUERY_LENGTH}	${QUERY_LENGTH}
-	importas	${NO_HEADER}	${NO_HEADER}
 	importas	${QUERY_FASTA}	${QUERY_FASTA}
-	importas	${SUBJECT_LENGTH}	${SUBJECT_LENGTH}
 }
-change-path	${NO_HEADER}	${QUERY_LENGTH}
-change-path	${QUERY_FASTA}	${QUERY_LENGTH}
-change-ext	""	".txt"
-change-path	${SUBJECT_LENGTH}	${QUERY_LENGTH}
+pipeline { change-path	${QUERY_FASTA}	${QUERY_LENGTH} }
+pipeline { change-ext	".fna"	".txt" }
+change-ext	".fa"	".txt"

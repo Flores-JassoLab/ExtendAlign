@@ -1,0 +1,3 @@
+#!/bin/execlineb -P
+pipeline { targets.no_header }
+i2t.query_and_subject_length

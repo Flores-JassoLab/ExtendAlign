@@ -1,7 +1,5 @@
 #!/bin/execlineb -P
 pipeline {
-	foreground { targets.no_header }
-	foreground { targets.queryfasta }
-	targets.subject_length
+	targets.query_fasta
 }
 i2t.query_length

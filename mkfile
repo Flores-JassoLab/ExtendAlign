@@ -1,3 +1,4 @@
+MKSHELL=/bin/bash
 ${ALIGNED_AND_UNALIGNED}/%.txt:	${CORRECT_MISMATCHES}/%.txt
 	set -x
 	outdir="$(dirname ${target})"
@@ -45,13 +46,11 @@ ${INCORRECT_MISMATCH}/%.txt:	${QUERY_LENGTH}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${QUERY_LENGTH}/%.txt:	${NO_HEADER}/%.txt	${QUERY_FASTA}	${SUBJECT_LENGTH}/%.txt
+${QUERY_AND_SUBJECT_LENGTH}/%.txt:	${QUERY_LENGTH}/%.txt	${SUBJECT_LENGTH}/%.txt	${NO_HEADER}/%.txt
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
-	SUBJECT="${SUBJECT_LENGTH}/${stem}.txt"
-	SEQUENCES="${NO_HEADER}/${stem}.txt"
-	query-and-subject-length "${SUBJECT}" "${SEQUENCES}" \
+	query-and-subject-length ${prereq} \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -63,11 +62,12 @@ ${NO_HEADER}/%.txt:	${JOINT_STRANDS}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${SUBJECT_LENGTH}/%.txt:	${SUBJECT_FASTA}
+${QUERY_LENGTH}/%.txt:	${QUERY_FASTA}/%.fna
+${SUBJECT_LENGTH}/%.txt:	${SUBJECT_FASTA}/%.fna
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
-	query-length "${prereq}" \
+	sequence-length "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -103,13 +103,13 @@ ${MINUS_STRAND_SEQUENCES}/%.fa:	${SPLIT_STRANDS}/%.minus.txt
 	mkdir -p `dirname "$target"`
 	grep -A1 \
 		-Ff <(awk '{print $1}' $prereq) \
-		$QUERYFASTA \
+		${QUERY_FASTA} \
 	| sed '/--/d' \
 	| rna2dna \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-'${SPLIT_STRANDS}/(.*)\.(plus|minus).txt':R:	'${BEST_BLAST_ALIGNMENT}/\1\.txt'
+${SPLIT_STRANDS}'/(.*)\.(plus|minus).txt':R:	${BEST_BLAST_ALIGNMENT}'/\1\.txt'
 	set -x
 	mkdir -p `dirname "$target"`
 	TMPFILE="${target}.build"

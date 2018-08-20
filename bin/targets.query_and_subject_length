@@ -1,3 +1,18 @@
-#!/bin/execlineb -P
-pipeline { targets.no_header }
-i2t.query_and_subject_length
+#!/bin/bash
+# set -x
+prepare() {
+	awk '{print "N\t" $0}'
+}
+query() {
+	targets.query_length \
+	| xargs -I @ basename @ .txt
+}
+subject() {
+	targets.subject_length \
+	| xargs -l basename
+}
+main() {
+	join <(query | prepare) <(subject | prepare) \
+	| awk '{print "'"${QUERY_AND_SUBJECT_LENGTH}"'/" $2 ":" $3}'
+}
+main "$@"

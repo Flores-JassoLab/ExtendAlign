@@ -1,4 +1,5 @@
 MKSHELL=/bin/bash
+
 ${ALIGNED_AND_UNALIGNED}/%.txt:	${CORRECT_MISMATCHES}/%.txt
 	set -x
 	outdir="$(dirname ${target})"
@@ -46,7 +47,7 @@ ${INCORRECT_MISMATCH}/%.txt:	${QUERY_LENGTH}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${QUERY_AND_SUBJECT_LENGTH}/%.txt:	${QUERY_LENGTH}/%.txt	${SUBJECT_LENGTH}/%.txt	${NO_HEADER}/%.txt
+${QUERY_AND_SUBJECT_LENGTH}'/(.+):(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${NO_HEADER}'/\1\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
@@ -62,7 +63,14 @@ ${NO_HEADER}/%.txt:	${JOINT_STRANDS}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${QUERY_LENGTH}/%.txt:	${QUERY_FASTA}/%.fna
+${QUERY_LENGTH}/%.txt:	${QUERY_FASTA}/%.fa
+	set -x
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
+	sequence-length "${prereq}" \
+	> "${target}.build" \
+	&& mv "${target}.build" $target
+
 ${SUBJECT_LENGTH}/%.txt:	${SUBJECT_FASTA}/%.fna
 	set -x
 	outdir="$(dirname ${target})"

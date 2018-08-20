@@ -21,6 +21,7 @@ BEGIN {
 		"subj_end" OFS \
 		"e_value" OFS \
 		"bit_score" OFS \
+		"strand" OFS \
 		"query_length" OFS \
 		"subj_length" OFS \
 		"query_3_seq" OFS \
@@ -46,16 +47,17 @@ BEGIN {
 	subj_end = 10
 	e_value = 11
 	bit_score = 12
-	query_length = 13
-	subj_length = 14
-	query_3_seq = 15
-	query_5_seq = 16
-	subj_3_seq = 17
-	subj_5_seq = 18
-	complete_query_seq = 19
-	complete_subj_seq = 20
-	extended_mismatch = 21
-	total_mismatch = 22
+	strand = 13
+	query_length = 14
+	subj_length = 15
+	query_3_seq = 16
+	query_5_seq = 17
+	subj_3_seq = 18
+	subj_5_seq = 19
+	complete_query_seq = 20
+	complete_subj_seq = 21
+	extended_mismatch = 22
+	total_mismatch = 23
 #
 # When a column does not have a value, we use the special value NA.
 #

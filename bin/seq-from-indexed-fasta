@@ -1,4 +1,3 @@
 #!/bin/execlineb -S0
-xargs -I @
-pipeline { samtools faidx ${@} @ }
-tail -n 1
+pipeline { samtools faidx ${@} }
+grep -v >

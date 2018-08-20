@@ -1,17 +1,9 @@
 #!/usr/bin/awk -f
 # The output file is described at
 @include "ea_format.awk"
+@include "ea_count_mismatches.awk"
 #
-# # No extension is needed when
-# $alignment_length == $query_length {
-# #
-# # So we just complete the missing fields and print the line.
-# #
-#	$query_5_seq = $query_3_seq = $subj_5_seq = $subj_3_seq = NA
-#	print $0
-# }
-# Extension needs to be performed in the alternative case
-# but is different for each strandness.
+# Extension is different for each strandness.
 #
 # Query Sequences
 # ===============
@@ -26,34 +18,28 @@ function get_3_ext(seq) {
 	_seq = substr(seq, ($query_end + 1), len_3_ext)
 	return _seq ? _seq : NA
 }
+function get_complete_seq(reference, name, start, end) {
+#        ================
 #
-# Subject sequences
-# =================
 #
-BEGIN {
+# The commands for interrogating is
+  program = "seq-from-indexed-fasta "
 #
-# Those are commands for interrogating the subject database
-#
-  cmd_plus = "seq-from-indexed-fasta $REFERENCE"
-  cmd_minus = "seq-from-indexed-fasta $REFERENCE | dna-reverse-complement"
-}
-#
-function get_complete_subj_seq() {
 #
 # We assume the majority of the sequences are plus
 # even if not declared.
 #
 	if ($strand == "minus") {
-		_pos = $subj_name ":" ($subj_start - len_3_ext) "-" ($subj_end + len_5_ext)
-		cmd = cmd_minus " " _pos
+		_pos = name ":" (start + len_5_ext) "-" (end - len_3_ext)
+		cmd = program reference " " _pos
 		cmd | getline _seq
 	} else {
-		_pos = $subj_name ":" ($subj_start - len_5_ext) "-" ($subj_end + len_3_ext)
-		cmd = cmd_plus " " _pos
+		_pos = name ":" (start - len_5_ext) "-" (end + len_3_ext)
+		cmd = program reference " " _pos " | dna-reverse-complement"
 		cmd | getline _seq
 	}
 	close(cmd)
-	return _seq
+	return _seq ? _seq : NA
 }
 #
 # MAIN
@@ -63,12 +49,13 @@ function get_complete_subj_seq() {
 	len_5_ext = ($query_start - 1)
 	len_3_ext = ($query_length - $query_end)
 
+	$complete_query_seq = get_complete_seq("/labs/crve-fabian/mirna_vaca/miRNAs-mismatches/ExtendAlign/EA-long-seqs/001-blastn/data/hsa-miRNAs22.fa", $query_name, $query_start, $query_end)
+	$complete_subj_seq = get_complete_seq("${REFERENCE}", $subj_name, $subj_start, $subj_end)
+
 	$query_5_seq = get_5_ext($complete_query_seq)
 	$query_3_seq = get_3_ext($complete_query_seq)
-
-	$complete_subj_seq = get_complete_subj_seq()
-
 	$subj_5_seq = get_5_ext($complete_subj_seq)
 	$subj_3_seq = get_3_ext($complete_subj_seq)
+
 	print $0
 }

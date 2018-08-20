@@ -1,125 +1,121 @@
 #!/usr/bin/awk -f
-
-#	echo "extending mismatchs"
-## check if alignment length is equal to query length, then, nothing needs to be recalculated
-## query legnth is column $16
-## Useful nomeclature will be: QHANG_5_start= Query Hang position start at 5' of the alignment, SHANG_5_start same but for subject
-### QHANG_3_start = Query Hang position end at 3' of the alignment, SHANG_3_start, same but for subject
-### ^^^ Correspondingly the same for end positions, 5', 3', query and subject.
-BEGIN {
-	FS = OFS = "\t"
+# The output file is described at
+@include "ea_format.awk"
+#
+# No extension is needed when
+$alignment_length == $query_length {
+#
+# So we just complete the missing fields and print the line.
+#
+	$query_5_seq = $query_3_seq = $subj_5_seq = $subj_3_seq = NA
+	print $0
 }
-## uncomment for debugg ##	NR==1{print "ORDER", $6, $7, $3, "qlength", $12}
-	NR==1{ print "qxtended_seq_5", "qxtended_seq_3", "sxtended_seq_5", "sxtended_seq_3", $0 }
-## NR != 1 to not print header
-## if $3 is equal to $16, alignment legth is equal to query legnth, no extension neccesary
-	NR!=1 && $3==$16 {print "NA", "NA", "NA", "NA", $3, $16, $12}
-## if $3 and $16 are different, extention needs to be performed
-	NR!=1 && $3!=$16 {
-	## Check strandness in field 12
-		if ( $12=="plus" ) {
-		# Define 5 prime overhang
-		# query start is column 6
-		# check if query start is 1, then overhang is NA
-		# else, overhnag can be calculated for query
-			if ($6==1) {
-				QHANG_5="NA"
-				SHANG_5="NA"
-			} else {
-				QHANG_5_start=1
-				QHANG_5_end=$6-1
-				## use substring to split column 26 (query fasta seq), into characters, and recover bases from 1 to query end 5 prime extension
-				QHANG_5=substr($26,QHANG_5_start,QHANG_5_end)
-				## sstart is column 8
-				SHANG_5_start=($8 - QHANG_5_end) ## should be sstart - QHANG_5_end
-				SHANG_5_end=($8 - 1) ## should be sstart - 1
-				##SHANG_5="Shang5_calculated" ## calculating with samtools faidx
-				## Reference contig is column 1
-				## Build samtools faidx command
-				cmd = (" samtools faidx $REFERENCE "$1":"SHANG_5_start"-"SHANG_5_end" | tail -n1 | tr '[:lower:]' '[:upper:]'")
-				cmd | getline SHANG_5
-				close (cmd)
-			}
-		# Define 3 prime overhang
-		# query end is column 7
-		# query legth is column 16
-		# check if query ends at query total length, then overhang is NA
-		# else, overhang is calculated for query
-			if ( $7==$16 ) {
-				QHANG_3="NA"
-				SHANG_3="NA"
-			} else {
-				QHANG_3_start=$7+1
-				QHANG_3_end=$16
-				QHANG_3=substr($26,QHANG_3_start,QHANG_3_end)
-				## Calculate Subject 3prime hang
-				## Subject end is column 9
-				## thus, extension starts at end+1
-				SHANG_3_start=$9+1
-				## extension ends at subject end + ( QHANG_3_end - QHANG_3_start )
-				## alternatively could be equal to subject end + number of characters at QHANG_3
-				SHANG_3_end = $9 + length(QHANG_3)
-				##SHANG_3="Shang3_calculated" ## calculating with samtools faidx
-				## Reference contig is column 1
-				## Build samtools faidx command
-				cmd = (" samtools faidx $REFERENCE "$1":"SHANG_3_start"-"SHANG_3_end" | tail -n1 | tr '[:lower:]' '[:upper:]'")
-				cmd | getline SHANG_3
-				close (cmd)
-			}
-		## uncomment for debugg ## print "calculate someshit, NO STRAND CORRECTION REQUIRED", "seq:"$26, "mismatches:"$4, "gapopen:"$5, "qstart:"$6, "qend:"$7, "aln_len:"$3, "contig:"$1, "substart:"$8, "subend:"$9, "qlen:"$16, $12, "qhang5: "QHANG_5, "qhang3:"QHANG_3, "shang5:"SHANG_5, "shang3:"SHANG_3
-		print QHANG_5, QHANG_3, SHANG_5, SHANG_3, $0
-		}
-		else if ( $12=="minus") {
-		## For minus strand, query hangs both 5 and 3, are calculated the same as for plus strand
-		## For minus strand, subject extension should be extracted differently... not sure how yet
-		# Define 5 prime overhang
-			if ($6==1) {
-				QHANG_5="NA"
-				SHANG_5="NA"
-			} else {
-				QHANG_5_start=1
-				QHANG_5_end=$6-1
-				## use substring to split column 26 (query fasta seq), into characters, and recover bases from 1 to query end 5 prime extension
-				QHANG_5=substr($26,QHANG_5_start,QHANG_5_end)
-			## must get creative with how to extract the correct 5 overhang for subjects in the minus strand
-			## The secret is in extracting the reference plus 3overhang, and reverse complement it
-			## That makes it comparable to the reported query 5sequence
-				#SHANG_5="5hang_calculated"
-				## sstart is column 8
-				SHANG_5_start=($8 + 1) ## should be sstart + 1 since it is reported in minus strand
-				SHANG_5_end=($8 + length(QHANG_5) ) ## should be sstart + the number of nucleotides extracted for the query
-				##SHANG_5="Shang5_calculated" ## calculating with samtools faidx
-				## Reference contig is column 1
-				## Build samtools faidx command
-				cmd = (" samtools faidx $REFERENCE "$1":"SHANG_5_start"-"SHANG_5_end" | tail -n1 | tr '[:lower:]' '[:upper:]' | rev | tr 'ATCG' 'TAGC' ")
-				cmd | getline SHANG_5
-				close (cmd)
-			}
-		# Define 3 prime overhang
-			if ( $7==$16 ) {
-				QHANG_3="NA"
-				SHANG_3="NA"
-			} else {
-				QHANG_3_start=$7+1
-				QHANG_3_end=$16
-				QHANG_3=substr($26,QHANG_3_start,QHANG_3_end)
-			## must get creative again to extract subject 3 overhang from the minus strand
-			## The secret is in extracting the reference plus 5overhang, and reverse complement it
-			## That makes it comparable to the reported query 3sequence
-				#SHANG_3="3hang_calculated"
-				## Subject end is column 9
-				## thus, extension for minus starts at subend - length of QHANG_3
-				SHANG_3_start=($9 - length(QHANG_3)  )
-				## extension ends at subject end - 1
-				SHANG_3_end=($9 - 1)
-				##SHANG_3="Shang3_calculated" ## calculating with samtools faidx
-				## Reference contig is column 1
-				## Build samtools faidx command
-				cmd = (" samtools faidx $REFERENCE "$1":"SHANG_3_start"-"SHANG_3_end" | tail -n1 | tr '[:lower:]' '[:upper:]' | rev | tr 'ATCG' 'TAGC' ")
-				cmd | getline SHANG_3
-				close (cmd)
-			}
-		## uncomment for debugg ## print "STRAND CORRECTION REQUIRED", "seq:"$26, "mismatches:"$4, "gapopen:"$5, "qstart:"$6, "qend:"$7, "aln_len:"$3, "contig:"$1, "substart:"$8, "subend:"$9, "qlen:"$16, $12, "qhang5: "QHANG_5, "qhang3:"QHANG_3, "shang5:"SHANG_5, "shang3:"SHANG_3
-		print QHANG_5, QHANG_3, SHANG_5, SHANG_3, $0
-		}
+# Extension needs to be performed in the alternative case
+# but is different for each strandness.
+#
+#
+$strand == "plus" {
+# Define 5 prime overhang
+# query start is column 6
+# check if query start is 1, then overhang is NA
+# else, overhnag can be calculated for query
+	if ($query_start == 1) {
+		QHANG_5 = "NA"
+		SHANG_5 = "NA"
+	} else {
+		QHANG_5_start = 1
+		QHANG_5_end = $query_start-1
+		## use substring to split column 26 (query fasta seq), into characters, and recover bases from 1 to query end 5 prime extension
+		QHANG_5 = substr($26, QHANG_5_start, QHANG_5_end)
+		## sstart is column 8
+		SHANG_5_start = ($subj_start - QHANG_5_end) ## should be sstart - QHANG_5_end
+		SHANG_5_end = ($subj_start - 1) ## should be sstart - 1
+		##SHANG_5 = "Shang5_calculated" ## calculating with samtools faidx
+		## Reference contig is column 1
+		## Build samtools faidx command
+		cmd = (" samtools faidx $REFERENCE "$1":"SHANG_5_start"-"SHANG_5_end" | tail -n1 | tr '[:lower:]' '[:upper:]'")
+		cmd | getline SHANG_5
+		close (cmd)
+	}
+# Define 3 prime overhang
+# query end is column 7
+# query legth is column 16
+# check if query ends at query total length, then overhang is NA
+# else, overhang is calculated for query
+	if ( $query_end == $query_length ) {
+		QHANG_3 = NA
+		SHANG_3 = NA
+	} else {
+		QHANG_3_start = $query_end + 1
+		QHANG_3_end = $query_length
+		QHANG_3 = substr($26, QHANG_3_start, QHANG_3_end)
+		## Calculate Subject 3prime hang
+		## Subject end is column 9
+		## thus, extension starts at end+1
+		SHANG_3_start = $subj_end+1
+		## extension ends at subject end + ( QHANG_3_end - QHANG_3_start )
+		## alternatively could be equal to subject end + number of characters at QHANG_3
+		SHANG_3_end = $subj_end + length(QHANG_3)
+		##SHANG_3 = "Shang3_calculated" ## calculating with samtools faidx
+		## Reference contig is column 1
+		## Build samtools faidx command
+		cmd = (" samtools faidx $REFERENCE "$1":"SHANG_3_start"-"SHANG_3_end" | tail -n1 | tr '[:lower:]' '[:upper:]'")
+		cmd | getline SHANG_3
+		close (cmd)
+	}
+## uncomment for debugg ## print "calculate someshit, NO STRAND CORRECTION REQUIRED", "seq:"$26, "mismatches:"$4, "gapopen:"$gapopen, "qstart:"$query_start, "qend:"$query_end, "aln_len:"$alignment_length , "contig:"$1, "substart:"$subj_start, "subend:"$subj_end, "qlen:"$query_length, $strand, "qhang5: "QHANG_5, "qhang3:"QHANG_3, "shang5:"SHANG_5, "shang3:"SHANG_3
+print QHANG_5, QHANG_3, SHANG_5, SHANG_3, $0
+}
+$strand == "minus" {
+## For minus strand, query hangs both 5 and 3, are calculated the same as for plus strand
+## For minus strand, subject extension should be extracted differently... not sure how yet
+# Define 5 prime overhang
+	if ($query_start == 1) {
+		QHANG_5 = "NA"
+		SHANG_5 = "NA"
+	} else {
+		QHANG_5_start = 1
+		QHANG_5_end = $query_start-1
+		## use substring to split column 26 (query fasta seq), into characters, and recover bases from 1 to query end 5 prime extension
+		QHANG_5 = substr($26, QHANG_5_start, QHANG_5_end)
+	## must get creative with how to extract the correct 5 overhang for subjects in the minus strand
+	## The secret is in extracting the reference plus 3overhang, and reverse complement it
+	## That makes it comparable to the reported query 5sequence
+		#SHANG_5 = "5hang_calculated"
+		## sstart is column 8
+		SHANG_5_start = ($subj_start + 1) ## should be sstart + 1 since it is reported in minus strand
+		SHANG_5_end = ($subj_start + length(QHANG_5) ) ## should be sstart + the number of nucleotides extracted for the query
+		##SHANG_5 = "Shang5_calculated" ## calculating with samtools faidx
+		## Reference contig is column 1
+		## Build samtools faidx command
+		cmd = (" samtools faidx $REFERENCE "$1":"SHANG_5_start"-"SHANG_5_end" | tail -n1 | tr '[:lower:]' '[:upper:]' | rev | tr 'ATCG' 'TAGC' ")
+		cmd | getline SHANG_5
+		close (cmd)
+	}
+# Define 3 prime overhang
+	if ( $query_end == $query_length ) {
+		QHANG_3 = "NA"
+		SHANG_3 = "NA"
+	} else {
+		QHANG_3_start = $query_end+1
+		QHANG_3_end = $query_length
+		QHANG_3 = substr($26, QHANG_3_start, QHANG_3_end)
+	## must get creative again to extract subject 3 overhang from the minus strand
+	## The secret is in extracting the reference plus 5overhang, and reverse complement it
+	## That makes it comparable to the reported query 3sequence
+		#SHANG_3 = "3hang_calculated"
+		## Subject end is column 9
+		## thus, extension for minus starts at subend - length of QHANG_3
+		SHANG_3_start = ($subj_end - length(QHANG_3) )
+		## extension ends at subject end - 1
+		SHANG_3_end = ($subj_end - 1)
+		##SHANG_3 = "Shang3_calculated" ## calculating with samtools faidx
+		## Reference contig is column 1
+		## Build samtools faidx command
+		cmd = (" samtools faidx $REFERENCE "$1":"SHANG_3_start"-"SHANG_3_end" | tail -n1 | tr '[:lower:]' '[:upper:]' | rev | tr 'ATCG' 'TAGC' ")
+		cmd | getline SHANG_3
+		close (cmd)
+	}
+## uncomment for debugg ## print "STRAND CORRECTION REQUIRED", "seq:"$26, "mismatches:"$4, "gapopen:"$gapopen, "qstart:"$query_start, "qend:"$query_end, "aln_len:"$alignment_length , "contig:"$1, "substart:"$subj_start, "subend:"$subj_end, "qlen:"$query_length, $strand, "qhang5: "QHANG_5, "qhang3:"QHANG_3, "shang5:"SHANG_5, "shang3:"SHANG_3
+print QHANG_5, QHANG_3, SHANG_5, SHANG_3, $0
 }

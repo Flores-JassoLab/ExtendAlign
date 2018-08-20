@@ -1,7 +1,7 @@
 #!/bin/execlineb -P
 multisubstitute {
 	importas	${SUBJECT_LENGTH}	${SUBJECT_LENGTH}
-	importas	${SUBJECTFASTA}	${SUBJECTFASTA}
+	importas	${SUBJECT_FASTA}	${SUBJECT_FASTA}
 }
-pipeline { change-path	${SUBJECTFASTA}	${SUBJECT_LENGTH} }
+pipeline { change-path	${SUBJECT_FASTA}	${SUBJECT_LENGTH} }
 change-ext	""	".txt"

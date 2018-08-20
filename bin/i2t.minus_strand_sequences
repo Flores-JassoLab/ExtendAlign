@@ -3,5 +3,6 @@ multisubstitute {
 	importas	${MINUS_STRAND_SEQUENCES}	${MINUS_STRAND_SEQUENCES}
 	importas	${SPLIT_STRANDS}	${SPLIT_STRANDS}
 }
+pipeline { grep -v ".plus.txt" }
 pipeline { change-path	${SPLIT_STRANDS}	${MINUS_STRAND_SEQUENCES} }
 change-ext	".minus.txt"	".fa"

@@ -6,4 +6,5 @@ multisubstitute {
 }
 pipeline { change-path	${REQUERY_MINUS_STRAND}	${JOINT_STRANDS} }
 pipeline { change-path	${SPLIT_STRANDS}	${JOINT_STRANDS} }
+pipeline { change-ext	".minus.txt"	".txt" }
 change-ext	".plus.txt"	".txt"

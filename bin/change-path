@@ -2,7 +2,6 @@
 importas -i src 1
 importas -i dst 2
 dirs
-debug
 sed
 	-r
 	-e "s#^${src}#${dst}#"

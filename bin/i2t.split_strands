@@ -4,4 +4,4 @@ multisubstitute {
 	importas	${BEST_BLAST_ALIGNMENT}	${BEST_BLAST_ALIGNMENT}
 }
 pipeline { change-path	${BEST_BLAST_ALIGNMENT}	${SPLIT_STRANDS} }
-change-ext	".txt'"	".(plus|minus).txt'"
+change-ext	"(.*)\.txt"	"\\1.plus.txt\\n\\1.minus.txt"

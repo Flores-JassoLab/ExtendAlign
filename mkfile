@@ -1,65 +1,33 @@
 MKSHELL=/bin/bash
 
-${ALIGNED_AND_UNALIGNED}/%.txt:	${CORRECT_MISMATCHES}/%.txt
-	set -x
-	outdir="$(dirname ${target})"
-	mkdir -p "${outdir}"
-	add-unaligned-sequences "${prereq}" \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${CORRECT_MISMATCHES}/%.txt:	${FULLY_ALIGNED}/%.txt	${EXTENDED_ALIGNMENT}/%.txt
+${CORRECT_MISMATCHES}/%.txt:	${EXTENDED_ALIGNMENT}/%.txt
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
 	correct-mismatches \
-		"${prereq}" \
+		${prereq} \
 	| sort-by-least-mismatch \
 	| choose-first-query \
 	| ea-header \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${EXTENDED_ALIGNMENT}/%.txt:	${INCORRECT_MISMATCH}/%.txt
+${EXTENDED_ALIGNMENT}'/(.+):(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'	${QUERY_AND_SUBJECT_LENGTH}'/\1:\2\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
-	extend-alignment $prereq \
+	extend-alignment \
+		-v QUERY="${QUERY_FASTA}/${stem1}.fa" \
+		-v SUBJECT="${SUBJECT_FASTA}/${stem2}.fa" \
+		"${BEST_BLAST_ALIGNMENT}/${stem1}:${stem2}.txt" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${FULLY_ALIGNED}/%.txt:	${QUERY_LENGTH}/%.txt
-	set -x
-	outdir="$(dirname ${target})"
-	mkdir -p "${outdir}"
-	format-fully-aligned-sequences \
-		$prereq \
-	| fix-malformed-fields \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${INCORRECT_MISMATCH}/%.txt:	${QUERY_LENGTH}/%.txt
-	set -x
-	outdir="$(dirname ${target})"
-	mkdir -p "${outdir}"
-	sequences-with-incorrect-mismatch \
-		$prereq \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${QUERY_AND_SUBJECT_LENGTH}'/(.+):(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${NO_HEADER}'/\1\.txt'
+${QUERY_AND_SUBJECT_LENGTH}'/(.+):(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BEST_BLAST_ALIGNMENT}'/\1\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
 	query-and-subject-length ${prereq} \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${NO_HEADER}/%.txt:	${JOINT_STRANDS}/%.txt
-	set -x
-	outdir="$(dirname ${target})"
-	mkdir -p "${outdir}"
-	skip-header $prereq \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -71,60 +39,13 @@ ${QUERY_LENGTH}/%.txt:	${QUERY_FASTA}/%.fa
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${SUBJECT_LENGTH}/%.txt:	${SUBJECT_FASTA}/%.fna
+${SUBJECT_LENGTH}/%.txt:	${SUBJECT_FASTA}/%.fa
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
 	sequence-length "${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
-
-${JOINT_STRANDS}/%.txt:	${REQUERY_MINUS_STRAND}/%.txt	${SPLIT_STRANDS}/%.plus.txt
-	set -x
-	TMPDIR="`dirname ${target}`"
-	mkdir -p "${TMPDIR}"
-	remove-strand-column \
-		${prereq} \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${REQUERY_MINUS_STRAND}/%.txt:	${MINUS_STRAND_REVERSE_COMPLEMENT}/%.fa
-	set -x
-	mkdir -p `dirname "$target"`
-	query-sequences \
-	| choose-best-alignment \
-	| blast-header \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${MINUS_STRAND_REVERSE_COMPLEMENT}/%.fa:	${MINUS_STRAND_SEQUENCES}/%.fa
-	set -x
-	mkdir -p `dirname "$target"`
-	fastx_reverse_complement \
-		-i $prereq \
-		-o /dev/fd/1 \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${MINUS_STRAND_SEQUENCES}/%.fa:	${SPLIT_STRANDS}/%.minus.txt
-	set -x
-	mkdir -p `dirname "$target"`
-	grep -A1 \
-		-Ff <(awk '{print $1}' $prereq) \
-		${QUERY_FASTA} \
-	| sed '/--/d' \
-	| rna2dna \
-	> "${target}.build" \
-	&& mv "${target}.build" $target
-
-${SPLIT_STRANDS}'/(.*)\.(plus|minus).txt':R:	${BEST_BLAST_ALIGNMENT}'/\1\.txt'
-	set -x
-	mkdir -p `dirname "$target"`
-	TMPFILE="${target}.build"
-	grep  -F "$stem2" $prereq  \
-	> "${target}.build" \
-	|| test 1 -eq "$?" && true \
-	&& mv "${TMPFILE}" "${target}"
 
 ${BEST_BLAST_ALIGNMENT}/%.txt:	${BLAST_OUTPUT}/%.txt
 	set -x
@@ -133,11 +54,10 @@ ${BEST_BLAST_ALIGNMENT}/%.txt:	${BLAST_OUTPUT}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${BLAST_OUTPUT}/%.txt:	${INPUT_FILES}/%.fa
+${BLAST_OUTPUT}'/(.+):(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'
 	set -x
 	mkdir -p "$(dirname "${target}")"
-	query-sequences \
-	| blast-header \
+	query-sequences ${prereq} \
 	> "${target}.build" \
 	&& mv "${target}.build" "${target}"
 

@@ -2,14 +2,14 @@
 # The output file is described at
 @include "ea_format.awk"
 #
-# No extension is needed when
-$alignment_length == $query_length {
-#
-# So we just complete the missing fields and print the line.
-#
-	$query_5_seq = $query_3_seq = $subj_5_seq = $subj_3_seq = NA
-	print $0
-}
+# # No extension is needed when
+# $alignment_length == $query_length {
+# #
+# # So we just complete the missing fields and print the line.
+# #
+#	$query_5_seq = $query_3_seq = $subj_5_seq = $subj_3_seq = NA
+#	print $0
+# }
 # Extension needs to be performed in the alternative case
 # but is different for each strandness.
 #
@@ -43,19 +43,17 @@ function get_complete_subj_seq() {
 # We assume the majority of the sequences are plus
 # even if not declared.
 #
-	if ($strand == "minus") {	
+	if ($strand == "minus") {
 		_pos = $subj_name ":" ($subj_start - len_3_ext) "-" ($subj_end + len_5_ext)
-		print _pos \
-		| cmd_minus \
-		| getline $complete_subj_seq
+		cmd = cmd_minus " " _pos
+		cmd | getline _seq
 	} else {
 		_pos = $subj_name ":" ($subj_start - len_5_ext) "-" ($subj_end + len_3_ext)
-		print _pos \
-		| cmd_plus \
-		| getline $complete_subj_seq
+		cmd = cmd_plus " " _pos
+		cmd | getline _seq
 	}
-	print _pos > /dev/fd/2
-	unset _pos
+	close(cmd)
+	return _seq
 }
 #
 # MAIN
@@ -72,4 +70,5 @@ function get_complete_subj_seq() {
 
 	$subj_5_seq = get_5_ext($complete_subj_seq)
 	$subj_3_seq = get_3_ext($complete_subj_seq)
+	print $0
 }

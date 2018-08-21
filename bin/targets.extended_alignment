@@ -1,7 +1,5 @@
 #!/bin/execlineb -P
 pipeline {
-	foreground { targets.query_fasta }
-	foreground { targets.subject_fasta }
 	targets.query_and_subject_length
 }
 i2t.extended_alignment

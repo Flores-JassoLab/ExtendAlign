@@ -6,6 +6,7 @@ BEGIN {
 # 1.  The file MUST be separarated by tabs:
 #
 	OFS = FS = "\t"
+	ORS = RS = "\n"
 #
 # 2. The columns are for handling the following information:
 #

@@ -1,5 +1,6 @@
 #!/bin/execlineb -P
 pipeline {
-	targets.input_files
+	foreground { targets.query_fasta }
+	targets.subject_fasta
 }
 i2t.blast_output

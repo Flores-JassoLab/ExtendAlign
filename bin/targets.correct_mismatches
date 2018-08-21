@@ -1,6 +1,5 @@
 #!/bin/execlineb -P
 pipeline {
-	foreground { targets.fully_aligned }
 	targets.extended_alignment
 }
 i2t.correct_mismatches

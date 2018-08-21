@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.minus_strand_sequences
-}
-i2t.minus_strand_reverse_complement

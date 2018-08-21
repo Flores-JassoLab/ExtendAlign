@@ -3,6 +3,5 @@ multisubstitute {
 	importas	${QUERY_LENGTH}	${QUERY_LENGTH}
 	importas	${QUERY_FASTA}	${QUERY_FASTA}
 }
-pipeline { change-path	${QUERY_FASTA}	${QUERY_LENGTH} }
-pipeline { change-ext	".fna"	".txt" }
+change-path	${QUERY_FASTA}	${QUERY_LENGTH}
 change-ext	".fa"	".txt"

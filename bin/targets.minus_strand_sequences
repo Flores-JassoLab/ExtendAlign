@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.split_strands
-}
-i2t.minus_strand_sequences

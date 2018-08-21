@@ -1,7 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	foreground { targets.requery_minus_strand }
-	targets.split_strands
-}
-pipeline { i2t.joint_strands }
-sort -u

@@ -1,6 +1,11 @@
 #!/bin/execlineb -P
 multisubstitute {
 	importas	${EXTENDED_ALIGNMENT}	${EXTENDED_ALIGNMENT}
-	importas	${INCORRECT_MISMATCH}	${INCORRECT_MISMATCH}
+	importas	${QUERY_FASTA}	${QUERY_FASTA}
+	importas	${SUBJECT_FASTA}	${SUBJECT_FASTA}
+	importas	${QUERY_AND_SUBJECT_LENGTH}	${QUERY_AND_SUBJECT_LENGTH}
 }
-change-path	${INCORRECT_MISMATCH}	${EXTENDED_ALIGNMENT}
+pipeline { change-path	${QUERY_FASTA}	${EXTENDED_ALIGNMENT} }
+pipeline { change-ext	".fa"	".txt" }
+pipeline { change-path	${SUBJECT_FASTA}	${EXTENDED_ALIGNMENT} }
+change-path	${QUERY_AND_SUBJECT_LENGTH}	${EXTENDED_ALIGNMENT}

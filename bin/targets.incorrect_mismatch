@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.query_length
-}
-i2t.incorrect_mismatch

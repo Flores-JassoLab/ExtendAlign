@@ -25,7 +25,8 @@ ${QUERY_AND_SUBJECT_LENGTH}'/(.+)~(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJ
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
-	query-and-subject-length ${prereq} \
+	query-and-subject-length \
+		${prereq} \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -33,7 +34,8 @@ ${QUERY_LENGTH}/%.txt:	${QUERY_FASTA}/%.fa
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
-	sequence-length "${prereq}" \
+	sequence-length \
+		"${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
@@ -41,23 +43,36 @@ ${SUBJECT_LENGTH}/%.txt:	${SUBJECT_FASTA}/%.fa
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
-	sequence-length "${prereq}" \
+	sequence-length \
+		"${prereq}" \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
 ${BEST_BLAST_ALIGNMENT}/%.txt:	${BLAST_OUTPUT}/%.txt
 	set -x
 	mkdir -p `dirname "$target"`
-	choose-best-alignment $prereq \
+	choose-best-alignment \
+		${prereq} \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
 ${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'
 	set -x
 	mkdir -p "$(dirname "${target}")"
-	query-sequences ${prereq} \
+	query-sequences \
+		${prereq} \
 	> "${target}.build" \
 	&& mv "${target}.build" "${target}"
+
+${QUERY_FASTA}/%.fa.fai:	${SUBJECT_FASTA}/%.fa
+	set -x
+	mkdir -p "$(dirname "${target}")"
+	samtools faidx ${prereq}
+
+${SUBJECT_FASTA}/%.fa.nhr:	${SUBJECT_FASTA}/%.fa
+	set -x
+	mkdir -p "$(dirname "${target}")"
+	makeblastdb -in ${prereq} -parse_seqids -dbtype nucl
 
 # Unit tests
 # ==========

@@ -67,12 +67,16 @@ ${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2
 ${QUERY_FASTA}/%.fa.fai:	${SUBJECT_FASTA}/%.fa
 	set -x
 	mkdir -p "$(dirname "${target}")"
-	samtools faidx ${prereq}
+	samtools faidx \
+		${prereq}
 
 ${SUBJECT_FASTA}/%.fa.nhr:	${SUBJECT_FASTA}/%.fa
 	set -x
 	mkdir -p "$(dirname "${target}")"
-	makeblastdb -in ${prereq} -parse_seqids -dbtype nucl
+	makeblastdb \
+		-in ${prereq} \
+		-parse_seqids \
+		-dbtype nucl
 
 # Unit tests
 # ==========

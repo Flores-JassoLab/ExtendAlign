@@ -1,12 +1,11 @@
 #!/bin/execlineb -S0
 multisubstitute {
-	importas prereq 1
-	importas REFERENCE 2
 	importas NT NT
 }
+debug
 blastn
-	-query ${QUERY}
-	-db ${SUBJECT}
+	-query ${1} # query
+	-db ${2} # subject
 	-task blastn
 	-reward 1
 	-penalty -1

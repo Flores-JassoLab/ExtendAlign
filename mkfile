@@ -12,7 +12,7 @@ ${CORRECT_MISMATCHES}/%.txt:	${EXTENDED_ALIGNMENT}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${EXTENDED_ALIGNMENT}'/(.+):(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'	${QUERY_AND_SUBJECT_LENGTH}'/\1:\2\.txt'
+${EXTENDED_ALIGNMENT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'	${QUERY_AND_SUBJECT_LENGTH}'/\1\~\2\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
@@ -21,7 +21,7 @@ ${EXTENDED_ALIGNMENT}'/(.+):(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FAST
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${QUERY_AND_SUBJECT_LENGTH}'/(.+):(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BEST_BLAST_ALIGNMENT}'/\1:\2\.txt'
+${QUERY_AND_SUBJECT_LENGTH}'/(.+)~(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BEST_BLAST_ALIGNMENT}'/\1\~\2\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"
@@ -52,7 +52,7 @@ ${BEST_BLAST_ALIGNMENT}/%.txt:	${BLAST_OUTPUT}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${BLAST_OUTPUT}'/(.+):(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'
+${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'
 	set -x
 	mkdir -p "$(dirname "${target}")"
 	query-sequences ${prereq} \

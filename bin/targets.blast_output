@@ -1,6 +1,18 @@
-#!/bin/execlineb -P
-pipeline {
-	foreground { targets.query_fasta }
-	targets.subject_fasta
+#!/bin/bash
+# set -x
+prepare() {
+	awk '{print "N\t" $0}'
 }
-i2t.blast_output
+query() {
+	input.query_fasta \
+	| xargs -I @ basename @ .fa
+}
+subject() {
+	input.subject_fasta \
+	| xargs -I @ basename @ .fa
+}
+main() {
+	join <(query | prepare) <(subject | prepare) \
+	| awk '{print "'"${BLAST_OUTPUT}"'/" $2 "~" $3 ".txt"}'
+}
+main "$@"

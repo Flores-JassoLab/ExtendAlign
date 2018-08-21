@@ -1,7 +1,5 @@
 #!/bin/execlineb -P
 pipeline {
-	foreground { targets.query_length }
-	foreground { targets.subject_length }
 	targets.best_blast_alignment
 }
 i2t.query_and_subject_length

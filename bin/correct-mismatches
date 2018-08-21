@@ -42,12 +42,6 @@ function length_if_not_na(sequence) {
 #
 	return (sequence == NA) ? 0 : length(sequence)
 }
-#
-# The filename has a title, so we print it and skip processing
-NR == 1 {
-  print $0
-  next
-}
 {
 #
 # The region accounted by our pipeline so far is

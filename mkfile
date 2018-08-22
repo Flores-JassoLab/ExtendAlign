@@ -50,7 +50,7 @@ ${EXTENDED_ALIGNMENT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FAST
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${QUERY_AND_SUBJECT_LENGTH}'/(.+)~(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BEST_BLAST_ALIGNMENT}'/\1\~\2\.txt'
+${QUERY_AND_SUBJECT_LENGTH}'/(.+)~(.+)\.txt':R:	${QUERY_LENGTH}'/\1\.txt'	${SUBJECT_LENGTH}'/\2\.txt'	${BLAST_OUTPUT}'/\1\~\2\.txt'
 	set -x
 	outdir="$(dirname ${target})"
 	mkdir -p "${outdir}"

@@ -31,7 +31,10 @@ nfile <= 2 {
 	next
 }
 nfile > 2 {
-	$query_length = len_dict[$query_name]
-	$subj_length = len_dict[$subj_name]
+	_t = len_dict[$query_name]
+	$query_length = _t ? _t : NA
+	_t = len_dict[$subj_name]
+	$subj_length = _t ? _t : NA
+	unset _t
 	print $0
 }

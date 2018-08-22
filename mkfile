@@ -72,7 +72,13 @@ ${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2
 	> "${target}.build" \
 	&& mv "${target}.build" "${target}"
 
-${QUERY_FASTA}/%.fa.fai:	${SUBJECT_FASTA}/%.fa
+${QUERY_FASTA}/%.fa.fai:	${QUERY_FASTA}/%.fa
+	set -x
+	mkdir -p "$(dirname "${target}")"
+	samtools faidx \
+		${prereq}
+
+${SUBJECT_FASTA}/%.fa.fai:	${SUBJECT_FASTA}/%.fa
 	set -x
 	mkdir -p "$(dirname "${target}")"
 	samtools faidx \

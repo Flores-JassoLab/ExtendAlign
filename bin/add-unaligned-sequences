@@ -25,7 +25,7 @@ nfile == 1 {
 # b) It is declared a the BEGIN block.
 # c) we still need to use the first file configuration.
 #
-nfile == 1 && ENDFILE {
+nfile == 2 && FNR == 1 {
 	RS = "(^|\n)>"
 	FS = "\n"
 	ORS = "\n"

@@ -20,6 +20,6 @@ function count_mismatches(str_a, str_b) {
 		return _diff
 	} else {
 		print "error: " str_a " and " str_b " are not of the same length"
-		exit 1 # false
+		#exit 1 # false
 	}
 }

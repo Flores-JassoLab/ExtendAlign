@@ -63,5 +63,8 @@ function get_complete_seq(reference, name, start, end) {
 	$subj_5_seq = get_5_ext($complete_subj_seq)
 	$subj_3_seq = get_3_ext($complete_subj_seq)
 #
+	unset len_5_ext
+	unset len_3_ext
+#
 	print $0
 }

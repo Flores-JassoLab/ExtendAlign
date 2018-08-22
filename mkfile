@@ -1,10 +1,11 @@
 MKSHELL=/bin/bash
 
-${ALIGNED_AND_UNALIGNED}/%.txt:        ${CORRECT_MISMATCHES}/%.txt	${QUERY_FASTA}/%.fa
+${ALIGNED_AND_UNALIGNED}'/(.+)~(.+)\.txt':R:        ${CORRECT_MISMATCHES}'/\1~\2.txt'	${QUERY_FASTA}'/\1.fa'
        set -x
        outdir="$(dirname ${target})"
        mkdir -p "${outdir}"
-       add-unaligned-sequences "${prereq}" \
+       add-unaligned-sequences \
+		${prereq} \
        > "${target}.build" \
        && mv "${target}.build" $target
 

@@ -65,7 +65,7 @@ BEGIN {
 # **FIXME**: There could be a query sequence containing "NA",
 # so we should rethink this convention.
 #
-	NA = "NA"
+	NA = "*"
 }
 
 function ea_header() {

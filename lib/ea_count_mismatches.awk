@@ -9,6 +9,9 @@ function count_mismatches(str_a, str_b) {
 	str_b = tolower(str_b)
 	n = length(str_a)
 	_diff = 0
+	if (str_a == NA || str_b == NA) {
+		return NA
+	}
 	if (n == length(str_b)) {
 		split(str_a, a, "")
 		split(str_b, b, "")
@@ -19,7 +22,7 @@ function count_mismatches(str_a, str_b) {
 		}
 		return _diff
 	} else {
-		print "error: " str_a " and " str_b " are not of the same length"
+		return "error: " str_a " and " str_b " are not of the same length"
 		#exit 1 # false
 	}
 }

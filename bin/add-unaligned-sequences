@@ -34,7 +34,7 @@ nfile == 2 && FNR == 1 {
 #
 # From the second file onwards we assume we are using fasta files:
 #
-{
+!($name in names) {
 #
 # The information we get from the fasta is these two fields.
 #

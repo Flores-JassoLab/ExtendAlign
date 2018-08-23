@@ -1,68 +1,12 @@
-#!/usr/bin/awk -f
+#!/bin/bash
 #
 # usage: add-unaligned-sequences correct-alignment fasta
 #
-# The first file must be the output of the ea_pipeline
-# that is described at
-@include "fasta_format"
-@include "ea_format.awk"
-#
-FNR == 1 { nfile++ }
-nfile == 1 {
-#
-# In the first file we print thee lines and store query names.
-#
-	print $0
-	names[$query_name]
-	next
-}
-#
-# At the end of the first file, we prepare to read fasta format,
-# this code was taken from "fasta_format.awk"
-# but the upper include would not work because:
-#
-# a) It conflicts with the setup for ea_format (i.e. FS = "\n").
-# b) It is declared a the BEGIN block.
-# c) we still need to use the first file configuration.
-#
-nfile == 2 && FNR == 1 {
-	RS = "(^|\n)>"
-	FS = "\n"
-	ORS = "\n"
-	OFS = "\t"
-}
-#
-# From the second file onwards we assume we are using fasta files:
-#
-!($name in names) {
-#
-# The information we get from the fasta is these two fields.
-#
-	$query_name = $name
-	$complete_query_seq = $sequence
-#
-# Every other field should be set to the empty value before printing.
-#
-	$subj_name = \
-	$identity = \
-	$alignment_length = \
-	$mismatch = \
-	$gapopen = \
-	$query_start = \
-	$query_end = \
-	$subj_start = \
-	$subj_end = \
-	$e_value = \
-	$bit_score = \
-	$strand = \
-	$query_length = \
-	$subj_length = \
-	$query_3_seq = \
-	$query_5_seq = \
-	$subj_3_seq = \
-	$subj_5_seq = \
-	$complete_subj_seq = \
-	$extended_mismatch = \
-	$total_mismatch = NA
-	print $0
-}
+CORRECT="$1"
+FASTA="$2"
+cat "${CORRECT}"
+format-unaligned-sequences \
+	"${FASTA}" \
+| grep \
+	-v \
+	-Ff <(awk -i "ea_format.awk" '{print $query_name}' "${CORRECT}" )

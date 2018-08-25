@@ -1,0 +1,33 @@
+#!/bin/bash
+
+VALID_INPUT=(
+	'data/extend-alignment.txt'
+)
+
+CORRECT_OUTPUT=(
+	'correct/extend-alignment.txt'
+)
+
+FOUT=(
+	'results/extend-alignment.txt'
+)
+
+test_function() {
+	local IN="$1"
+	local OUT="$2"
+	mkdir -p "$(dirname ${OUT})"
+	bin/extend-alignment /labs/crve-fabian/mirna_vaca/GenomeReferences/fasta/miRBase22/mature/hsa-miRNAs22.fa /labs/crve-fabian/mirna_vaca/GenomeReferences/fasta/Mm10p6/GCA_000001635.8_GRCm38.p6_genomic.fna "$IN" > "$OUT"
+
+}
+
+test_valid() {
+	rv=0
+	for i in `seq 0 $(( ${#VALID_INPUT[@]} - 1 ))`; do
+		test_function "${VALID_INPUT[$i]}" "${FOUT[$i]}"
+		diff "${CORRECT_OUTPUT[$i]}" "${FOUT[$i]}" \
+		|| rv=1
+	done
+	exit "$rv"
+}
+
+test_valid >&2

@@ -1,3 +1,4 @@
 #!/bin/execlineb -S0
 pipeline { samtools faidx ${@} }
-grep -v >
+pipeline { grep -v > }
+rna2dna

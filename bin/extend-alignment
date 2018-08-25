@@ -27,7 +27,21 @@ function get_3_ext(seq) {
 	_seq = substr(seq, ($query_end + 1), len_3_ext)
 	return _seq ? _seq : NA
 }
-function get_complete_seq(reference, name, start, end) {
+function get_query_seq(reference, name, start, end) {
+#        =============
+#
+#
+# The commands for interrogating is
+  program = "seq-from-indexed-fasta "
+#
+#
+	_pos = name ":" (start - len_5_ext) "-" (end + len_3_ext)
+	cmd = program reference " " _pos
+	cmd | getline _seq
+	close(cmd)
+	return _seq ? _seq : NA
+}
+function get_subj_seq(reference, name, start, end) {
 #        ================
 #
 #
@@ -36,12 +50,12 @@ function get_complete_seq(reference, name, start, end) {
 #
 #
 	if ($strand == "minus") {
-		_pos = name ":" (start + len_5_ext) "-" (end - len_3_ext)
-		cmd = program reference " " _pos
+		_pos = name ":" (end - len_3_ext) "-" (start + len_5_ext)
+		cmd = program reference " " _pos " | dna-reverse-complement"
 		cmd | getline _seq
 	} else {
 		_pos = name ":" (start - len_5_ext) "-" (end + len_3_ext)
-		cmd = program reference " " _pos " | dna-reverse-complement"
+		cmd = program reference " " _pos
 		cmd | getline _seq
 	}
 	close(cmd)
@@ -55,8 +69,8 @@ function get_complete_seq(reference, name, start, end) {
 	len_5_ext = ($query_start - 1)
 	len_3_ext = ($query_length - $query_end)
 #
-	$complete_query_seq = get_complete_seq(query_fasta, $query_name, $query_start, $query_end)
-	$complete_subj_seq = get_complete_seq(subj_fasta, $subj_name, $subj_start, $subj_end)
+	$complete_query_seq = get_query_seq(query_fasta, $query_name, $query_start, $query_end)
+	$complete_subj_seq = get_subj_seq(subj_fasta, $subj_name, $subj_start, $subj_end)
 #
 	$query_5_seq = get_5_ext($complete_query_seq)
 	$query_3_seq = get_3_ext($complete_query_seq)

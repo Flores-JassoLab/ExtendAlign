@@ -7,6 +7,7 @@ ${ALIGNED_AND_UNALIGNED}'/(.+)~(.+)\.txt':R:        ${CORRECT_MISMATCHES}'/\1~\2
 	tmpfile="${target}.build"
 	add-unaligned-sequences \
 		${prereq} \
+	| sort-by-least-mismatch \
 	> "${tmpfile}" \
 	&& mv "${tmpfile}" "${target}"
 

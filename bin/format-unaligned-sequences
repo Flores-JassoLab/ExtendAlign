@@ -36,6 +36,6 @@ $1 {
 	$subj_5_seq = \
 	$complete_subj_seq = \
 	$extended_mismatch = \
-	$total_mismatch = NA
+	$total_mismatch = length($complete_query_seq)
 	print $0
 }

@@ -10,7 +10,7 @@ function count_mismatches(str_a, str_b) {
 	n = length(str_a)
 	_diff = 0
 	if (str_a == NA || str_b == NA) {
-		return NA
+		return length_if_not_na(str_a) + length_if_not_na(str_b)
 	}
 	if (n == length(str_b)) {
 		split(str_a, a, "")

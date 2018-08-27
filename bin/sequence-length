@@ -6,4 +6,7 @@ pipeline {
 		-length
 		-only ${@}
 }
-awk "BEGIN { OFS = \"\t\" } {print $1, $2}"
+awk "BEGIN { OFS = \"\t\" } {
+	gsub(\"_\", \"/\", $1)
+	print $1, $2
+}"

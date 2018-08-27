@@ -8,6 +8,7 @@ ${ALIGNED_AND_UNALIGNED}'/(.+)~(.+)\.txt':R:        ${CORRECT_MISMATCHES}'/\1~\2
 	add-unaligned-sequences \
 		${prereq} \
 	| sort-by-least-mismatch \
+	| ea-header \
 	> "${tmpfile}" \
 	&& mv "${tmpfile}" "${target}"
 
@@ -19,7 +20,6 @@ ${CORRECT_MISMATCHES}/%.txt:	${EXTENDED_ALIGNMENT}/%.txt
 		${prereq} \
 	| sort-by-least-mismatch \
 	| choose-first-query \
-	| ea-header \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 

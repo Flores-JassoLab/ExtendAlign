@@ -1,0 +1,13 @@
+#!/bin/awk -f
+#
+# The format we are using is described at
+@include "ea_format.awk"
+#
+# We need to undo the formating done at `add-least-mismatch-for-sort`
+{
+	for (i = 1; i <= (NF - 2); i++) {
+		$i = $(i + 2)
+	}
+	NF -= 2
+	print $0
+}

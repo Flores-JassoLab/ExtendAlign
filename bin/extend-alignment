@@ -50,11 +50,13 @@ function get_subj_seq(reference, name, start, end) {
 #
 #
 	if ($strand == "minus") {
-		_pos = name ":" (end - len_3_ext) "-" (start + len_5_ext)
+		_start = (end - len_3_ext)
+		_pos = name ":" (_start > 0 ? _start : 1) "-" (start + len_5_ext)
 		cmd = program reference " " _pos " | dna-reverse-complement"
 		cmd | getline _seq
 	} else {
-		_pos = name ":" (start - len_5_ext) "-" (end + len_3_ext)
+		_start = (start - len_5_ext)
+		_pos = name ":" (_start > 0 ? _start : 1) "-" (end + len_3_ext)
 		cmd = program reference " " _pos
 		cmd | getline _seq
 	}

@@ -2,14 +2,17 @@
 
 VALID_INPUT=(
 	'data/correct-mismatches.txt'
+	'data/correct-mismatches.vaca.txt'
 )
 
 CORRECT_OUTPUT=(
 	'correct/correct-mismatches.txt'
+	'correct/correct-mismatches.vaca.txt'
 )
 
 FOUT=(
 	'results/correct-mismatches.txt'
+	'results/correct-mismatches.vaca.txt'
 )
 
 test_function() {

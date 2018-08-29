@@ -18,8 +18,6 @@ ${CORRECT_MISMATCHES}/%.txt:	${EXTENDED_ALIGNMENT}/%.txt
 	mkdir -p "${outdir}"
 	correct-mismatches \
 		${prereq} \
-	| sort-by-least-mismatch \
-	| choose-first-query \
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 

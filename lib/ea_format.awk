@@ -71,3 +71,20 @@ BEGIN {
 function ea_header() {
 	print HEADER
 }
+
+function length_if_not_na(sequence) {
+#        -----------------
+#
+# The alignment cannot be extended outside the bounds of the subject sequence,
+# in the case where the alignment exceeds or stops at those bounds,
+# `extend_alignment` adds the special value NA as defined in `ea_format`.
+#
+	return (sequence == NA) ? 0 : length(sequence)
+}
+
+function accounted_length() {
+#
+# The accounted lenght is the of the query that is considered on the extended alignment
+#
+	($alignment_length - $gapopen) + length_if_not_na($query_5_seq) + length_if_not_na($query_3_seq)
+}

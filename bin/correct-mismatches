@@ -33,19 +33,10 @@
 # Short query sequences may align to the edges of the subject_sequences
 # and thus we need to consider the unaligned regions as mismatches
 #
-function length_if_not_na(sequence) {
-#        -----------------
-#
-# The alignment cannot be extended outside the bounds of the subject sequence,
-# in the case where the alignment exceeds or stops at those bounds,
-# `extend_alignment` adds the special value NA as defined in `ea_format`.
-#
-	return (sequence == NA) ? 0 : length(sequence)
-}
 {
 #
 # The region accounted by our pipeline so far is
-  accounted_length = ($alignment_length - $gapopen) + length_if_not_na($query_5_seq) + length_if_not_na($query_3_seq)
+  acct_len = accounted_length()
 #
 #
 # We calculate the mismatch in the extended regions
@@ -54,9 +45,9 @@ $extended_mismatch = count_mismatches($query_3_seq, $subj_3_seq) + \
 #
 # The length of the query sequence that exceeds the bounds of subject sequence
 # should be added to the
- $total_mismatch = $mismatch + $gapopen + $extended_mismatch + ($query_length - accounted_length)
+ $total_mismatch = $mismatch + $gapopen + $extended_mismatch
 #
-  if(accounted_length > $query_length) {
+  if(acct_len > $query_length) {
     print $0, FILENAME ":" NR ": accounted_length is greater than input sequence length"
   } else {
     print $0

@@ -35,7 +35,7 @@ function get_5_ext(seq) {
 function sequence_coordinates(name, start, end, len) {
 	unset _pos
 	_start = start > 0 ? start : 1
-	_end = end < length ? end : length
+	_end = end < len ? end : len
 	_pos = name ":" _start  "-" _end
 	return _pos
 }
@@ -52,7 +52,6 @@ function get_5_subj_ext(reference, name) {
 		cmd = program reference " " sequence_coordinates(name, _start, _end, $subj_length)
 	}
 	cmd | getline _seq
-	print cmd > "/dev/fd/2"
 	close(cmd)
 	return _seq ? _seq : NA
 }
@@ -72,7 +71,6 @@ function get_3_subj_ext(reference, name) {
 		_end = ($subj_end + len_3_ext)
 		cmd = program reference " " sequence_coordinates(name, _start, _end, $subj_length)
 	}
-	print cmd > "/dev/fd/2"
 	cmd | getline _seq
 	close(cmd)
 	return _seq ? _seq : NA

@@ -1,4 +1,4 @@
-#!/bin/awk -f
+#!/usr/bin/awk -f
 #
 # The format we are using is described at
 @include "ea_format.awk"

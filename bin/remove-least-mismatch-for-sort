@@ -1,4 +1,4 @@
-#!/bin/awk -f
+#!/usr/bin/awk -f
 #
 # The format we are using is described at
 @include "ea_format.awk"
@@ -8,6 +8,6 @@
 	for (i = 1; i <= (NF - 2); i++) {
 		$i = $(i + 2)
 	}
-	NF -= 2
+	NF = NF - 2
 	print $0
 }

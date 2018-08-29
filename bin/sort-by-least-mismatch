@@ -4,7 +4,7 @@ multisubstitute {
 	define mismatch 2
 }
 pipeline {
-	add-least-mismatch-for-sort "${@}"
+	add-least-mismatch-for-sort ${@}
 }
 pipeline {
 	sort

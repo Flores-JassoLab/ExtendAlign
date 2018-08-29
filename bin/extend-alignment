@@ -2,6 +2,10 @@
 #
 # The output file is described at
 @include "ea_format.awk"
+BEGIN {
+# The commands for interrogating is
+  program = "seq-from-indexed-fasta "
+}
 #
 FNR == 1 && f < 2 {
 	f++
@@ -20,11 +24,52 @@ FNR == 1 && f < 2 {
 # As we have the complete query sequence, we can just get the missing substrings
 #
 function get_5_ext(seq) {
+#
+# If we have an alignment that reaches beyond 5'
+# the position should be substracted from len_5_ext
+#
 	_seq = substr(seq, 1, len_5_ext)
+	return _seq ? _seq : NA
+}
+function sequence_coordinates(name, start, end, len) {
+	_start = start > 0 ? start : 1
+	_end = end < length ? end : length
+	_pos = name ":" _start  "-" _end
+	return _pos
+}
+#
+function get_5_subj_ext(reference, name) {
+	if ($strand == "minus") {
+		_start = ($subj_start + 1)
+		_end = ($subj_start + len_5_ext)
+		cmd = program reference " " sequence_coordinates(name, _start, _end, $subj_length) " | dna-reverse-complement"
+	} else {
+		_start = ($subj_start - len_5_ext)
+		_end = ($subj_start - 1)
+		cmd = program reference " " sequence_coordinates(name, _start, _end, $subj_length)
+	}
+	cmd | getline _seq
+	print cmd > "/dev/fd/2"
+	close(cmd)
 	return _seq ? _seq : NA
 }
 function get_3_ext(seq) {
 	_seq = substr(seq, ($query_end + 1), len_3_ext)
+	return _seq ? _seq : NA
+}
+function get_3_subj_ext(reference, name) {
+	if ($strand == "minus") {
+		_start = ($subj_end - len_3_ext)
+		_end = ($subj_end - 1)
+		cmd = program reference " " sequence_coordinates(name, _start, _end, $subj_length) " | dna-reverse-complement"
+	} else {
+		_start = ($subj_end + 1)
+		_end = ($subj_end + len_3_ext)
+		cmd = program reference " " sequence_coordinates(name, _start, _end, $subj_length)
+	}
+	print cmd > "/dev/fd/2"
+	cmd | getline _seq
+	close(cmd)
 	return _seq ? _seq : NA
 }
 function get_query_seq(reference, name, start, end) {
@@ -41,25 +86,19 @@ function get_query_seq(reference, name, start, end) {
 	close(cmd)
 	return _seq ? _seq : NA
 }
-function get_subj_seq(reference, name, start, end) {
+function get_subj_seq(reference, name, start, end, len) {
 #        ================
-#
-#
-# The commands for interrogating is
-  program = "seq-from-indexed-fasta "
-#
 #
 	if ($strand == "minus") {
 		_start = (end - len_3_ext)
-		_pos = name ":" (_start > 0 ? _start : 1) "-" (start + len_5_ext)
-		cmd = program reference " " _pos " | dna-reverse-complement"
-		cmd | getline _seq
+		_end = (start + len_5_ext)
+		cmd = program reference " " sequence_coordinates(name, _start, _end, len) " | dna-reverse-complement"
 	} else {
 		_start = (start - len_5_ext)
-		_pos = name ":" (_start > 0 ? _start : 1) "-" (end + len_3_ext)
-		cmd = program reference " " _pos
-		cmd | getline _seq
+		_end = (end + len_3_ext)
+		cmd = program reference " " sequence_coordinates(name, _start, _end, len)
 	}
+	cmd | getline _seq
 	close(cmd)
 	return _seq ? _seq : NA
 }
@@ -72,12 +111,12 @@ function get_subj_seq(reference, name, start, end) {
 	len_3_ext = ($query_length - $query_end)
 #
 	$complete_query_seq = get_query_seq(query_fasta, $query_name, $query_start, $query_end)
-	$complete_subj_seq = get_subj_seq(subj_fasta, $subj_name, $subj_start, $subj_end)
+	$complete_subj_seq = get_subj_seq(subj_fasta, $subj_name, $subj_start, $subj_end, $subj_length)
 #
 	$query_5_seq = get_5_ext($complete_query_seq)
 	$query_3_seq = get_3_ext($complete_query_seq)
-	$subj_5_seq = get_5_ext($complete_subj_seq)
-	$subj_3_seq = get_3_ext($complete_subj_seq)
+	$subj_3_seq = get_3_subj_ext(subj_fasta, $subj_name)
+	$subj_5_seq = get_5_subj_ext(subj_fasta, $subj_name)
 #
 	unset len_5_ext
 	unset len_3_ext

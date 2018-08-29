@@ -1,0 +1,33 @@
+#!/bin/bash
+
+VALID_INPUT=(
+	'data/correct-blast-gaps.fa'
+)
+
+CORRECT_OUTPUT=(
+	'correct/correct-blast-gaps.txt'
+)
+
+FOUT=(
+	'results/correct-blast-gaps.txt'
+)
+
+test_function() {
+	local IN="$1"
+	local OUT="$2"
+	mkdir -p "$(dirname ${OUT})"
+	query-sequences "${IN}" ../data/subject/hsa-premir-mft.fa  > "$OUT"
+
+}
+
+test_valid() {
+	rv=0
+	for i in `seq 0 $(( ${#VALID_INPUT[@]} - 1 ))`; do
+		test_function "${VALID_INPUT[$i]}" "${FOUT[$i]}"
+		diff <(sort "${CORRECT_OUTPUT[$i]}") <(sort "${FOUT[$i]}") \
+		|| rv=1
+	done
+	exit "$rv"
+}
+
+test_valid >&2

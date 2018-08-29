@@ -1,4 +1,4 @@
 #!/bin/execlineb -S0
-pipeline { sort-by-least-mismatch ${@} }
+pipeline { sort-by-best-match ${@} }
 pipeline { choose-first-query }
 sort

@@ -1,0 +1,14 @@
+#!/bin/execlineb -S0
+multisubstitute {
+	define length 1
+	define mismatch 2
+}
+pipeline {
+	add-best-match-for-sort ${@}
+}
+pipeline {
+	sort
+		-k ${length},${length}nr
+		-k ${mismatch},${mismatch}n
+}
+remove-best-match-for-sort

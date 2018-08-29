@@ -1,14 +1,3 @@
 #!/bin/execlineb -S0
-multisubstitute {
-	define length 1
-	define mismatch 2
-}
-pipeline {
-	add-least-mismatch-for-sort ${@}
-}
-pipeline {
-	sort
-		-k ${length},${length}nr
-		-k ${mismatch},${mismatch}n
-}
-remove-least-mismatch-for-sort
+define total_mismatch 23
+sort -k ${total_mismatch},${total_mismatch}n "${@}"

@@ -2,7 +2,6 @@
 multisubstitute {
 	importas NT NT
 }
-debug
 blastn
 	-query ${1} # query
 	-db ${2} # subject

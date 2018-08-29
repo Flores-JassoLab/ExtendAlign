@@ -1,18 +1,24 @@
 #!/bin/bash
 
 VALID_INPUT=(
+	'data/correct-mismatches.3p.txt'
 	'data/correct-mismatches.txt'
 	'data/correct-mismatches.vaca.txt'
+	'data/correct-mismatches-weird.txt'
 )
 
 CORRECT_OUTPUT=(
+	'correct/correct-mismatches.3p.txt'
 	'correct/correct-mismatches.txt'
 	'correct/correct-mismatches.vaca.txt'
+	'correct/correct-mismatches-weird.txt'
 )
 
 FOUT=(
+	'results/correct-mismatches.3p.txt'
 	'results/correct-mismatches.txt'
 	'results/correct-mismatches.vaca.txt'
+	'results/correct-mismatches-weird.txt'
 )
 
 test_function() {

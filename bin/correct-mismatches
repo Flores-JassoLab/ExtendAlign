@@ -38,10 +38,11 @@
 # The region accounted by our pipeline so far is
   acct_len = accounted_length()
 #
+# 5' extensions should be reversed before checking.
 #
 # We calculate the mismatch in the extended regions
 $extended_mismatch = count_mismatches($query_3_seq, $subj_3_seq) + \
-	count_mismatches($query_5_seq, $subj_5_seq)
+	count_mismatches(reverse_sequence($query_5_seq), reverse_sequence($subj_5_seq))
 #
 # The length of the query sequence that exceeds the bounds of subject sequence
 # should be added to the
@@ -53,4 +54,12 @@ $extended_mismatch = count_mismatches($query_3_seq, $subj_3_seq) + \
     print $0
   }
 # our result.
+}
+#
+function reverse_sequence(str) {
+	unset _str
+	cmd = "printf '%s\\n' '" str "' | rev"
+	cmd | getline _str
+	close(cmd)
+	return _str ? _str : NA
 }

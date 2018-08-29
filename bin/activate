@@ -3,5 +3,6 @@ importas -D config confdir 1
 emptyenv
 s6-envdir lib/dirs
 s6-envdir ${confdir}
+umask 0007
 bash
 	--rcfile lib/activate.sh

@@ -1,5 +1,15 @@
 MKSHELL=/bin/bash
 
+${FINAL_REPORT}/%.txt:        ${ALIGNED_AND_UNALIGNED}/%.txt
+	set -x
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
+	tmpfile="${target}.build"
+	format-report \
+		${prereq} \
+	> "${tmpfile}" \
+	&& mv "${tmpfile}" "${target}"
+
 ${ALIGNED_AND_UNALIGNED}'/(.+)~(.+)\.txt':R:        ${CORRECT_MISMATCHES}'/\1~\2.txt'	${QUERY_FASTA}'/\1.fa'
 	set -x
 	outdir="$(dirname ${target})"

@@ -1,0 +1,6 @@
+#!/bin/execlineb -P
+multisubstitute {
+	importas	${FINAL_REPORT}	${FINAL_REPORT}
+	importas	${ALIGNED_AND_UNALIGNED}	${ALIGNED_AND_UNALIGNED}
+}
+change-path	${ALIGNED_AND_UNALIGNED}	${FINAL_REPORT}

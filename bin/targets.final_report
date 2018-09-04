@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+pipeline {
+	targets.aligned_and_unaligned
+}
+i2t.final_report

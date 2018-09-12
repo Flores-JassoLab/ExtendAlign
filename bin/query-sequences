@@ -1,6 +1,6 @@
 #!/bin/execlineb -S0
 multisubstitute {
-	importas NT NT
+	importas -D 1 NT NT
 }
 blastn
 	-query ${1} # query

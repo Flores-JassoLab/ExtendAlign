@@ -75,11 +75,12 @@ ${BEST_BLAST_ALIGNMENT}/%.txt:	${BLAST_OUTPUT}/%.txt
 	> "${target}.build" \
 	&& mv "${target}.build" $target
 
-${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa'	${SUBJECT_FASTA}'/\2\.fa'
+${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa\.fai'	${SUBJECT_FASTA}'/\2\.fa\.fai'	${SUBJECT_FASTA}'/\2\.fa\.nhr'
 	set -x
 	mkdir -p "$(dirname "${target}")"
 	query-sequences \
-		${prereq} \
+		"${QUERY_FASTA}/${stem1}.fa" \
+		"${SUBJECT_FASTA}/${stem2}.fa" \
 	> "${target}.build" \
 	&& mv "${target}.build" "${target}"
 

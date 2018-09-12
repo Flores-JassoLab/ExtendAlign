@@ -1,6 +1,6 @@
 .*.sw?
 .*.vis.*
-/analysis
+/analysis*
 /data
 /reference
 /results

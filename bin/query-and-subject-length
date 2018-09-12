@@ -23,7 +23,7 @@ nfile <= 2 {
 # if we receive this warning, we may consider using two dictionaries.
 #
 	if ($dict_name in len_dict) {
-		print "warning: the sequence is repeated in this dictionary (" FILENAME ")" >> /dev/fd/2
+		print "warning: the sequence is repeated in this dictionary (" FILENAME ")" >> "/dev/fd/2"
 	}
 	if ($dict_name) {
 		len_dict[$dict_name] = $dict_len

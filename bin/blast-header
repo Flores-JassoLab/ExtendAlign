@@ -1,7 +1,10 @@
 #!/usr/bin/awk -f
-
-BEGIN{
-	OFS="\t"
-	print "bta", "pre-hsa", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "sstrand"
+#
+# Add header as described in
+@include "ea_format"
+#
+BEGIN {
+	blast_header()
 }
+#
 1

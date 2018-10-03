@@ -10,12 +10,12 @@ BEGIN {
 #
 # 2. The columns are for handling the following information:
 #
-	HEADER = "query_name" OFS \
+	BLAST_HEADER = "query_name" OFS \
 		"subj_name" OFS \
 		"identity" OFS \
 		"alignment_length" OFS \
 		"mismatch" OFS \
-		"gapopen" OFS \
+		"gaps" OFS \
 		"query_start" OFS \
 		"query_end" OFS \
 		"subj_start" OFS \
@@ -23,6 +23,8 @@ BEGIN {
 		"e_value" OFS \
 		"bit_score" OFS \
 		"strand" OFS \
+
+	HEADER = BLAST_HEADER \
 		"query_length" OFS \
 		"subj_length" OFS \
 		"query_3_seq" OFS \
@@ -66,6 +68,10 @@ BEGIN {
 # so we should rethink this convention.
 #
 	NA = "*"
+}
+
+function blast_header() {
+	print HEADER
 }
 
 function ea_header() {

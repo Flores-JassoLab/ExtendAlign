@@ -1,12 +1,22 @@
-#!/bin/execlineb -S0
-debug
-pipeline {
-	infoseq
-		-name
-		-length
-		-only ${@}
+#!/usr/bin/awk -f
+#
+# usage: query-length fasta [fasta2] [...]
+#
+# The fasta file is described at
+@include "fasta_format.awk"
+BEGIN {
+	OFS = "\t"
 }
-awk "BEGIN { OFS = \"\t\" } {
-	gsub(\"_\", \"/\", $1)
-	print $1, $2
-}"
+#
+# As the format file uses ^> as a RS,
+# the first sequence of each file will be empty
+#
+$name {
+	len = 0
+	for (i = sequence; i <= NF; i++) {
+		len += length($i)
+	}
+	split($name, parts, " ")
+	print parts[1], len
+	delete parts
+}

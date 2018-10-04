@@ -1,24 +1,18 @@
 #!/bin/bash
 
 VALID_INPUT=(
-	'/labs/crve-fabian/mirna_vaca/GenomeReferences/fasta/miRBase22/mature/hsa-miRNAs22.fa /labs/crve-fabian/mirna_vaca/GenomeReferences/fasta/Mm10p6/GCA_000001635.8_GRCm38.p6_genomic.fna data/extend-alignment.txt'
-	'../data/query/seqbta.fa ../data/subject/hsa-premir-mft.fa data/extend-alignment.3p.txt'
-	'../data/query/seqbta.fa ../data/subject/hsa-premir-mft.fa data/extend-alignment.5p.txt'
-	#'../data/query/seqbta.fa ../data/subject/hsa-premir-mft.fa data/extend-alignment.weird.txt'
+	'data/miRNAs-test.fa data/subject/premiRNA.fa data/extend-alignment.3p.txt'
+	'data/miRNAs-test.fa data/subject/premiRNA.fa data/extend-alignment.5p.txt'
 )
 
 CORRECT_OUTPUT=(
-	'correct/extend-alignment.txt'
 	'correct/extend-alignment.3p.txt'
 	'correct/extend-alignment.5p.txt'
-	#'correct/extend-alignment.weird.txt'
 )
 
 FOUT=(
-	'results/extend-alignment.txt'
 	'results/extend-alignment.3p.txt'
 	'results/extend-alignment.5p.txt'
-	#'results/extend-alignment.weird.txt'
 )
 
 test_function() {

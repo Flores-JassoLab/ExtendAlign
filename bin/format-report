@@ -1,6 +1,9 @@
 #!/usr/bin/awk -f
 @include "ea_format.awk"
-
+NR == 1 {
+	print $query_name, $subj_name, $query_length, $complete_query_seq, $complete_subj_seq, "total_match", $total_mismatch
+	next
+}
 {
 	len = length($complete_query_seq) > length($complete_subj_seq) ? length($complete_query_seq) : length($complete_subj_seq)
 	total_match = len - $total_mismatch

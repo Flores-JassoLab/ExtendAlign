@@ -78,7 +78,7 @@ ${BEST_BLAST_ALIGNMENT}/%.txt:	${BLAST_OUTPUT}/%.txt
 ${BLAST_OUTPUT}'/(.+)~(.+)\.txt':R:	${QUERY_FASTA}'/\1\.fa\.fai'	${SUBJECT_FASTA}'/\2\.fa\.fai'	${SUBJECT_FASTA}'/\2\.fa\.nhr'
 	set -x
 	mkdir -p "$(dirname "${target}")"
-	query-sequences \
+	HSe-blastn \
 		"${QUERY_FASTA}/${stem1}.fa" \
 		"${SUBJECT_FASTA}/${stem2}.fa" \
 	> "${target}.build" \

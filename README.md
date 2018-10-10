@@ -8,9 +8,9 @@ Usage
 =====
 ExtendAlign has three versions:
 
-  - **EA-preprint:** Performs sense/antisense alignemnts and reports the number of match/mismatch of the best alignment for each query.
-  - **EA-plus:** Performs only sense alignments and reports the number of match/mismatch for the best alignment for each query.
-  - **EA-nobest:** Performs sense/antisense alignments and does not select the best alignent, reports all hits given by HSe-blastn.
+  - **EA-BestHit:** Performs sense/antisense alignemnts and reports the number of match/mismatch of the best alignment for each query.
+  - **EA-AllHits:** Performs sense/antisense alignments and does not select the best alignent, reports all hits given by HSe-blastn.
+  - **EA-PlusAlign:** Performs only sense alignments and reports the number of match/mismatch for the best alignment for each query.
 
 
 For any version, place the sequences to be aligned (query) in fasta format into the `data/query` directory.
@@ -30,6 +30,7 @@ query_name, subj_name, query_length, complete_query_seq, complete_subj_seq, tota
 ```
 
 If the process is too slow for you, `split` the query files before using ExtendAlign.
+
 
 Test data set
 =============

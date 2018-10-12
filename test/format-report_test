@@ -1,15 +1,15 @@
 #!/bin/bash
 
 VALID_INPUT=(
-	'data/correct-match-mismatch.txt'
+	'data/format-report.txt'
 )
 
 CORRECT_OUTPUT=(
-	'correct/correct-match-mismatch.txt'
+	'correct/format-report.txt'
 )
 
 FOUT=(
-	'results/correct-match-mismatch.txt'
+	'results/format-report.txt'
 )
 
 test_function() {

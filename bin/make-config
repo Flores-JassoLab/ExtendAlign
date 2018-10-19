@@ -1,0 +1,15 @@
+#!/bin/execlineb -P
+getcwd CWD
+multisubstitute {
+	importas PATH PATH
+	importas AWKPATH AWKPATH
+	importas TERM TERM
+	importas LANG LANG
+	importas CWD CWD
+	define CONFIG config
+}
+foreground { mkdir -p ${CONFIG} }
+foreground { redirfd -w 1 ${CONFIG}/PATH echo ${PATH}:${CWD}/bin }
+foreground { redirfd -w 1 ${CONFIG}/AWKPATH echo ${AWKPATH}:${CWD}/lib }
+foreground { redirfd -w 1 ${CONFIG}/LANG echo ${LANG} }
+foreground { redirfd -w 1 ${CONFIG}/TERM echo ${TERM} }

@@ -25,6 +25,7 @@ For any version, place the sequences to be aligned (query) in fasta format into 
 Place the sequences to be used as reference (subject) in fasta format into the `data/subject` directory and execute:
 
 ```
+$ bin/make-config
 $ bin/activate
 $ targets | xargs mk
 ```

@@ -1,18 +1,17 @@
 ExtendAlign
 ============
 
-A computational algorithm to correct the match/mismatch bias reported on end-to-end alignments of short sequences.
+A computational algorithm for delivering multiple global alignment results originated from local alignments.
 
 
 Usage
 =====
+
 ExtendAlign has three flavors (branches):
 
   - **best-hit:** Performs sense/antisense alignemnts and reports the number of match/mismatch of the best alignment for each query.
   - **all-hits:** Performs sense/antisense alignments and does not select the best alignent, reports all hits given by HSe-blastn.
   - **plus-strand:** Performs only sense alignments and reports the number of match/mismatch for the best alignment for each query.
-
-For any version, place the sequences to be aligned (query) in fasta format into the `data/query` directory.
 
 To **download** the code use:
 
@@ -20,6 +19,8 @@ To **download** the code use:
 $ YOUR_FLAVOR_CHOICE=best-hit
 $ git clone https://github.com/Flores-JassoLab/ExtendAlign --branch $YOUR_FLAVOR_CHOICE
 ```
+
+For any version, place the sequences to be aligned (query) in fasta format into the `data/query` directory.
 
 Place the sequences to be used as reference (subject) in fasta format into the `data/subject` directory and execute:
 
@@ -68,16 +69,6 @@ $ targets | xargs env NPROC=$(grep proc /proc/cpuinfo | wc -l ) mk
 ```
 
 
-Design considerations
-=====================
-
-
-
-Algorithm
-=========
-
-
-
 Requirements
 ============
 
@@ -105,4 +96,4 @@ Contact
 
 Doubts or comments?
 
-Dr Fabian Flores-Jasso cfflores@inmegen.gob.mx
+Dr Fabian Flores-Jasso <cfflores@inmegen.gob.mx>

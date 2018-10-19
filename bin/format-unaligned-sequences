@@ -20,7 +20,7 @@ $1 {
 	$identity = \
 	$alignment_length = \
 	$mismatch = \
-	$gapopen = \
+	$gaps = \
 	$query_start = \
 	$query_end = \
 	$subj_start = \

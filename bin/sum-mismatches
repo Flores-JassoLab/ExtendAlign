@@ -2,6 +2,6 @@
 @include "ea_format"
 
 {
-	$total_mismatch = $mismatch + $gapopen + $extended_mismatch
+	$total_mismatch = $mismatch + $gaps + $extended_mismatch
 	print $0
 }

@@ -6,12 +6,12 @@
 {
 # To find the alignment with least mismatch,
 # we need to find the length of the aligment without gaps:
- _accounted_length = $alignment_length - $gapopen
+ _accounted_length = $alignment_length - $gaps
 #
 # If we have corrected the alignment,
 # then use our previous calculation,
 # otherwise,
-_mismatch = $total_mismatch ? $total_mismatch : $mismatch + $gapopen
+_mismatch = $total_mismatch ? $total_mismatch : $mismatch + $gaps
 #
 print _accounted_length, _mismatch, $0
 }

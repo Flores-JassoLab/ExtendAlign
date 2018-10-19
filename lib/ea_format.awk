@@ -43,7 +43,7 @@ BEGIN {
 	identity = 3
 	alignment_length = 4
 	mismatch = 5
-	gapopen = 6
+	gaps = 6
 	query_start = 7
 	query_end = 8
 	subj_start = 9
@@ -92,5 +92,5 @@ function accounted_length() {
 #
 # The accounted lenght is the of the query that is considered on the extended alignment
 #
-	($alignment_length - $gapopen) + length_if_not_na($query_5_seq) + length_if_not_na($query_3_seq)
+	($alignment_length - $gaps) + length_if_not_na($query_5_seq) + length_if_not_na($query_3_seq)
 }

@@ -10,6 +10,16 @@ ${FINAL_REPORT}/%.txt:        ${ALIGNED_AND_UNALIGNED}/%.txt
 	> "${tmpfile}" \
 	&& mv "${tmpfile}" "${target}"
 
+${SBR}/%.txt:        ${ALIGNED_AND_UNALIGNED}/%.txt
+	set -x
+	outdir="$(dirname ${target})"
+	mkdir -p "${outdir}"
+	tmpfile="${target}.build"
+	format-sbr \
+		${prereq} \
+	> "${tmpfile}" \
+	&& mv "${tmpfile}" "${target}"
+
 ${ALIGNED_AND_UNALIGNED}'/(.+)~(.+)\.txt':R:        ${CORRECT_MISMATCHES}'/\1~\2.txt'	${QUERY_FASTA}'/\1.fa'
 	set -x
 	outdir="$(dirname ${target})"
@@ -103,6 +113,10 @@ ${SUBJECT_FASTA}/%.fa.nhr:	${SUBJECT_FASTA}/%.fa
 		-in ${prereq} \
 		-parse_seqids \
 		-dbtype nucl
+
+our-paper-results:V:
+	cd test
+	mk as-in-paper/hsa-miRNAs22~mmu-premiRNAs22.txt
 
 # Unit tests
 # ==========

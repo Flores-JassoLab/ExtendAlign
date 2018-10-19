@@ -6,9 +6,9 @@ NR == 1 {
 }
 {
 	len = length($complete_query_seq) > length($complete_subj_seq) ? length($complete_query_seq) : length($complete_subj_seq)
-	HSe-BLAST_match = $alignment_length - ($mismatch + $gaps)
-	HSe-BLAST_mismatch = $mismatch + $gaps
-	EA-total_match = len - $total_mismatch
-	EA-total_mismatch = $total_mismatch
-	print $query_name, $subj_name, $query_length, $complete_query_seq, $complete_subj_seq, "HSe-BLAST_match", "HSe-BLAST_mismatch", "EA-total_match", "EA-total_mismatch"
+	HSe_BLAST_match = $alignment_length - ($mismatch + $gapopen)
+	HSe_BLAST_mismatch = $mismatch + $gapopen
+	EA_total_match = len - $total_mismatch
+	EA_total_mismatch = $total_mismatch
+	print $query_name, $subj_name, $query_length, $complete_query_seq, $complete_subj_seq, HSe_BLAST_match, HSe_BLAST_mismatch, EA_total_match, EA_total_mismatch
 }

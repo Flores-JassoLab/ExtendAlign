@@ -16,7 +16,7 @@ test_function() {
 	local IN="$1"
 	local OUT="$2"
 	mkdir -p "$(dirname ${OUT})"
-	format-report "$IN" > "$OUT"
+	format-sbr "$IN" > "$OUT"
 
 }
 

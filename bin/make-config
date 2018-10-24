@@ -1,11 +1,11 @@
 #!/bin/execlineb -P
 getcwd CWD
 multisubstitute {
-	importas PATH PATH
-	importas AWKPATH AWKPATH
-	importas TERM TERM
-	importas LANG LANG
-	importas CWD CWD
+	importas -D "" PATH PATH
+	importas -D "" AWKPATH AWKPATH
+	importas -D "" TERM TERM
+	importas -D "" LANG LANG
+	importas -D "" CWD CWD
 	define CONFIG config
 }
 foreground { mkdir -p ${CONFIG} }

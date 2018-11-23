@@ -73,7 +73,7 @@ $ targets | xargs env NPROC=$(grep proc /proc/cpuinfo | wc -l ) mk
 Requirements
 ============
 
-  - [`blast`](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ "Basic Local Alignment Search Tool.")
+  - [`blast`](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 
   - [`coreutils`](https://www.gnu.org/software/coreutils/coreutils.html "Basic file, shell and text manipulation utilities of the GNU operating system.")
   
@@ -85,11 +85,43 @@ Requirements
 
   - [`samtools`](http://www.htslib.org/download/ "Utilities for interacting with and post-processing short DNA sequence read alignments")
 
+To install requirements
+### Install instructions for Debian/Ubuntu systems.
+
+To solve dependencies, execute: 
+
+```
+sudo apt update
+sudo apt install blast2 coreutils findutils 9base s6
+```
+
+To finish the `mk` configuration, execute:
+
+```
+echo 'export PATH=$PATH:/usr/lib/plan9/bin' >> ~/.bashrc
+```
+
+For [`samtools`](http://www.htslib.org/download/) and its dependencie [`htslib`](http://www.htslib.org/download/), and [`execline`](http://skarnet.org/software/execline/) and its dependencies [`skalibs`](http://skarnet.org/software/skalibs/) and [`s6`](http://skarnet.org/software/s6/), you have to download the source packages, decompress, change to decompressed folder and execute these three commands for each one:
+
+```
+./configure
+make
+sudo make install
+```
+
+The source package can be download from:
+
+  - [`htslib`](http://www.htslib.org/download/)
+  - [`skalibs`](http://skarnet.org/software/skalibs/)
+  - [`s6`](http://skarnet.org/software/s6/)
+  - [`samtools`](http://www.htslib.org/download/)
+  - [`execline`](http://skarnet.org/software/execline/)
+
 
 References
 ==========
 
-Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple global alignment results originated from local alignments».
+Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple global alignment results originated from local alignments». [`bioRxiv`](https://www.biorxiv.org/content/early/2018/11/23/475707)
 
 
 Contact

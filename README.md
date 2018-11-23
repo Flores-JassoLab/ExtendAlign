@@ -74,19 +74,15 @@ Requirements
 ============
 
   - [`blast`](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
-
   - [`coreutils`](https://www.gnu.org/software/coreutils/coreutils.html "Basic file, shell and text manipulation utilities of the GNU operating system.")
-  
   - [`execline`](http://www.skarnet.org/software/execline/ "execline is a (non-interactive) scripting language")
-
   - [`findutils`](https://www.gnu.org/software/findutils/ "Basic directory searching utilities of the GNU operating system.")
-
   - [`mk`](http://doc.cat-v.org/bell_labs/mk/mk.pdf "A successor for `make`.")
-
   - [`samtools`](http://www.htslib.org/download/ "Utilities for interacting with and post-processing short DNA sequence read alignments")
 
-To install requirements
-### Install instructions for Debian/Ubuntu systems.
+
+To install requirements:
+#### Install instructions for Debian/Ubuntu systems.
 
 To solve dependencies, execute: 
 
@@ -101,7 +97,7 @@ To finish the `mk` configuration, execute:
 echo 'export PATH=$PATH:/usr/lib/plan9/bin' >> ~/.bashrc
 ```
 
-For [`samtools`](http://www.htslib.org/download/) and its dependencie [`htslib`](http://www.htslib.org/download/), and [`execline`](http://skarnet.org/software/execline/) and its dependencies [`skalibs`](http://skarnet.org/software/skalibs/) and [`s6`](http://skarnet.org/software/s6/), you have to download the source packages, decompress, change to decompressed folder and execute these three commands for each one:
+For [`samtools`](http://www.htslib.org/download/) and its dependencies [`htslib`](http://www.htslib.org/download/), and [`execline`](http://skarnet.org/software/execline/) and its dependencies [`skalibs`](http://skarnet.org/software/skalibs/) and [`s6`](http://skarnet.org/software/s6/), you have to download the source packages, decompress, change to decompressed folder and execute these three commands for each one:
 
 ```
 ./configure
@@ -121,7 +117,7 @@ The source package can be download from:
 References
 ==========
 
-Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple global alignment results originated from local alignments». [`bioRxiv`](https://www.biorxiv.org/content/early/2018/11/23/475707)
+Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple global alignment results originated from local alignments». [bioRxiv](https://www.biorxiv.org/content/early/2018/11/23/475707)
 
 
 Contact

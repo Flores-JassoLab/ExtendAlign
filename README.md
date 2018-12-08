@@ -1,7 +1,7 @@
 ExtendAlign
 ============
 
-A computational algorithm for delivering multiple global alignment results originated from local alignments.
+A computational algorithm for delivering multiple, local end-to-end alignments.
 
 
 Usage

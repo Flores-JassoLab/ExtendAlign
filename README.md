@@ -117,7 +117,7 @@ The source package can be download from:
 References
 ==========
 
-Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple global alignment results originated from local alignments». [bioRxiv](https://www.biorxiv.org/content/early/2018/11/23/475707)
+Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments».  https://www.biorxiv.org/content/early/2018/11/23/475707
 
 
 Contact

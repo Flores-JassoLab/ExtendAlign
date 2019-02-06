@@ -1,0 +1,35 @@
+##
+# mkfile with dependency rules for:
+#		1. Creating a blast database from .fa , .fna , or .fasta files
+#
+## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+
+## Define shell command line which will be used to run recipes
+MKSHELL=/bin/bash
+
+## Uuse blastn makeblastdb to create the battery of blast database files
+## Here, we only request the .nsq file, but every other db file will be crated along
+%.nsq: %
+	makeblastdb \
+		-in $prereq \
+		-parse_seqids \
+		-dbtype nucl
+
+## locally test this module by running:
+##	```
+##	mk test
+##	```
+test:V:
+	echo "[...] test running this module with data in test/data"
+	echo "[>..] results will be created in test/results"
+	## Remove old test results, if any; then create test/reults dir
+	rm -rf test/results
+	mkdir -p test/results
+	## Execute runmk.sh, it will find the test/data basic example; -a arg forces target creation even if results are up to date
+	bash runmk.sh -a
+	## Move results from test/data to test/results
+	## files are *.nhr, *.nin, *.nog, *.nsd, *.nsi, *.nsq
+	##	^^ so we simplify mv using *.n* as pattern
+	mv test/data/*.n* test/results
+	## Copy remaining *.fa , *.fasta, or *.fna files from test/data, since they are referenced by blastn later
+	cp test/data/* test/results

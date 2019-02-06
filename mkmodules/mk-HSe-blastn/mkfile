@@ -1,0 +1,52 @@
+##
+# mkfile with dependency rules for:
+#		1. Creating a blastn results TSV file from .fa , .fna , or .fasta files, by comparing it against a blast generated REFERENCE_DB
+#
+## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+
+## Define shell command line which will be used to run recipes
+MKSHELL=/bin/bash
+
+## Use blastn to compare a fasta query file ($prereq) with a previouly created blast DataBase
+## BLAST_DATABASE and BLAST_THREADS has to be parameters passed from the CLI execution
+## 	^^ see this submodule readme.txt file for parameter definition
+%.blastn.tsv: %
+	## Since blast results come with no header by default, first we print the header line for the results
+	##	^^ for code readability, we code the header names separated by commas and then replace them (tr) by tabs
+	echo "qseqid,sseqid,pident,length,mismatch,gaps,qstart,qend,sstart,send,evalue,bitscore,sstrand" \
+	| tr "," "\t" > $target.build
+	## Now, to proper blasting; blastn results will be appended to results file with header
+	blastn \
+		-query $prereq \
+		-db $BLAST_DATABASE \
+		-task blastn \
+		-reward 1 \
+		-penalty -1 \
+		-gapopen 2 \
+		-gapextend 2 \
+		-word_size 7 \
+		-dust no \
+		-soft_masking false \
+		-max_target_seqs 100 \
+		-evalue 10 \
+		-num_threads $BLAST_THREADS \
+		-outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand" \
+	>> $target.build \
+	&& mv $target.build $target
+
+## locally test this module by running:
+##	```
+##	mk test
+##	```
+test:V:
+	echo "[...] test running this module with data in test/data"
+	echo "[>..] results will be created in test/results"
+	## Remove old test results, if any; then create test/reults dir
+	rm -rf test/results
+	mkdir -p test/results
+	## Execute runmk.sh, it will find the test/data basic example; -a arg forces target creation even if results are up to date
+	## Define test parameters required by the main mk rules
+	bash runmk.sh -a 	BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa" BLAST_THREADS="1"
+	## Move results from test/data to test/results
+	## files are *.blastn.tsv
+	mv test/data/*.blastn.tsv test/results

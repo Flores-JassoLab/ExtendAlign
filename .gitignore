@@ -11,3 +11,6 @@ config.mk
 /ignore/*
 /prueba*/
 ref-*/
+
+## Ignore local mkmodule test results
+mkmodules/*/test/results

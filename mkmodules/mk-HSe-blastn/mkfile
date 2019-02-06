@@ -1,6 +1,7 @@
 ##
-# mkfile with dependency rules for:
-#		1. Creating a blastn results TSV file from .fa , .fna , or .fasta files, by comparing it against a blast generated REFERENCE_DB
+# mkfile script with dependency rules for:
+#		1. Creating a blastn results TSV file from .EAfa files, by comparing it against a blast generated REFERENCE_DB
+#			Note: Unlike the base blastn version, this EA version outputs the query and subject original sequence length, which will be used downstream to define the length of EA extension
 #
 ## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
@@ -10,12 +11,15 @@ MKSHELL=/bin/bash
 ## Use blastn to compare a fasta query file ($prereq) with a previouly created blast DataBase
 ## BLAST_DATABASE and BLAST_THREADS has to be parameters passed from the CLI execution
 ## 	^^ see this submodule readme.txt file for parameter definition
-%.blastn.tsv: %
+%.blastn.tsv: %.EAfa
 	## Since blast results come with no header by default, first we print the header line for the results
 	##	^^ for code readability, we code the header names separated by commas and then replace them (tr) by tabs
-	echo "qseqid,sseqid,pident,length,mismatch,gaps,qstart,qend,sstart,send,evalue,bitscore,sstrand" \
+	## 	^^ please note that our header definition adds the qlength and slength to the -outfmt requested to blastn
+	echo "qlength,qseqid,slength,sseqid,pident,length,mismatch,gaps,qstart,qend,sstart,send,evalue,bitscore,sstrand" \
 	| tr "," "\t" > $target.build
 	## Now, to proper blasting; blastn results will be appended to results file with header
+	## before appending them, well parse them with sed to change the EA custom separator for a tab
+	##	^^this will place the query and subject original length number in every line
 	blastn \
 		-query $prereq \
 		-db $BLAST_DATABASE \
@@ -31,22 +35,5 @@ MKSHELL=/bin/bash
 		-evalue 10 \
 		-num_threads $BLAST_THREADS \
 		-outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand" \
-	>> $target.build \
+	| sed "s#{EA}#\t#g" >> $target.build \
 	&& mv $target.build $target
-
-## locally test this module by running:
-##	```
-##	mk test
-##	```
-test:V:
-	echo "[...] test running this module with data in test/data"
-	echo "[>..] results will be created in test/results"
-	## Remove old test results, if any; then create test/reults dir
-	rm -rf test/results
-	mkdir -p test/results
-	## Execute runmk.sh, it will find the test/data basic example; -a arg forces target creation even if results are up to date
-	## Define test parameters required by the main mk rules
-	bash runmk.sh -a 	BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa" BLAST_THREADS="1"
-	## Move results from test/data to test/results
-	## files are *.blastn.tsv
-	mv test/data/*.blastn.tsv test/results

@@ -7,7 +7,7 @@
   ## ^^since at the end of the blastn process, *.blastn.tsv files are created
 find -L . \
   -type f \
-  -name "*.fa" -o -name "*.fna" -o -name "*.fasta" \
-| sed "s#\$#.blastn.tsv#" \
+  -name "*.EAfa" \
+| sed "s#.EAfa#.blastn.tsv#" \
 | xargs mk $@
   ## ^^ "mk $@" enables to pass mk arguments from the main flow execution

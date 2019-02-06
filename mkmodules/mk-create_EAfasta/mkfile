@@ -1,5 +1,5 @@
 ##
-# mkfile with dependency rules for:
+# mkfile script with dependency rules for:
 #		1. Transforming a fasta file to Extend Aling fasta format
 #
 ## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html

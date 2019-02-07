@@ -34,6 +34,7 @@ MKSHELL=/bin/bash
 		-max_target_seqs 100 \
 		-evalue 10 \
 		-num_threads $BLAST_THREADS \
+		-strand $BLAST_STRAND \
 		-outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand" \
 	| sed "s#{EA}#\t#g" >> $target.build \
 	&& mv $target.build $target

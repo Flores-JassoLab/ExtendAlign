@@ -14,5 +14,6 @@ echo "[>>.] results will be created in test/results"
 bash runmk.sh -a \
   BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa.EAfa" \
   BLAST_THREADS="1" \
+  BLAST_STRAND="both" \
 && mv test/data/*.blastn.tsv test/results \
 && echo "[>>>] Module Test Successful"

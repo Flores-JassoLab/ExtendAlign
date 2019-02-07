@@ -25,7 +25,7 @@ Input:
   ````
 
   Note(s):
-	- The "NUMBER{EA}" string of characters at the start of the fasta header, is a custom string added by a previous EA module
+	- The "NUMBER{EA}" string of characters at the start of the fasta header, is a custom string added by a previous EA module (mk-create_EAfasta)
 
 Output:
 	A custom blastn output TAB separated file, with .blastn.tsv extension
@@ -65,6 +65,10 @@ BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa.EAfa"
 
 ## Number of threads (CPUs) to use in blast search
 BLAST_THREADS="1"
+
+## Query strand(s) to search against database/subject.
+# Choice of "both", "minus", or "plus".
+BLAST_STRAND="both"
 
 Testing the module:
 

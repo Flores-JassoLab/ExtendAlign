@@ -1,5 +1,5 @@
 Module:	mk-create_blastdb
-Author(s): Israel Aguilar (iaguilaror@gmail.com)
+Author(s): Mariana Flores (mflores@inmegen.edu.mx), Israel Aguilar (iaguilaror@gmail.com)
 Date: FEB 2019
 
 TODO:

@@ -39,6 +39,8 @@ Output:
   26 hsa-miR-1226-5p.MIMAT0005576 71 mmu-mir-6927.MI0022774 76.923 26 6 0 1 26 1 26 0.039 23.5 plus 0 0 0 45 0 0 1 1 26 26 1 1 26 26 +
   26 hsa-miR-4700-3p.MIMAT0019797 79 mmu-mir-700.MI0004684 69.231 26 8 0 1 26 28 3 2.8 17.3 minus 0 0 51 2 0 0 1 1 26 26 28 28 3 3 -
 	````
+  Note(s):
+    - For this example, tabs ware replaced by simple white spaces
 
   Output File Column Descriptions: see readme.txt in module mk-HSe-blastn for basic column description;
   new columns are described as follows:

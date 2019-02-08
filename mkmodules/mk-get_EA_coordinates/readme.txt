@@ -57,7 +57,7 @@ Output:
   s5end_extension_end: For Subject 5' end, sequence position where the nucleotides should finish to be extracted
   s3end_extension_start: For Subject 3' end, sequence position where the nucleotides should begin to be extracted
   s3end_extension_end: For Subject 3' end, sequence position where the nucleotides should finish to be extracted
-  strand: + or - code for the blastn result strandness
+  strand: + or - code for the blastn result strandness (will be required in +/- format by downstream process)
   """"
 
 Module parameters:

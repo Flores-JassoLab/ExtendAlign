@@ -23,11 +23,11 @@ MKSHELL=/bin/bash
 	# then, numerically ascending field 8 (number of gaps)
 	# the sorted lines will pass to awk to print lines only the first time a query ID appears (seen[$2]++)
 	# finally, results are appended to the temporary target that contains the original header
-	sort \
+	tail -n+2 $prereq \
+	| sort \
 		-k 6,6nr \
 		-k 7,7n \
 		-k 8,8n \
-		$prereq \
 	| awk ' !seen[$2]++ ' \
 	>> $target.build \
 	&& mv $target.build $target

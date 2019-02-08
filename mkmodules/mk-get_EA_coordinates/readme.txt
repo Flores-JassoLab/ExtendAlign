@@ -43,21 +43,21 @@ Output:
   Output File Column Descriptions: see readme.txt in module mk-HSe-blastn for basic column description;
   new columns are described as follows:
   """"
-  q5end_extension_length:
-  q3end_extension_length:
-  s5end_extension_length:
-  s3end_extension_length:
-  overlap5end_extension_length:
-  overlap3end_extension_length:
-  q5end_extension_start:
-  q5end_extension_end:
-  q3end_extension_start:
-  q3end_extension_end:
-  s5end_extension_start:
-  s5end_extension_end:
-  s3end_extension_start:
-  s3end_extension_end:
-  strand:
+  q5end_extension_length: For Query, number of nucleotides at 5' end that were not included in the blastn reported alignment
+  q3end_extension_length: For Query, number of nucleotides at 3' end that were not included in the blastn reported alignment
+  s5end_extension_length: For Subject, number of nucleotides at 5' end that were not included in the blastn reported alignment
+  s3end_extension_length: For Subject, number of nucleotides at 3' end that were not included in the blastn reported alignment
+  overlap5end_extension_length: For 5' end, maximum number of extension length shared by query and subject; e.g. Query 5end length is 7nt, Subject 5end is 3nt, thus, the overlap5end_extension_length is the minimal value of those two, which is 3nt.
+  overlap3end_extension_length: For 3' end, maximum number of extension length shared by query and subject; e.g. Query 3end length is 0nt, Subject 3end is 9nt, thus, the overlap5end_extension_length is the minimal value of those two, which is 0nt.
+  q5end_extension_start: For Query 5' end, sequence position where the nucleotides should begin to be extracted from the query fasta
+  q5end_extension_end: For Query 5' end, sequence position where the nucleotides should finish to be extracted
+  q3end_extension_start: For Query 3' end, sequence position where the nucleotides should begin to be extracted
+  s5end_extension_start: For Subject 5' end, sequence position where the nucleotides should begin to be extracted from the query fasta
+  q3end_extension_end: For Query 3' end, sequence position where the nucleotides should finish to be extracted
+  s5end_extension_end: For Subject 5' end, sequence position where the nucleotides should finish to be extracted
+  s3end_extension_start: For Subject 3' end, sequence position where the nucleotides should begin to be extracted
+  s3end_extension_end: For Subject 3' end, sequence position where the nucleotides should finish to be extracted
+  strand: + or - code for the blastn result strandness
   """"
 
 Module parameters:

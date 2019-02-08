@@ -193,5 +193,5 @@ MKSHELL=/bin/bash
 					s3end_extension_start, s3end_extension_end,
 					strand
 			}
-	' $prereq > $target.build\
+	' $prereq > $target.build \
 	&& mv $target.build $target

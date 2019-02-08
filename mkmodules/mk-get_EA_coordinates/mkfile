@@ -22,7 +22,7 @@ MKSHELL=/bin/bash
 # 4. Define query 5' end extension length
 #	5. Define the 5' overlapping extension length (i.e. the minimum number of nucleotides valid for downstream comparison in search of mismatches)
 #	6. Define the 3' overlapping extension length
-#	By comparing blastn reported stard and end, for query and subject, alignment coordinates, the following happens:
+#	By comparing blastn reported start and end alignment coordinates, for query and subject, the following happens:
 # 7. Define the coordinates for the query 5' start and end of extension
 # 8. Define the coordinates for the query 3' start and end of extension
 # 9. Define the coordinates for the subject 5' start and end of extension
@@ -99,11 +99,31 @@ MKSHELL=/bin/bash
 					# at the end, we are calcullating how many nt overhang in the original 5 end of the subject sequence
 					# but during a downstream process (another module), nucleotides will be reverse complement extracted from that 5 end
 						s3end_extension_length=subject_alignment_end - 1
-				}
-			#
+				} # ends Subject extension lengths definition block
+			###
+			# Define 5 end overlapping extension length
+			# by finding the lowest number between q5end_extension_length and s5end_extension_length
+			# if Query 5 end extension length is LESS THAN or EQUAL than Subject 5 end extension length, the overlapping extension length value is the Query 5 end extension length
+			# else, the overlapping extension length value is the Subject 5 end extension length
+				if ( q5end_extension_length <= s5end_extension_length )
+					overlap5end_extension_length= q5end_extension_length
+				else
+					overlap5end_extension_length= s5end_extension_length
+			###
+			# Define 3 end overlapping extension length
+			# by finding the lowest number between q3end_extension_length and s3end_extension_length
+			# if Query 3 end extension length is LESS THAN or EQUAL than Subject 3 end extension length, the overlapping extension length value is the Query 3 end extension length
+			# else, the overlapping extension length value is the Subject 3 end extension length
+				if ( q3end_extension_length <= s3end_extension_length )
+					overlap3end_extension_length= q3end_extension_length
+				else
+					overlap3end_extension_length= s3end_extension_length
+			###
+			# Print lines and coordinate values
 				print $0,
 					q5end_extension_length, q3end_extension_length,
-					s5end_extension_length, s3end_extension_length
+					s5end_extension_length, s3end_extension_length,
+					overlap5end_extension_length, overlap3end_extension_length
 			}
 	' $prereq > $target.build\
 	&& mv $target.build $target

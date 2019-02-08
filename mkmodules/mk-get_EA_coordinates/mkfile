@@ -44,7 +44,8 @@ MKSHELL=/bin/bash
 				"q5end_extension_start","q5end_extension_end",
 				"q3end_extension_start","q3end_extension_end",
 				"s5end_extension_start","s5end_extension_end",
-				"s3end_extension_start","s3end_extension_end"
+				"s3end_extension_start","s3end_extension_end",
+				"strand"
 			} # ends header printing block
 		###
 		# Data body operations block
@@ -65,6 +66,22 @@ MKSHELL=/bin/bash
 				subject_alignment_end=$12
 			# Subject strand, or sense, (plus or minus) where the blastn hit took place
 				subject_strand=$15
+			### Reset values, to avoid errors of carrying over values when some conditions are not met
+				q5end_extension_length="NA"
+				q3end_extension_length="NA"
+				s5end_extension_length="NA"
+				s3end_extension_length="NA"
+				overlap5end_extension_length="NA"
+				overlap3end_extension_length="NA"
+				q5end_extension_start="NA"
+				q5end_extension_end="NA"
+				q3end_extension_start="NA"
+				q3end_extension_end="NA"
+				s5end_extension_start="NA"
+				s5end_extension_end="NA"
+				s3end_extension_start="NA"
+				s3end_extension_end="NA"
+				strand="NA"
 			###
 			# Query extension lengths definition block
 			## Define query 5 end extension length
@@ -119,11 +136,62 @@ MKSHELL=/bin/bash
 				else
 					overlap3end_extension_length= s3end_extension_length
 			###
+			# Define the coordinates for the Query 5 prime start and end of extension
+			# extension will begin from query alignment start minus the 5 end overlapped extension length
+				q5end_extension_start= query_alignment_start - overlap5end_extension_length
+			# extension will end at query alignment start
+				q5end_extension_end= query_alignment_start
+			###
+			# Define the coordinates for the Query 3 prime start and end of extension
+			# extension will begin from query alignment end
+				q3end_extension_start= query_alignment_end
+			# extension will end at query alignment end plus the 3 end overlapped extension length
+				q3end_extension_end= query_alignment_end + overlap3end_extension_length
+			###
+			# Define the coordinates for the Subject 5 prime start and end of extension
+			# if subject strand is "plus", subject coordinates are calculated similarly as the Query coordinates above
+				if ( subject_strand == "plus" ) {
+					s5end_extension_start= subject_alignment_start - overlap5end_extension_length
+					s5end_extension_end= subject_alignment_start
+				} else if ( subject_strand == "minus" ) {
+				# if subject strand is "minus", subject coordinates are calculated in a similar same way as query 3 end values
+				## remember than when strand is "minus", subject alignment start is rightmost from subject alignment end position
+				# extension will begin from subject alignment start
+					s5end_extension_start= subject_alignment_start
+				# extension will end at subject alignment start plus the 5 end overlapped extension length
+					s5end_extension_end= subject_alignment_start + overlap5end_extension_length
+				}
+			###
+			# Define the coordinates for the Subject 3 prime start and end of extension
+			# if subject strand is "plus", subject coordinates are calculated similarly as the Query coordinates above
+				if ( subject_strand == "plus" ) {
+					s3end_extension_start= subject_alignment_end
+					s3end_extension_end= subject_alignment_end + overlap3end_extension_length
+				} else if ( subject_strand == "minus" ) {
+				# if subject strand is "minus", subject coordinates are calculated in a similar same way as query 5 end values
+				## remember than when strand is "minus", subject alignment end is leftmost from subject alignment start position
+				# extension will begin from subject alignment end minus the 3 end overlapped extension length
+					s3end_extension_start= subject_alignment_end - overlap3end_extension_length
+				# extension will end at subject alignment end
+					s3end_extension_end= subject_alignment_end
+				}
+			###
+			# Add sign code for strandness (will be required by bedtools to extracte fasta nucleotides)
+				if ( subject_strand == "plus" )
+					strand="+"
+				else
+					strand="-"
+			###
 			# Print lines and coordinate values
 				print $0,
 					q5end_extension_length, q3end_extension_length,
 					s5end_extension_length, s3end_extension_length,
-					overlap5end_extension_length, overlap3end_extension_length
+					overlap5end_extension_length, overlap3end_extension_length,
+					q5end_extension_start, q5end_extension_end,
+					q3end_extension_start, q3end_extension_end,
+					s5end_extension_start, s5end_extension_end,
+					s3end_extension_start, s3end_extension_end,
+					strand
 			}
 	' $prereq > $target.build\
 	&& mv $target.build $target

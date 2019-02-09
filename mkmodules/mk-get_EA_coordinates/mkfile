@@ -32,7 +32,7 @@ MKSHELL=/bin/bash
 %.EAcoordinates.tsv: %.tsv
 	awk '
 		###
-		# Definition of common Field Separator as tab
+		# Definition of input and output Field Separator as tab
 			BEGIN {OFS=FS="\t"}
 		###
 		# First line, print header, adding new column names

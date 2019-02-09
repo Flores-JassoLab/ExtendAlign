@@ -7,13 +7,13 @@ TODO:
 
 Module description: add sequence coordinates to an EA blastn results table to indicate where nucleotides should be extracted from for downstream bulk fasta extraction
   a. This module calculates the length of extendable nucleotides at the 5 prime and 3 prime ends, of query and subjects
-  b. It takes into account the many factor that affect a correct comparison of nucleotides, such as:
+  b. It takes into account the many factors that affect a correct comparison of nucleotides, such as:
     - query and subject length
     - differential overhanging - or cases where query's unaligned overhangs are longer than subject's unaligned overhangs, and vice versa
     - strandness - in cases where the blastn hit was reported as a hit in the minus strand of the subject (this requires mirrored operations of the sequence coordinates)
       ^^ e.g. the Subject 5'end extendable coordinates for a "minus" hit are extracted from the 3'end portion of the original Subject sequence
   c. Using all of the above data, this module adds sequence coordinates to indicate where to perform nucleotide extraction to enable a downstream finer match/mismatch count in cases where alignments can be extended
-  d. IMPORTANT: this module does not perform the fasta extraction, or the extended match/mismatch recount. Leave that to other mkmodule
+  d. IMPORTANT: this module does not perform the fasta extraction, or the extended match/mismatch recount. Leave that to other mkmodules
 
 Module Dependencies:
 	NONE

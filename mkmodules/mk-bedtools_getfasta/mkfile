@@ -75,13 +75,13 @@ MKSHELL=/bin/bash
 		}
 	' $prereq \
 	| bedtools getfasta \
-			-s\
+			-s \
 			-tab \
 			-fi $QUERY_FASTA \
 			-bed - \
 	| awk '
 			{
-			## Start sequence_nucleotides variable
+			## Start sequence_nucleotides variable with missing value "NA"
 				sequence_nucleotides= "NA"
 			## measure nt extension before printing
 				nt_length=length($2)
@@ -92,8 +92,8 @@ MKSHELL=/bin/bash
 				if (nt_length > 1)
 				#For awk substring, solution taken from here: https://www.unix.com/shell-programming-and-scripting/151489-can-i-remove-first-char-using-awk.html
 					sequence_nucleotides=substr($2, 1, nt_length-1)
-			## print extracted sequence
-				print sequence_nucleotides
+			## print extracted sequence, as uppercase for proper char comparisson in a downstream module
+				print toupper(sequence_nucleotides)
 			}
 		' >> $target.build \
 	&& mv $target.build $target
@@ -138,11 +138,81 @@ MKSHELL=/bin/bash
 
 ## A fastabed file is created containing the coordinates and nucleotide sequences extracted
 ## The prerequisite of this rule is a temporary bed file
+## Another requirement (although not an mk prereq per se) is a variable path to the original QUERY FASTA used as input of the EA pipeline
+## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
+##	^^during a real pipeline execution, this variable is a parameter passed by the user
 %.query3end.bedfasta.tmp: %.query3end.bed.tmp
 	## create tmp output with header
 	echo "query_3end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
-	awk ' {print "QUERY_3_END"}' $prereq >> $target.build \
+	## use bedtools to extract fasta sequences in bed format ("-tab" option)
+	# -s options takes strand into account (effectively getting the reverse complement sequence in case of "-" strandness)
+	# run bedtools getfasta for more info about command options
+	## Potential bug issue when no extraction is needed, because bed coordinates have length zero
+	#		^^ this error is reported by bedtools getfasta: "Feature (hsa-miR-1226-5p.MIMAT0005576:26-26) has length = 0, Skipping."
+	#		^^ because of this, for some blastn result lines there is no line reported in the bedfasta.tmp file
+	#		^^ this will create an issue when we perfom the final step in this module, which is horizontal pasting of fasta sequences for query and subject ends
+	#		^^ The problem would be a different number of lines in each bedfasta tmp file, which would provoke an erroneous pasting of columns
+	#		^^ simplest fix is to always extract an extra nucleotide, which will be removed after bedtools getfasta is executed
+	# 	^^ We will use awk to parse and format this bedfasta file before final printing
+	# Bugfix:
+	#		1. run awk over the prereq temporary bed file to modify the coordinates to force extraction of an extra nucleotide
+	#		2. pipe the awk STDOUT to bedtools getfasta by indicating the option "-bed -"
+	#			!NOTE: as bedtools v2.27.1 getfasta tool documentation does not indicate that you can read piped STDOUT via "-bed -", but it works
+	#		3. pipe the getfasta STDOUT to awk for removal of the extra nucleotide extracted in step 1 of this bugfix, and definition of missing value when no extension was performed
+	awk '
+		###
+		# Definition of input and output Field Separator as tab
+		BEGIN {OFS=FS="\t"}
+		###
+		# Main code block
+		{
+			###
+			# Definition of bed column values before printing
+			# ^^see recipe comments above for more info
+				sequence_id = $1
+				extension_start = $2
+				extension_end = $3
+				dummy_name = $4
+				dummy_score = $5
+				strand = $6
+			###
+			# Modify coordinates to force the downstream code block of bedtools getfasta to extract at least one nucleotide
+			# ^^(to solve bug when extension_start and end would otherwise be the same value)
+			# ^^(i.e. extension length would be 0)
+			## !NOTE: bedtools getfasta uses half-open [start-1, end] bed processing
+			# For 3 end query extension we will always include one extra nucleotide at the start (leftmost position) of the extracted string
+			# ^^this extra nucleotide correspond to the last nt included in the original blastn alignment
+			# ^^!!Remember to correctly remove this extra nucleotide in the post-bedtools-getfasta awk processing
+			# So, for 3 end query, lets shift the extension start by one nt
+				extension_start = extension_start - 1
+			###
+			# print bed columns
+				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
+		}
+	' $prereq \
+	| bedtools getfasta \
+			-s \
+			-tab \
+			-fi $QUERY_FASTA \
+			-bed - \
+	| awk '
+			{
+			## Start sequence_nucleotides variable with missing value "NA"
+				sequence_nucleotides= "NA"
+			## measure nt extension before printing
+				nt_length=length($2)
+			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
+				if (nt_length == 1)
+					sequence_nucleotides="."
+			# when nt_length > 1, remove the first char in the string (leftmost position), because this is the 3 end query
+				if (nt_length > 1)
+				#For awk substring, solution taken from here: https://www.unix.com/shell-programming-and-scripting/151489-can-i-remove-first-char-using-awk.html
+					sequence_nucleotides=substr($2, 2)
+			## print extracted sequence, as uppercase for proper char comparisson in a downstream module
+				print toupper(sequence_nucleotides)
+			}
+		' >> $target.build \
 	&& mv $target.build $target
 
 ## A temporary bed file with the coordinates is extracted from the original input TSV
@@ -183,13 +253,96 @@ MKSHELL=/bin/bash
 	' $prereq > $target.build \
 	&& mv $target.build $target
 
-## A fastabed file is created containing the coordinates and nucleotide sequences extracted
 ## The prerequisite of this rule is a temporary bed file
+## Another requirement (although not an mk prereq per se) is a variable path to the original SUBJECT FASTA used as input of the EA pipeline
+## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
+##	^^during a real pipeline execution, this variable is a parameter passed by the user
 %.subject5end.bedfasta.tmp: %.subject5end.bed.tmp
 	## create tmp output with header
 	echo "subject_5end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
-	awk ' {print "SUBJECT_5_END"}' $prereq >> $target.build \
+	## use bedtools to extract fasta sequences in bed format ("-tab" option)
+	# -s options takes strand into account (effectively getting the reverse complement sequence in case of "-" strandness)
+	## IMPORTANT NOTE: since EA blastn results report alignment coordinates for subject in reference to strand, subject fasta extraction is dependent on the strandness of the hit
+	## In short: if strand is plus ("+"), nucleotide extension is performed as if we were dealing with the '%.query5end.bedfasta.tmp' rule
+	##	^^else (strand = "-"), nucleotide extension is performed as if we were dealing with the '%.query3end.bedfasta.tmp' rule
+	awk '
+		###
+		# Definition of input and output Field Separator as tab
+		BEGIN {OFS=FS="\t"}
+		###
+		# Main code block
+		{
+			###
+			# Definition of bed column values before printing
+			# ^^see recipe comments above for more info
+				sequence_id = $1
+				extension_start = $2
+				extension_end = $3
+				dummy_name = $4
+				dummy_score = $5
+				strand = $6
+			###
+			# Modify coordinates to force the downstream code block of bedtools getfasta to extract at least one nucleotide
+			# ^^(to solve bug when extension_start and end would otherwise be the same value)
+			# ^^(i.e. extension length would be 0)
+			# For Subject data, modify coordinates depending on strandness
+			if (strand == "+")
+			## !NOTE: bedtools getfasta uses half-open [start-1, end] bed processing
+			# For plus strand, 5 end subject extension we will always include one extra nucleotide at the end (rightmost position) of the extracted string
+			# ^^this extra nucleotide correspond to the first nt included in the original blastn alignment
+			# ^^!!Remember to correctly remove this extra nucleotide in the post-bedtools-getfasta awk processing
+			# So, for plus strand 5 end subject, lets shift the extension start by one nt
+				extension_start = extension_start - 1
+			if (strand == "-")
+			## !NOTE: bedtools getfasta uses half-open [start-1, end] bed processing
+			## REMEMBER, for the minus extraction, the sequence will be reverse complemented automatically by bedtools, thats why...
+			# ^^for minus strand, 5 end subject extension we will always include one extra nucleotide at the start (leftmost position) of the extracted string after reverse complement
+			# ^^this extra nucleotide correspond to the first nt included in the original minus strand blastn alignment
+			# ^^!!Remember to correctly remove this extra nucleotide in the post-bedtools-getfasta awk processing
+			# So, for minus strand 5 end subject, lets shift the extension start by one nt
+				extension_start = extension_start - 1
+			###
+			# print bed columns
+				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
+		}
+	' $prereq \
+	| bedtools getfasta \
+			-s \
+			-tab \
+			-fi $SUBJECT_FASTA \
+			-bed - \
+	| awk '
+		###
+		# example of lines passed by STDOUT is: "mmu-mir-6927.MI0022774:0-1(+)   G"
+		# To recover legible strand information, we have to define multiple Field Separators (FS) as "\t", "(" and ")"
+		BEGIN {FS="[\t()]"; OFS="\t"}
+			{
+			## Due to multiple Field Separator, lets define input fields
+				sequence_id=$1
+				strand=$2
+				empty_space=$3
+				extracted_sequence=$4
+			## Start sequence_nucleotides variable with missing value "NA"
+				sequence_nucleotides= "NA"
+			## measure nt extension before printing
+				nt_length=length(extracted_sequence)
+			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
+				if (nt_length == 1)
+					sequence_nucleotides="."
+			# when nt_length > 1, remove the extra character depending on strandness
+				if (nt_length > 1) {
+					#For plus strand, remove the last char in the string (rightmost position)
+					if (strand == "+")
+						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
+					#For minus strand, remove the first char in the string (leftmost position)
+					if (strand == "-")
+						sequence_nucleotides=substr(extracted_sequence, 2)
+				}
+			# ## print extracted sequence, as uppercase for proper char comparisson in a downstream module
+				print toupper(sequence_nucleotides)
+			}
+		' >> $target.build \
 	&& mv $target.build $target
 
 ## A temporary bed file with the coordinates is extracted from the original input TSV
@@ -228,8 +381,6 @@ MKSHELL=/bin/bash
 	' $prereq > $target.build \
 	&& mv $target.build $target
 
-#############==WORK IN PROGRESS ==============
-## A fastabed file is created containing the coordinates and nucleotide sequences extracted
 ## The prerequisite of this rule is a temporary bed file
 ## Another requirement (although not an mk prereq per se) is a variable path to the original SUBJECT FASTA used as input of the EA pipeline
 ## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
@@ -238,55 +389,89 @@ MKSHELL=/bin/bash
 	## create tmp output with header
 	echo "subject_3end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
-	awk ' {print "SUBJECT_3_END"}' $prereq >> $target.build \
-	&& mv $target.build $target
 	## use bedtools to extract fasta sequences in bed format ("-tab" option)
 	# -s options takes strand into account (effectively getting the reverse complement sequence in case of "-" strandness)
-	# run bedtools getfasta for more info about command options
-	## Potential bug issue when no extraction is needed, because bed coordinates have length zero
-	#		^^ this error is reported by bedtools getfasta: "Feature (mmu-mir-6927.MI0022774:26-26) has length = 0, Skipping."
-	#		^^ because of this, for some blastn result lines there is no line reported in the bedfasta.tmp file
-	#		^^ this will create an issue when we perfom the final step in this module, which is horizontal pasting of fasta sequences for query and subject ends
-	#		^^ The problem would be a different number of lines in each bedfasta tmp file, which would provoke an erroneous pasting of columns
-	#		^^ simplest fix is to always extract an extra nucleotide, which will be removed after bedtools getfasta is executed
-	# 	^^ We will use awk to parse and format this bedfasta file before final printing
-	# Bugfix:
-	#		1. run awk over the prereq temporary bed file to modify the coordinates to force extraction of an extra nucleotide
-	#		2. pipe the awk STDOUT to bedtools getfasta by indicating the option "-bed -"
-	#			!NOTE: as bedtools v2.27.1 getfasta tool documentation does not indicate that you can read piped STDOUT via "-bed -", but it works
-	#		3. pipe the getfasta STDOUT to awk for removal of the extra nucleotide extracted in step 1 of this bugfix, and definition of missing value when no extension was performed
-	# awk '
-	# 	###
-	# 	# Definition of input and output Field Separator as tab
-	# 	BEGIN {OFS=FS="\t"}
-	# 	###
-	# 	# Main code block
-	# 	{
-	# 		###
-	# 		# Definition of bed column values before printing
-	# 		# ^^see recipe comments above for more info
-	# 			sequence_id = $1
-	# 			extension_start = $2
-	# 			extension_end = $3
-	# 			dummy_name = $4
-	# 			dummy_score = $5
-	# 			strand = $6
-	# 		###
-	# 		# Modify coordinates to force downstream bedtools getfasta to extract at least one nucleotide when extension_start and end would otherwise be the same value (i.e. extension length would be 0)
-	# 			extension_start = extension_start - 1
-	# 		###
-	# 		# print bed columns
-	# 			print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
-	# 	}
-	# ' $prereq \
-	# | bedtools getfasta \
-	# 		-s \
-	# 		-tab \
-	# 		-fi $SUBJECT_FASTA \
-	# 		-bed - \
-	# > $target.build \
-	# && mv $target.build $target
-#############==END WORK IN PROGRESS ==============
+	## IMPORTANT NOTE: since EA blastn results report alignment coordinates for subject in reference to strand, subject fasta extraction is dependent on the strandness of the hit
+	## In short: if strand is plus ("+"), nucleotide extension is performed as if we were dealing with the '%.query3end.bedfasta.tmp' rule
+	##	^^else (strand = "-"), nucleotide extension is performed as if we were dealing with the '%.query5end.bedfasta.tmp' rule
+	awk '
+		###
+		# Definition of input and output Field Separator as tab
+		BEGIN {OFS=FS="\t"}
+		###
+		# Main code block
+		{
+			###
+			# Definition of bed column values before printing
+			# ^^see recipe comments above for more info
+				sequence_id = $1
+				extension_start = $2
+				extension_end = $3
+				dummy_name = $4
+				dummy_score = $5
+				strand = $6
+			###
+			# Modify coordinates to force the downstream code block of bedtools getfasta to extract at least one nucleotide
+			# ^^(to solve bug when extension_start and end would otherwise be the same value)
+			# ^^(i.e. extension length would be 0)
+			# For Subject data, modify coordinates depending on strandness
+			if (strand == "+")
+			## !NOTE: bedtools getfasta uses half-open [start-1, end] bed processing
+			# For plus strand, 3 end subject extension we will always include one extra nucleotide at the start (leftmost position) of the extracted string
+			# ^^this extra nucleotide correspond to the last nt included in the original blastn alignment
+			# ^^!!Remember to correctly remove this extra nucleotide in the post-bedtools-getfasta awk processing
+			# So, for plus strand 3 end subject, lets shift the extension start by one nt
+				extension_start = extension_start - 1
+			if (strand == "-")
+			## !NOTE: bedtools getfasta uses half-open [start-1, end] bed processing
+			## REMEMBER, for the minus extraction, the sequence will be reverse complemented automatically by bedtools, thats why...
+			# ^^for minus strand, 3 end subject extension we will always include one extra nucleotide at the end (rightmost position) of the extracted string after reverse complement
+			# ^^this extra nucleotide correspond to the last nt included in the original minus strand blastn alignment
+			# ^^!!Remember to correctly remove this extra nucleotide in the post-bedtools-getfasta awk processing
+			# So, for minus strand 3 end subject, lets shift the extension start by one nt
+				extension_start = extension_start - 1
+			###
+			# print bed columns
+				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
+		}
+	' $prereq \
+	| bedtools getfasta \
+			-s \
+			-tab \
+			-fi $SUBJECT_FASTA \
+			-bed - \
+	| awk '
+		###
+		# example of lines passed by STDOUT is: "mmu-mir-6927.MI0022774:0-1(+)   G"
+		# To recover legible strand information, we have to define multiple Field Separators (FS) as "\t", "(" and ")"
+		BEGIN {FS="[\t()]"; OFS="\t"}
+			{
+			## Due to multiple Field Separator, lets define input fields
+				sequence_id=$1
+				strand=$2
+				empty_space=$3
+				extracted_sequence=$4
+			## Start sequence_nucleotides variable with missing value "NA"
+				sequence_nucleotides= "NA"
+			## measure nt extension before printing
+				nt_length=length(extracted_sequence)
+			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
+				if (nt_length == 1)
+					sequence_nucleotides="."
+			# when nt_length > 1, remove the extra character depending on strandness
+				if (nt_length > 1) {
+					#For plus strand, remove the first char in the string (leftmost position)
+					if (strand == "+")
+						sequence_nucleotides=substr(extracted_sequence, 2)
+					#For minus strand, remove the last char in the string (rightmost position)
+					if (strand == "-")
+						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
+				}
+			# ## print extracted sequence, as uppercase for proper char comparisson in a downstream module
+				print toupper(sequence_nucleotides)
+			}
+		' >> $target.build \
+	&& mv $target.build $target
 
 ## A temporary bed file with the coordinates is extracted from the original input TSV
 ## The bed must contain the sequence id, which is in the following fields:

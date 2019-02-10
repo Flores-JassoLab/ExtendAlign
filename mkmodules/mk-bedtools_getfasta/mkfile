@@ -326,17 +326,10 @@ MKSHELL=/bin/bash
 			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
 				if (nt_length == 1)
 					sequence_nucleotides="."
-			# when nt_length > 1, remove the extra character depending on strandness
-				if (nt_length > 1) {
-					#For plus strand, remove the last char in the string (rightmost position)
-					if (strand == "+")
+			# when nt_length > 1, remove the last char in the string (rightmost position)
+				if (nt_length > 1)
 						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
-					#For minus strand, remove the first char in the string (leftmost position)
-					if (strand == "-")
-				##FIXABLE		sequence_nucleotides=substr(extracted_sequence, 2)
-						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
-				}
-			# ## print extracted sequence
+			## print extracted sequence
 				print sequence_nucleotides
 			}
 		' >> $target.build \
@@ -454,17 +447,10 @@ MKSHELL=/bin/bash
 			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
 				if (nt_length == 1)
 					sequence_nucleotides="."
-			# when nt_length > 1, remove the extra character depending on strandness
-				if (nt_length > 1) {
-					#For plus strand, remove the first char in the string (leftmost position)
-					if (strand == "+")
+			# when nt_length > 1, remove the first char in the string (leftmost position)
+				if (nt_length > 1)
 						sequence_nucleotides=substr(extracted_sequence, 2)
-					#For minus strand, remove the last char in the string (rightmost position)
-					if (strand == "-")
-			##FIXABLE			#sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
-						sequence_nucleotides=substr(extracted_sequence, 2)
-				}
-			# ## print extracted sequence
+			## print extracted sequence
 				print sequence_nucleotides
 			}
 		' >> $target.build \

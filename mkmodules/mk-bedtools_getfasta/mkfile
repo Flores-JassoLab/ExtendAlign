@@ -3,7 +3,7 @@
 #		1. Adding extended nucleotide sequences to a custom EA blastn results file
 #		2. The input for this module contains coordinates that define where to extract the extended nucleotides
 #		3. We will use those coordinates to create many intermediate bed files
-#		4. To enable DNA/RNA comparisons in downstreams modules, this mkmodulealso creates intermediate harmonized fasta files for queries and subjects; harmonized means that U's are changed to T's, and that all nucleotides are extracted as uppercase
+#		4. To enable DNA/RNA and lowercase vs uppercase comparisons in downstreams modules, this mkmodulealso creates intermediate harmonized fasta files for queries and subjects; harmonized means that U's are changed to T's, and that all nucleotides are extracted as uppercase
 #		5. Then, `bedtools getfasta` command will extract the required nucleotides in bulk (i.e. a single mk recipe for every hit in the EA blastn results file)
 #		6. One extraction (one bedfasta file) will occur for each one of the following bulk of coordinates: query 5' end, query 3' end, subject 5' end, subject 3' end
 #		7. Finally, the base input EA blastn table will be pasted along with the 4 bedfasta files
@@ -81,7 +81,7 @@ MKSHELL=/bin/bash
 	| awk '
 			{
 			## Start sequence_nucleotides variable with missing value "NA"
-				sequence_nucleotides= "NA"
+				sequence_nucleotides= "ERR"
 			## measure nt extension before printing
 				nt_length=length($2)
 			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
@@ -196,7 +196,7 @@ MKSHELL=/bin/bash
 	| awk '
 			{
 			## Start sequence_nucleotides variable with missing value "NA"
-				sequence_nucleotides= "NA"
+				sequence_nucleotides= "ERR"
 			## measure nt extension before printing
 				nt_length=length($2)
 			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
@@ -320,7 +320,7 @@ MKSHELL=/bin/bash
 				empty_space=$3
 				extracted_sequence=$4
 			## Start sequence_nucleotides variable with missing value "NA"
-				sequence_nucleotides= "NA"
+				sequence_nucleotides= "ERR"
 			## measure nt extension before printing
 				nt_length=length(extracted_sequence)
 			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted
@@ -441,7 +441,7 @@ MKSHELL=/bin/bash
 				empty_space=$3
 				extracted_sequence=$4
 			## Start sequence_nucleotides variable with missing value "NA"
-				sequence_nucleotides= "NA"
+				sequence_nucleotides= "ERR"
 			## measure nt extension before printing
 				nt_length=length(extracted_sequence)
 			# when nt_length == 1, sequence_nucleotides should be a "." # empty value, since only the extra nucleotide used to correct bed positions for bedtools getfasta was extracted

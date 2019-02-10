@@ -10,6 +10,8 @@ Module description: add sequence coordinates to an EA blastn results table to in
   b. It takes into account the many factors that affect a correct comparison of nucleotides, such as:
     - query and subject length
     - differential overhanging - or cases where query's unaligned overhangs are longer than subject's unaligned overhangs, and vice versa
+			^^thus, this module includes a failsafe to not extend more nucleotides than can be evenly compared between query and subject extension
+	    ^^(i.e. if at 5'end, query can be extended 5 nt, but subject can only be extended 3 nt, coordinates will be adjusted to only span 3nt extensions for both, query and subject)
     - strandness - in cases where the blastn hit was reported as a hit in the minus strand of the subject (this requires mirrored operations of the sequence coordinates)
       ^^ e.g. the Subject 5'end extendable coordinates for a "minus" hit are extracted from the 3'end portion of the original Subject sequence
   c. Using all of the above data, this module adds sequence coordinates to indicate where to perform nucleotide extraction to enable a downstream finer match/mismatch count in cases where alignments can be extended

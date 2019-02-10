@@ -11,7 +11,7 @@ Module description: run blastn in High Sensitivity mode with an EA fasta query f
   c. Query and subject lengths will be used in another module downstream to decide if an alignment can be extended by EA
 
 Module Dependencies:
-	blastn from BLAST+ - https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download
+	blastn from ncbi BLAST 2.8.1+ - https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download
 
 	Citations:
 	Camacho, Christiam, et al. "BLAST+: architecture and applications." BMC bioinformatics 10.1 (2009): 421.

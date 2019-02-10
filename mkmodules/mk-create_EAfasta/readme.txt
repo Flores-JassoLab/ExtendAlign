@@ -12,7 +12,7 @@ Module description: transform a fasta file into .EAfa (fasta for extend align)
 	d. This module saves up execution time, since sequence length is calculated only once per seq, instead of every time it shows up in downstream blastn results
 
 Module Dependencies:
-	seqkit - https://github.com/shenwei356/seqkit
+	seqkit v0.10.0 - https://github.com/shenwei356/seqkit
 
 	Citations:
 	W Shen, S Le, Y Li*, F Hu*. SeqKit: a cross-platform and ultrafast toolkit for FASTA/Q file manipulation. PLOS ONE. doi:10.1371/journal.pone.0163962.

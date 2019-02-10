@@ -9,7 +9,7 @@ Module description: Creates a blast Database from an EA fasta file (.EAfa)
 	a. This module runs blast makeblastdb to build database files
 
 Module Dependencies:
-	makeblastdb from BLAST+ - https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download
+	makeblastdb from ncbi BLAST 2.8.1+ - https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download
 
 	Citations:
 	Camacho, Christiam, et al. "BLAST+: architecture and applications." BMC bioinformatics 10.1 (2009): 421.

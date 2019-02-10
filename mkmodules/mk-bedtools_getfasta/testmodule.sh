@@ -14,5 +14,5 @@ echo "[>>.] results will be created in test/results"
 bash runmk.sh -a \
   QUERY_FASTA="../../test/data/query/hsa-miRNAs22.fa" \
   SUBJECT_FASTA="../../test/data/subject/mmu-premiRNAs22.fa" \
-&& mv test/data/*.extended_nucleotides.tsv test/data/*.tmp  test/results \
+&& mv test/data/*.extended_nucleotides.tsv test/data/*.tmp*  test/results \
 && echo "[>>>] Module Test Successful"

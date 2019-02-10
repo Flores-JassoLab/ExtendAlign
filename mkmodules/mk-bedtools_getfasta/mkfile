@@ -3,10 +3,11 @@
 #		1. Adding extended nucleotide sequences to a custom EA blastn results file
 #		2. The input for this module contains coordinates that define where to extract the extended nucleotides
 #		3. We will use those coordinates to create many intermediate bed files
-#		4. Then, `bedtools getfasta` command will extract the required nucleotides in bulk (i.e. a single mk recipe for every hit in the EA blastn results file)
-#		5. One extraction (one bedfasta file) will occur for each one of the following bulk of coordinates: query 5' end, query 3' end, subject 5' end, subject 3' end
-#		6. Finally, the base input EA blastn table will be pasted along with the 4 bedfasta files
-#		7. In the end, a .extended_nucleotides.tsv file is created, with each original EA blastn hit plus new columns that contain the extended nucleotides
+#		4. To enable DNA/RNA comparisons in downstreams modules, this mkmodulealso creates intermediate harmonized fasta files for queries and subjects; harmonized means that U's are changed to T's, and that all nucleotides are extracted as uppercase
+#		5. Then, `bedtools getfasta` command will extract the required nucleotides in bulk (i.e. a single mk recipe for every hit in the EA blastn results file)
+#		6. One extraction (one bedfasta file) will occur for each one of the following bulk of coordinates: query 5' end, query 3' end, subject 5' end, subject 3' end
+#		7. Finally, the base input EA blastn table will be pasted along with the 4 bedfasta files
+#		8. In the end, a .extended_nucleotides.tsv file is created, with each original EA blastn hit plus new columns that contain the extended nucleotides
 #
 ## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
@@ -20,11 +21,9 @@ MKSHELL=/bin/bash
 	&& mv $target.build $target
 
 ## A fastabed file is created containing the coordinates and nucleotide sequences extracted
-## The prerequisite of this rule is a temporary bed file
-## Another requirement (although not an mk prereq per se) is a variable path to the original QUERY FASTA used as input of the EA pipeline
-## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
-##	^^during a real pipeline execution, this variable is a parameter passed by the user
-%.query5end.bedfasta.tmp: %.query5end.bed.tmp
+## A prerequisite of this rule is a temporary bed file
+## Another prerequisite is a custom fasta file for the Queries (where U's have been replaced by T's, to enable RNA/DNA direct comparison; also to solve this issue with bedtools: https://github.com/arq5x/bedtools2/issues/682)
+%.query5end.bedfasta.tmp: %.query5end.bed.tmp %.query.harmonized.fa.tmp
 	## create tmp output with header
 	echo "query_5end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
@@ -73,11 +72,11 @@ MKSHELL=/bin/bash
 			# print bed columns
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
 		}
-	' $prereq \
+	' $stem.query5end.bed.tmp\
 	| bedtools getfasta \
 			-s \
 			-tab \
-			-fi $QUERY_FASTA \
+			-fi $stem.query.harmonized.fa.tmp \
 			-bed - \
 	| awk '
 			{
@@ -92,8 +91,8 @@ MKSHELL=/bin/bash
 				if (nt_length > 1)
 				#For awk substring, solution taken from here: https://www.unix.com/shell-programming-and-scripting/151489-can-i-remove-first-char-using-awk.html
 					sequence_nucleotides=substr($2, 1, nt_length-1)
-			## print extracted sequence, as uppercase for proper char comparisson in a downstream module
-				print toupper(sequence_nucleotides)
+			## print extracted sequence
+				print sequence_nucleotides
 			}
 		' >> $target.build \
 	&& mv $target.build $target
@@ -137,11 +136,9 @@ MKSHELL=/bin/bash
 	&& mv $target.build $target
 
 ## A fastabed file is created containing the coordinates and nucleotide sequences extracted
-## The prerequisite of this rule is a temporary bed file
-## Another requirement (although not an mk prereq per se) is a variable path to the original QUERY FASTA used as input of the EA pipeline
-## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
-##	^^during a real pipeline execution, this variable is a parameter passed by the user
-%.query3end.bedfasta.tmp: %.query3end.bed.tmp
+## A prerequisite of this rule is a temporary bed file
+## Another prerequisite is a custom fasta file for the Queries (where U's have been replaced by T's, to enable RNA/DNA direct comparison; also to solve this issue with bedtools: https://github.com/arq5x/bedtools2/issues/682)
+%.query3end.bedfasta.tmp: %.query3end.bed.tmp %.query.harmonized.fa.tmp
 	## create tmp output with header
 	echo "query_3end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
@@ -190,11 +187,11 @@ MKSHELL=/bin/bash
 			# print bed columns
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
 		}
-	' $prereq \
+	' $stem.query3end.bed.tmp \
 	| bedtools getfasta \
 			-s \
 			-tab \
-			-fi $QUERY_FASTA \
+			-fi $stem.query.harmonized.fa.tmp \
 			-bed - \
 	| awk '
 			{
@@ -209,8 +206,8 @@ MKSHELL=/bin/bash
 				if (nt_length > 1)
 				#For awk substring, solution taken from here: https://www.unix.com/shell-programming-and-scripting/151489-can-i-remove-first-char-using-awk.html
 					sequence_nucleotides=substr($2, 2)
-			## print extracted sequence, as uppercase for proper char comparisson in a downstream module
-				print toupper(sequence_nucleotides)
+			## print extracted sequence
+				print sequence_nucleotides
 			}
 		' >> $target.build \
 	&& mv $target.build $target
@@ -253,11 +250,10 @@ MKSHELL=/bin/bash
 	' $prereq > $target.build \
 	&& mv $target.build $target
 
-## The prerequisite of this rule is a temporary bed file
-## Another requirement (although not an mk prereq per se) is a variable path to the original SUBJECT FASTA used as input of the EA pipeline
-## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
-##	^^during a real pipeline execution, this variable is a parameter passed by the user
-%.subject5end.bedfasta.tmp: %.subject5end.bed.tmp
+## A fastabed file is created containing the coordinates and nucleotide sequences extracted
+## A prerequisite of this rule is a temporary bed file
+## Another prerequisite is a custom fasta file for the Subjects (where U's have been replaced by T's, to enable RNA/DNA direct comparison; also to solve this issue with bedtools: https://github.com/arq5x/bedtools2/issues/682)
+%.subject5end.bedfasta.tmp: %.subject5end.bed.tmp %.subject.harmonized.fa.tmp
 	## create tmp output with header
 	echo "subject_5end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
@@ -306,11 +302,11 @@ MKSHELL=/bin/bash
 			# print bed columns
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
 		}
-	' $prereq \
+	' $stem.subject5end.bed.tmp \
 	| bedtools getfasta \
 			-s \
 			-tab \
-			-fi $SUBJECT_FASTA \
+			-fi $stem.subject.harmonized.fa.tmp \
 			-bed - \
 	| awk '
 		###
@@ -337,10 +333,11 @@ MKSHELL=/bin/bash
 						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
 					#For minus strand, remove the first char in the string (leftmost position)
 					if (strand == "-")
-						sequence_nucleotides=substr(extracted_sequence, 2)
+				##FIXABLE		sequence_nucleotides=substr(extracted_sequence, 2)
+						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
 				}
-			# ## print extracted sequence, as uppercase for proper char comparisson in a downstream module
-				print toupper(sequence_nucleotides)
+			# ## print extracted sequence
+				print sequence_nucleotides
 			}
 		' >> $target.build \
 	&& mv $target.build $target
@@ -381,11 +378,10 @@ MKSHELL=/bin/bash
 	' $prereq > $target.build \
 	&& mv $target.build $target
 
-## The prerequisite of this rule is a temporary bed file
-## Another requirement (although not an mk prereq per se) is a variable path to the original SUBJECT FASTA used as input of the EA pipeline
-## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
-##	^^during a real pipeline execution, this variable is a parameter passed by the user
-%.subject3end.bedfasta.tmp: %.subject3end.bed.tmp
+## A fastabed file is created containing the coordinates and nucleotide sequences extracted
+## A prerequisite of this rule is a temporary bed file
+## Another prerequisite is a custom fasta file for the Subjects (where U's have been replaced by T's, to enable RNA/DNA direct comparison; also to solve this issue with bedtools: https://github.com/arq5x/bedtools2/issues/682)
+%.subject3end.bedfasta.tmp: %.subject3end.bed.tmp %.subject.harmonized.fa.tmp
 	## create tmp output with header
 	echo "subject_3end_extended_nt"	> $target.build
 	## Parse the data. Results will be appended to the tmp output with header
@@ -434,11 +430,11 @@ MKSHELL=/bin/bash
 			# print bed columns
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
 		}
-	' $prereq \
+	' $stem.subject3end.bed.tmp \
 	| bedtools getfasta \
 			-s \
 			-tab \
-			-fi $SUBJECT_FASTA \
+			-fi $stem.subject.harmonized.fa.tmp \
 			-bed - \
 	| awk '
 		###
@@ -465,10 +461,11 @@ MKSHELL=/bin/bash
 						sequence_nucleotides=substr(extracted_sequence, 2)
 					#For minus strand, remove the last char in the string (rightmost position)
 					if (strand == "-")
-						sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
+			##FIXABLE			#sequence_nucleotides=substr(extracted_sequence, 1, nt_length-1)
+						sequence_nucleotides=substr(extracted_sequence, 2)
 				}
-			# ## print extracted sequence, as uppercase for proper char comparisson in a downstream module
-				print toupper(sequence_nucleotides)
+			# ## print extracted sequence
+				print sequence_nucleotides
 			}
 		' >> $target.build \
 	&& mv $target.build $target
@@ -507,4 +504,36 @@ MKSHELL=/bin/bash
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
 		}
 	' $prereq > $target.build \
+	&& mv $target.build $target
+
+## Create a custom fasta file for the Queries (where U's have been replaced by T's,
+## ^^to enable RNA/DNA direct comparison; also to solve this issue with bedtools: https://github.com/arq5x/bedtools2/issues/682)
+## Also, all the sequences will be transformed to uppercase for direct comparison in a downstream module
+## The prerequisite is a variable path to the original QUERY FASTA used as input of the EA pipeline
+## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
+##	^^during a real pipeline execution, this variable is a parameter passed by the user
+%.query.harmonized.fa.tmp: $QUERY_FASTA
+	awk '
+		$1 ~ /^>/ { print $0 }
+		$1 !~ /^>/ {
+			harmonized_sequence=toupper($1)
+			gsub("U", "T", harmonized_sequence)
+			print harmonized_sequence
+		} ' $prereq > $target.build \
+	&& mv $target.build $target
+
+## Create a custom fasta file for the Subjects (where U's have been replaced by T's,
+## ^^to enable RNA/DNA direct comparison; also to solve this issue with bedtools: https://github.com/arq5x/bedtools2/issues/682)
+## Also, all the sequences will be transformed to uppercase for direct comparison in a downstream module
+## The prerequisite is a variable path to the original SUBJECT FASTA used as input of the EA pipeline
+## 	^^for local mkmodule testing, this is defined in the testmodule.sh script
+##	^^during a real pipeline execution, this variable is a parameter passed by the user
+%.subject.harmonized.fa.tmp: $SUBJECT_FASTA
+	awk '
+		$1 ~ /^>/ { print $0 }
+		$1 !~ /^>/ {
+			harmonized_sequence=toupper($1)
+			gsub("U", "T", harmonized_sequence)
+			print harmonized_sequence
+		} ' $prereq > $target.build \
 	&& mv $target.build $target

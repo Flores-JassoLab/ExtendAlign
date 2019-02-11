@@ -3,7 +3,7 @@
 /*================================================================
 The FLORES-JASSO LAB presents...
 
-  THE ExtendAlign Nextflow PIPELINE
+  The ExtendAlign Nextflow Pipeline
 
 - A Short Sequence Extended Alignment tool
 
@@ -50,22 +50,24 @@ Core-processing:
 def helpMessage() {
 	log.info"""
   ==========================================
-  THE ExtendAlign Nextflow PIPELINE
+  The ExtendAlign Nextflow Pipeline
   - A Short Sequence Extended Alignment tool
   v${version}
   ==========================================
 
 	Usage:
 
-	nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2>
+	nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
     [--blastn_threads int_value] [--blastn_strand both|plus|minus] [--number_of_hits all|best]
 
    --query_fasta    <- DNA or RNA fasta file with query sequences;
                        accepted extensions are .fa .fna and .fasta
    --subject_fasta  <- DNA or RNA fasta file with subject sequences;
                        accepted extensions are .fa .fna and .fasta
+   --output-dir     <- directory where results, intermediate and log files will bestored;
+                       default: same dir where --query_fasta resides
    --blastn_threads <- Number of threads to use in blastn search;
-                       default 1
+                       default: 1
    --blastn_strand  <- Subject strand to align against during blastn;
                        default: both
                          plus  = report hits found in subject's plus strand
@@ -150,7 +152,8 @@ try {
     and this test fails
 */
 if ( !params.query_fasta || !params.subject_fasta ) {
-  log.error " Please provide both, the --query_fasta AND the --subject_fasta \n"
+  log.error " Please provide both, the --query_fasta AND the --subject_fasta \n\n" +
+  " For more information, execute: nextflow run extend_align.nf --help"
   exit 1
 }
 /* Check if query OR subject fasta files are missing
@@ -206,7 +209,7 @@ if ( params.number_of_hits != "best" && params.number_of_hits != "all" ) {
 */
 log.info"""
 ==========================================
-THE ExtendAlign Nextflow PIPELINE
+The ExtendAlign Nextflow Pipeline
 - A Short Sequence Extended Alignment tool
 v${version}
 ==========================================
@@ -214,16 +217,21 @@ v${version}
 /* define function to store run summary info */
 def summary = [:]
 /* log parameter values beign used into summary */
-summary['Run Name']			= workflow.runName
+/* For the following runtime metadata origins, see https://www.nextflow.io/docs/latest/metadata.html */
+summary['NF resumed execution?'] = workflow.resume
+summary['NF Run Name']			= workflow.runName
+summary['NF Current user']		= workflow.userName
+/* string transform the time and date of run start; remove : chars and replace spaces by underscores */
+summary['NF Start time']			= workflow.start.toString().replace(":", "").replace(" ", "_")
+summary['NF Script dir']		 = workflow.projectDir
+summary['NF Working dir']		 = workflow.workDir
+summary['NF Current dir']		= workflow.launchDir
 summary['Input Query']			= params.query_fasta
 summary['Input Subject']			= params.subject_fasta
 summary['Blastn threads']			= params.blastn_threads
 summary['Blastn strand']			= params.blastn_strand
 summary['Number of hits']			= params.number_of_hits
-summary['Working dir']		 = workflow.workDir
-summary['Current home']		= "$HOME"
-summary['Current user']		= "$USER"
-summary['Current path']		= "$PWD"
+summary['NF Launched command'] = workflow.commandLine
 /* print stored summary info */
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "=========================================="
@@ -231,3 +239,41 @@ log.info "=========================================="
 /*//////////////////////////////
   PIPELINE START
 */
+
+/*
+	DEFINE PATHS TO MK MODULES
+  -- every required file (mainly runmk.sh and mkfile, but also every accessory script)
+  will be moved from this paths into the corresponding process work subdirectory during pipeline execution
+  The use of ${workflow.projectDir} metadata guarantees that mkmodules
+  will always be retrieved from a path relative to this NF script
+*/
+
+/* _A1_query_EAfasta_formating */
+module_mk_A1_get_chr_sizes = "${workflow.projectDir}/mkmodules/mk-create_EAfasta"
+
+/* _B1_subject_EAfasta_formating */
+module_mk_B1_subject_EAfasta_formating = "${workflow.projectDir}/mkmodules/mk-create_EAfasta"
+
+/* _B2_subject_blastDB_creation */
+module_mk_B2_subject_blastDB_creation = "${workflow.projectDir}/mkmodules/mk-create_blastdb"
+
+/* _001_blastn_alignment */
+module_mk_001_blastn_alignment = "${workflow.projectDir}/mkmodules/mk-HSe-blastn"
+
+/* _001sub1_keep_besthits */
+module_mk_001sub1_keep_besthits = "${workflow.projectDir}/mkmodules/mk-get_best_hit"
+
+/* _002_add_EA_coordinates_for_extraction */
+module_mk_002_add_EA_coordinates_for_extraction = "${workflow.projectDir}/mkmodules/mk-get_EA_coordinates"
+
+/* _003_add_EA_extension_nucleotides */
+module_mk_003_add_EA_extension_nucleotides = "${workflow.projectDir}/mkmodules/mk-bedtools_getfasta"
+
+/* _004_add_EA_percent_identity */
+module_mk_004_add_EA_percent_identity = "${workflow.projectDir}/mkmodules/mk-mismatch_recalculation"
+
+/* _005_append_queries_with_no_hits */
+module_mk_005_append_queries_with_no_hits = "${workflow.projectDir}/mkmodules/mk-append_nohits"
+
+/* _006_generate_EA_report */
+module_mk_006_generate_EA_report = "${workflow.projectDir}/mkmodules/mk-EA_report"

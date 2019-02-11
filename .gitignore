@@ -17,3 +17,9 @@ mkmodules/*/test/results
 
 ## ignore .nextflow hidden files
 .nextflow*
+
+## ignore NextFlow work directory
+work/
+
+## ignore test data intermediate directory
+test/data/query/Extend_Align_intermediate/

@@ -64,7 +64,7 @@ def helpMessage() {
                        accepted extensions are .fa .fna and .fasta
    --subject_fasta  <- DNA or RNA fasta file with subject sequences;
                        accepted extensions are .fa .fna and .fasta
-   --output-dir     <- directory where results, intermediate and log files will bestored;
+   --output_dir     <- directory where results, intermediate and log files will bestored;
                        default: same dir where --query_fasta resides
    --blastn_threads <- Number of threads to use in blastn search;
                        default: 1
@@ -89,6 +89,12 @@ def helpMessage() {
   If you bump the number, remember to bump it in the header description at the begining of this script too
 */
 version = "0.2.0"
+
+/*//////////////////////////////
+  Define pipeline Name
+  This will be used as a name to include in the results and intermediates directory names
+*/
+pipeline_name = "Extend_Align"
 
 /*
   Initiate default values for parameters
@@ -145,6 +151,7 @@ try {
 
 /*//////////////////////////////
   INPUT PARAMETER VALIDATION BLOCK
+  TODO (iaguilar) check the extension of input queries; see getExtension() at https://www.nextflow.io/docs/latest/script.html#check-file-attributes
 */
 
 /* Check if query and subject fasta files were provided
@@ -204,6 +211,25 @@ if ( params.number_of_hits != "best" && params.number_of_hits != "all" ) {
     exit 1
 }
 
+/*
+  TODO (iaguilar) perform output_dir parameter validation
+    -when it is not provided, goes to default value
+    -when no value is passed, gives error message and asks for fullpath
+  Output directory definition
+  Default value to create directory is the parent dir of --query_fasta
+*/
+params.output_dir = file(params.query_fasta).getParent()
+
+/*
+  Results and Intermediate directory definition
+  They are always relative to the base Output Directory
+  and they always include the pipeline name in the variable defined in this Script
+
+  This directories will be automatically created by the pipeline to store files during the run
+*/
+results_dir = "${params.output_dir}/${pipeline_name}_results/"
+intermediates_dir = "${params.output_dir}/${pipeline_name}_intermediate/"
+
 /*//////////////////////////////
   LOG RUN INFORMATION
 */
@@ -228,6 +254,9 @@ summary['NF Working dir']		 = workflow.workDir
 summary['NF Current dir']		= workflow.launchDir
 summary['Input Query']			= params.query_fasta
 summary['Input Subject']			= params.subject_fasta
+summary['Base Output Dir']		= params.output_dir
+summary['Results Dir']		= results_dir
+summary['Intermediate Dir']		= intermediates_dir
 summary['Blastn threads']			= params.blastn_threads
 summary['Blastn strand']			= params.blastn_strand
 summary['Number of hits']			= params.number_of_hits
@@ -249,7 +278,7 @@ log.info "=========================================="
 */
 
 /* _A1_query_EAfasta_formating */
-module_mk_A1_get_chr_sizes = "${workflow.projectDir}/mkmodules/mk-create_EAfasta"
+module_mk_A1_query_EAfasta_formating = "${workflow.projectDir}/mkmodules/mk-create_EAfasta"
 
 /* _B1_subject_EAfasta_formating */
 module_mk_B1_subject_EAfasta_formating = "${workflow.projectDir}/mkmodules/mk-create_EAfasta"
@@ -277,3 +306,216 @@ module_mk_005_append_queries_with_no_hits = "${workflow.projectDir}/mkmodules/mk
 
 /* _006_generate_EA_report */
 module_mk_006_generate_EA_report = "${workflow.projectDir}/mkmodules/mk-EA_report"
+
+/*
+	READ INPUTS
+*/
+
+// /* Load query fasta file into channel */
+Channel
+	.fromPath("${params.query_fasta}")
+	.set{ query_fasta_input }
+
+// /* Load subject fasta file into channel */
+Channel
+	.fromPath("${params.subject_fasta}")
+	.set{ subject_fasta_input }
+
+/* Process _A1_query_EAfasta_formating */
+
+/* Read mkfile module files */
+Channel
+	.fromPath("${module_mk_A1_query_EAfasta_formating}/*")
+	.toList()
+	.set{ mkfiles_A1 }
+
+process _A1_query_EAfasta_formating {
+
+	publishDir "${intermediates_dir}/_A1_query_EAfasta_formating/",mode:"copy"
+
+	input:
+  file fasta from query_fasta_input
+	file mk_files from mkfiles_A1
+
+	output:
+	file "*.EAfa" into results_A1_query_EAfasta_formating, also_results_A1_query_EAfasta_formating
+
+	"""
+	bash runmk.sh
+	"""
+
+}
+
+/* Process _B1_subject_EAfasta_formating */
+
+/* Read mkfile module files */
+Channel
+	.fromPath("${module_mk_B1_subject_EAfasta_formating}/*")
+	.toList()
+	.set{ mkfiles_B1 }
+
+process _B1_subject_EAfasta_formating {
+
+	publishDir "${intermediates_dir}/_B1_subject_EAfasta_formating/",mode:"copy"
+
+	input:
+  file fasta from subject_fasta_input
+	file mk_files from mkfiles_B1
+
+	output:
+	file "*.EAfa" into results_B1_subject_EAfasta_formating, also_results_B1_subject_EAfasta_formating
+
+	"""
+	bash runmk.sh
+	"""
+
+}
+
+/* Process _B2_subject_blastDB_creation */
+
+/* Read mkfile module files */
+Channel
+	.fromPath("${module_mk_B2_subject_blastDB_creation}/*")
+	.toList()
+	.set{ mkfiles_B2 }
+
+process _B2_subject_blastDB_creation {
+
+	publishDir "${intermediates_dir}/_B2_subject_blastDB_creation/",mode:"copy"
+
+	input:
+  file eafasta from results_B1_subject_EAfasta_formating
+	file mk_files from mkfiles_B2
+
+	output:
+  /*
+    --load every n* created file, see readme at mkmodule for more info
+    --specify mode flatten to avoid a downstream _001_blastn_alignment process bug
+      were instead of sending database files
+      it just sends a file named input.2 with the file paths
+  */
+	file "*.EAfa.n*" into results_B2_subject_blastDB_creation mode flatten
+
+	"""
+	bash runmk.sh
+	"""
+
+}
+
+/* get every blastDB file into a single list to send them togheter to the next process */
+results_B2_subject_blastDB_creation
+  .toList()
+  .set{ all_blastDB_files }
+
+/* Process _001_blastn_alignment */
+
+/* Read mkfile module files */
+Channel
+	.fromPath("${module_mk_001_blastn_alignment}/*")
+	.toList()
+	.set{ mkfiles_001 }
+
+process _001_blastn_alignment {
+
+	publishDir "${intermediates_dir}/_001_blastn_alignment/",mode:"copy"
+
+	input:
+  file eafasta from results_A1_query_EAfasta_formating
+  file dbfiles from all_blastDB_files
+	file mk_files from mkfiles_001
+
+	output:
+  file "*.blastn.tsv" into results_001_blastn_alignment
+
+  /*
+  define a variable with the subject query name to be able to dinamically generate
+  the path to the custom blastn EA database
+  */
+  script:
+  dbname=file(params.subject_fasta).getName()
+
+  /* since this module uses arguments passed to mk, we will declare them */
+  /* BLAST_DATABASE uses the previously generated dbname variable to find the name for the blastDB files */
+	"""
+  bash runmk.sh \
+    BLAST_DATABASE="${dbname}.EAfa" \
+    BLAST_THREADS="${params.blastn_threads}" \
+    BLAST_STRAND="${params.blastn_strand}"
+	"""
+
+}
+
+/*
+  ==Pipeline branching point==
+  If user asked for --number_of_hits "best" hit mode
+  then the results_001_blastn_alignment channel have to pass for the _001sub1_keep_besthits
+*/
+
+if ( params.number_of_hits == "best") {
+
+  /* Process _001sub1_keep_besthits */
+
+  /* Read mkfile module files */
+  Channel
+  	.fromPath("${module_mk_001sub1_keep_besthits}/*")
+  	.toList()
+  	.set{ mkfiles_001sub1 }
+
+  process _001sub1_keep_besthits {
+
+  	publishDir "${intermediates_dir}/_001sub1_keep_besthits/",mode:"copy"
+
+  	input:
+    file blastn_tsv from results_001_blastn_alignment
+  	file mk_files from mkfiles_001sub1
+
+  	output:
+    file "*.blastnbesthit.tsv" into results_001sub1_keep_besthits
+
+  	"""
+    bash runmk.sh
+  	"""
+
+  }
+
+}
+
+/*
+  To handle the user option of --number_of_hits = "best" | "all"
+  Let's conditionaly define the channel that will become the input for the next process: _002_add_EA_coordinates_for_extraction
+*/
+
+if ( params.number_of_hits == "best" ) {
+  // use the channel from the best hit extraction process
+  results_001sub1_keep_besthits
+    .set{ conditional_input_for_002 }
+} else {
+  // directly use the channel from the normal blastn process
+  results_001_blastn_alignment
+    .set{ conditional_input_for_002 }
+}
+
+/* Process : _002_add_EA_coordinates_for_extraction */
+
+/* Read mkfile module files */
+Channel
+  .fromPath("${module_mk_002_add_EA_coordinates_for_extraction}/*")
+  .toList()
+  .set{ mkfiles_002 }
+
+process _002_add_EA_coordinates_for_extraction {
+
+  publishDir "${intermediates_dir}/_002_add_EA_coordinates_for_extraction/",mode:"copy"
+
+  input:
+  file blastn_tsv from conditional_input_for_002
+  file mk_files from mkfiles_002
+
+  output:
+  file "*.EAcoordinates.tsv" into results_002_add_EA_coordinates_for_extraction
+
+  """
+  bash runmk.sh
+  """
+
+}

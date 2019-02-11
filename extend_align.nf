@@ -519,3 +519,116 @@ process _002_add_EA_coordinates_for_extraction {
   """
 
 }
+
+/* Process _003_add_EA_extension_nucleotides */
+
+/* Read mkfile module files */
+Channel
+  .fromPath("${module_mk_003_add_EA_extension_nucleotides}/*")
+  .toList()
+  .set{ mkfiles_003 }
+
+process _003_add_EA_extension_nucleotides {
+
+  publishDir "${intermediates_dir}/_003_add_EA_extension_nucleotides/",mode:"copy"
+
+  input:
+  file ea_coordinates_tsv from results_002_add_EA_coordinates_for_extraction
+  file mk_files from mkfiles_003
+
+  output:
+  file "*.extended_nucleotides.tsv" into results_003_add_EA_extension_nucleotides
+
+	/*
+		get the absolute paths for input fastas, for downstream passing to runmk.sh
+	*/
+	script:
+	query_path=file(params.query_fasta)
+	subject_path=file(params.subject_fasta)
+
+  /* since this module uses arguments passed to mk, we will declare them */
+	/* QUERY_FASTA is the path to the input query fasta */
+	/* SUBJECT_FASTA is the path to the input subject fasta */
+  """
+  bash runmk.sh \
+	 QUERY_FASTA="${query_path}" \
+	 SUBJECT_FASTA="${subject_path}"
+  """
+
+}
+
+/* Process _004_add_EA_percent_identity */
+
+/* Read mkfile module files */
+Channel
+  .fromPath("${module_mk_004_add_EA_percent_identity}/*")
+  .toList()
+  .set{ mkfiles_004 }
+
+process _004_add_EA_percent_identity {
+
+  publishDir "${intermediates_dir}/_004_add_EA_percent_identity/",mode:"copy"
+
+  input:
+  file ea_extrended_tsv from results_003_add_EA_extension_nucleotides
+  file mk_files from mkfiles_004
+
+  output:
+  file "*.recalculatedmm.tsv" into results_004_add_EA_percent_identity
+
+  """
+  bash runmk.sh
+  """
+
+}
+
+/* Process _005_append_queries_with_no_hits */
+
+/* Read mkfile module files */
+Channel
+  .fromPath("${module_mk_005_append_queries_with_no_hits}/*")
+  .toList()
+  .set{ mkfiles_005 }
+
+process _005_append_queries_with_no_hits {
+
+  publishDir "${intermediates_dir}/_005_append_queries_with_no_hits/",mode:"copy"
+
+  input:
+  file ea_recalculatedmm_tsv from results_004_add_EA_percent_identity
+	file eafasta from also_results_A1_query_EAfasta_formating
+  file mk_files from mkfiles_005
+
+  output:
+  file "*.with_nohits.tsv" into results_005_append_queries_with_no_hits
+
+  """
+  bash runmk.sh
+  """
+
+}
+
+/* Process _006_generate_EA_report */
+
+/* Read mkfile module files */
+Channel
+  .fromPath("${module_mk_006_generate_EA_report}/*")
+  .toList()
+  .set{ mkfiles_006 }
+
+process _006_generate_EA_report {
+
+  publishDir "${intermediates_dir}/_006_generate_EA_report/",mode:"copy"
+
+  input:
+  file ea_complete_tsv from results_005_append_queries_with_no_hits
+  file mk_files from mkfiles_006
+
+  output:
+  file "*_EA_report.tsv"
+
+  """
+  bash runmk.sh
+  """
+
+}

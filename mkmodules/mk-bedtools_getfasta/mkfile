@@ -15,7 +15,7 @@
 MKSHELL=/bin/bash
 
 ## Paste the columns from the original TSV input along with the fastabed files
-%.extended_nucleotides.tsv: %.tsv %.query5end.bedfasta.tmp %.query3end.bedfasta.tmp %.subject5end.bedfasta.tmp %.subject3end.bedfasta.tmp
+%.extended_nucleotides.tsv: %.EAcoordinates.tsv %.query5end.bedfasta.tmp %.query3end.bedfasta.tmp %.subject5end.bedfasta.tmp %.subject3end.bedfasta.tmp
 	echo "I should be pasting every fastabed into the blastn input file"
 	paste $prereq > $target.build \
 	&& mv $target.build $target
@@ -109,7 +109,7 @@ MKSHELL=/bin/bash
 #	!NOTE: For query coordinates, strand should always be "+" since blastn results always report query coordinates in the plus strand
 ## In the end, this bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
-%.query5end.bed.tmp: %.tsv
+%.query5end.bed.tmp: %.EAcoordinates.tsv
 	awk '
 		###
 		# Definition of input and output Field Separator as tab
@@ -224,7 +224,7 @@ MKSHELL=/bin/bash
 #	!NOTE: For query coordinates, strand should always be "+" since blastn results always report query coordinates in the plus strand
 ## In the end, this bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
-%.query3end.bed.tmp: %.tsv
+%.query3end.bed.tmp: %.EAcoordinates.tsv
 	awk '
 		###
 		# Definition of input and output Field Separator as tab
@@ -346,7 +346,7 @@ MKSHELL=/bin/bash
 # column 30 = strand
 ## In the end, the bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
-%.subject5end.bed.tmp: %.tsv
+%.subject5end.bed.tmp: %.EAcoordinates.tsv
 	awk '
 		###
 		# Definition of input and output Field Separator as tab
@@ -467,7 +467,7 @@ MKSHELL=/bin/bash
 # column 30 = strand
 ## In the end, the bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
-%.subject3end.bed.tmp: %.tsv
+%.subject3end.bed.tmp: %.EAcoordinates.tsv
 	awk '
 		###
 		# Definition of input and output Field Separator as tab

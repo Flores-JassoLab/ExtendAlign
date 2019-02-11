@@ -8,6 +8,6 @@
 find -L . \
   -type f \
   -name "*.EAcoordinates.tsv" \
-| sed "s#.tsv#.extended_nucleotides.tsv#" \
+| sed "s#.EAcoordinates.tsv#.extended_nucleotides.tsv#" \
 | xargs mk $@
   ## ^^ "mk $@" enables to pass mk arguments from the main flow execution

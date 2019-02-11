@@ -3,6 +3,6 @@
 nextflow run extend_align.nf \
 	--query_fasta test/data/query/hsa-miRNAs22.fa \
 	--subject_fasta test/data/subject/sample_subject.fa \
-	-resume \
 	--blastn_strand both \
-	--number_of_hits best
+	--number_of_hits best \
+	-resume

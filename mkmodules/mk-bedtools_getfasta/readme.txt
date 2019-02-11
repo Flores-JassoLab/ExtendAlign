@@ -59,7 +59,7 @@ Input:
     - This type of file is created by the mk-get_EA_coordinates module
 
 Output:
-  A custom blastn output TAB separated file, with extended_nucleotides.tsv extension.
+  A custom blastn output TAB separated file, with .extended_nucleotides.tsv extension.
   This extended nucleotides file contains extra columns for the common blastn format and .EAcoordinates.tsv format
   Example line(s):
   ````

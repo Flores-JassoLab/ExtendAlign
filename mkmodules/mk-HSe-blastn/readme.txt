@@ -66,7 +66,7 @@ BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa.EAfa"
 ## Number of threads (CPUs) to use in blast search
 BLAST_THREADS="1"
 
-## Query strand(s) to search against database/subject.
+## Subject strand to search against in database/subject.
 # Choice of "both", "minus", or "plus".
 BLAST_STRAND="both"
 

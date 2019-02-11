@@ -14,3 +14,6 @@ ref-*/
 
 ## Ignore local mkmodule test results
 mkmodules/*/test/results
+
+## ignore .nextflow hidden files
+.nextflow*

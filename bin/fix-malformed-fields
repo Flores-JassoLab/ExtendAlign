@@ -1,5 +1,0 @@
-#!/bin/execlineb -S0
-sed
-	-r
-	-e "s#[ \t]+#\t#"
-	${@}

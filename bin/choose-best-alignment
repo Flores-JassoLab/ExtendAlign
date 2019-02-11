@@ -1,4 +1,0 @@
-#!/bin/execlineb -S0
-pipeline { sort-by-best-match ${@} }
-pipeline { choose-first-query }
-sort

@@ -1,8 +1,0 @@
-#!/bin/execlineb -S0
-foreground {
-pipeline { fdclose 2 samtools faidx ${@} }
-pipeline { grep -v > }
-pipeline { tr -d "\\n" }
-rna2dna
-}
-printf "\n"

@@ -1,4 +1,0 @@
-#!/usr/bin/awk -f
-@include "ea_format"
-
-$alignment_length < $query_length

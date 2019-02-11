@@ -1,7 +1,0 @@
-#!/bin/execlineb
-importas -i src 1
-importas -i dst 2
-dirs
-sed
-	-r
-	-e "s#^${src}#${dst}#"

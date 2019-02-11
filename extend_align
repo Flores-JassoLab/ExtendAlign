@@ -1,45 +1,8 @@
 #!/bin/bash
 
-####
-# Wrapper script that allows finer control of relative paths via simple bash comman line
-####
-
-## DEfine output and logs directorys relative to input file path
-RESULTS_DIR=$(echo $INPUT_DIR | sed s"#/input#/results#" )
-LOGS_DIR=$(echo $INPUT_DIR | sed s"#/input#/logs#" )
-
-## Also define intermediate dir, for files that are not the final results, but the client may ask for
-INTERMEDIATE_DIR=$(echo $INPUT_DIR | sed s"#/input#/intermediate#" )
-
-## Create output dir and logs dir and intermediate dir
-mkdir -p $RESULTS_DIR
-mkdir -p $LOGS_DIR
-mkdir -p $INTERMEDIATE_DIR
-
-## Define log file name
-LOG_CODE="$(date | tr " "  "_" | tr -d ":")"
-LOG_FILE="$LOGS_DIR/$LOG_CODE"
-
-## Start nextflow setting up
-# read sciript path ## Probably not needed since NF keeps track of script directory
-## But used to define the workdir path
-MAIN_FLOW_DIR=$(dirname $0)
-
-## Get the user/sample code from the input file path, to be used as the nextflow work dir code
-WORKDIR_CODE=$(echo $INPUT_DIR | rev | cut -d"/" -f3,4 | rev )
-
-# Define workdir for this sample
-WORK_DIR_PATH="$MAIN_FLOW_DIR/work/$WORKDIR_CODE"
-#Create nextflow work dir in case there isn't any
-mkdir -p $WORK_DIR_PATH
-
-#nextflow run nextflow_script #INPUT FILE #RESULTS DIR #LOGS DIR #INTERMEDIATE DIR #WORK DIR
-nextflow run $MAIN_FLOW_DIR/genome_comparator.nf \
-	--input_dir $INPUT_DIR \
-	--results_dir $RESULTS_DIR \
-	--intermediate_dir $INTERMEDIATE_DIR \
-	--nextflow_script_dir $MAIN_FLOW_DIR \
-	-work-dir $WORK_DIR_PATH \
-	-with-report $LOG_FILE.report.html \
-	-with-dag $LOG_FILE.DAG.html \
-	-resume
+nextflow run extend_align.nf \
+	--query_fasta test/data/query/hsa-miRNAs22.fa \
+	--subject_fasta test/data/subject/sample_subject.fa \
+	-resume \
+	--blastn_strand both \
+	--number_of_hits best

@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.blast_output
-}
-i2t.best_blast_alignment

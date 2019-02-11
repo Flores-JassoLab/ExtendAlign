@@ -16,7 +16,6 @@ MKSHELL=/bin/bash
 
 ## Paste the columns from the original TSV input along with the fastabed files
 %.extended_nucleotides.tsv: %.EAcoordinates.tsv %.query5end.bedfasta.tmp %.query3end.bedfasta.tmp %.subject5end.bedfasta.tmp %.subject3end.bedfasta.tmp
-	echo "I should be pasting every fastabed into the blastn input file"
 	paste $prereq > $target.build \
 	&& mv $target.build $target
 

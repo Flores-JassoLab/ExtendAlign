@@ -1,3 +1,5 @@
+## TODO (iaguilar) clean this legacy ignore block
+
 .*.sw?
 .*.vis.*
 /analysis*/
@@ -12,6 +14,8 @@ config.mk
 /prueba*/
 ref-*/
 
+## ENDS legacy ignore block
+
 ## Ignore local mkmodule test results
 mkmodules/*/test/results
 
@@ -23,6 +27,9 @@ work/
 
 ## ignore test data intermediate directory
 test/data/query/Extend_Align_intermediate/
+## ignore test data results directory
+test/data/query/Extend_Align_results/
 
 ## ignore .fai files
+## If needed by bedtools, they are created during the run by bedtools itself
 *.fai

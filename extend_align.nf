@@ -57,30 +57,35 @@ def helpMessage() {
 
 	Usage:
 
-	nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
-    [--blastn_threads int_value] [--blastn_strand both|plus|minus] [--number_of_hits all|best]
+  nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
+  				[--number_of_hits all|best] [--blastn_threads int_value] [--blastn_strand both|plus|minus]
+  				[--blastn_max_target_seqs int_value] [--blastn_evalue real_value]
 
-   --query_fasta    <- DNA or RNA fasta file with query sequences;
-                       accepted extensions are .fa .fna and .fasta
-   --subject_fasta  <- DNA or RNA fasta file with subject sequences;
-                       accepted extensions are .fa .fna and .fasta
-   --output_dir     <- directory where results, intermediate and log files will bestored;
-                       default: same dir where --query_fasta resides
-   --blastn_threads <- Number of threads to use in blastn search;
-                       default: 1
-   --blastn_strand  <- Subject strand to align against during blastn;
-                       default: both
-                         plus  = report hits found in subject's plus strand
-                         minus = report hits found in subject's minus strand
-                         both  = report all
-   --number_of_hits <- Amount of blastn hits extended by EA for each query;
-                       default: best
-                         all  = Every hit found by blastn is extended and reported by EA
-                         best = Only the best blastn hit (one per query) is extended and reported by EA
-                          NOTE. defined using the basic blastn alignment values, by the following algorithm:
-                                best hit is the one with higher alignment length, and the lowest number of mismatches and gaps
-   --help           <- Shows Pipeline Information
-   --version        <- Show ExtendAlign version
+	  --query_fasta    <- DNA or RNA fasta file with query sequences;
+				accepted extensions are .fa .fna and .fasta
+	  --subject_fasta  <- DNA or RNA fasta file with subject sequences;
+				accepted extensions are .fa .fna and .fasta
+	  --output_dir     <- directory where results, intermediate and log files will bestored;
+				default: same dir where --query_fasta resides
+	  --number_of_hits <- Amount of blastn hits extended by EA for each query;
+				default: best
+				all  = Every hit found by blastn is extended and reported by EA
+				best = Only the best blastn hit (one per query) is extended and reported by EA
+				NOTE. defined using the basic blastn alignment values, by the following algorithm:
+				best hit is the one with higher alignment length, and the lowest number of mismatches and gaps
+	  --blastn_threads <- Number of threads to use in blastn search;
+				default: 1
+	  --blastn_strand  <- Subject strand to align against during blastn;
+				default: both
+				plus  = report hits found in subject's plus strand
+				minus = report hits found in subject's minus strand
+				both  = report all
+	  --blastn_max_target_seqs <- Number of aligned sequences to keep;
+				default: 100
+	  --blastn_evalue  <- Expect value (E) for saving hits;
+				default: 10
+	  --help           <- Shows Pipeline Information
+	  --version        <- Show ExtendAlign version
 	""".stripIndent()
 }
 
@@ -88,7 +93,7 @@ def helpMessage() {
   Define pipeline version
   If you bump the number, remember to bump it in the header description at the begining of this script too
 */
-version = "0.2.0"
+version = "0.2.1"
 
 /*//////////////////////////////
   Define pipeline Name
@@ -102,9 +107,11 @@ pipeline_name = "Extend_Align"
 */
 params.query_fasta = false  //if no inputh path is provided, value is false to provoke the error during the parameter validation block
 params.subject_fasta = false //if no inputh path is provided, value is false to provoke the error during the parameter validation block
-params.blastn_threads = "1" //default is one computing thread for blastn processing
+params.blastn_threads = 1 //default is one computing thread for blastn processing
 params.blastn_strand = "both" //default is to report blastn hits in both stands
 params.number_of_hits = "best" //default is to keep only the best blastn hit before EA extension
+params.blastn_max_target_seqs = 100 //default is to keep only the first 100 hits found by blastn
+params.blastn_evalue = 10 //Default is an evalue of 10.0 as cutoff to report hits
 params.help = false //default is false to not trigger help message automatically at every run
 params.version = false //default is false to not trigger version message automatically at every run
 
@@ -169,7 +176,7 @@ if ( !params.query_fasta || !params.subject_fasta ) {
 
   We use a try catch structure to be able to print the catch message, otherwise a simple
   "ERROR ~ No such file: mmu-premiRNA.fa" message would be printed
-  and that is not completely informative
+  which is not completely informative
 */
 try {
 	if( ! file(params.query_fasta, checkIfExists: true) || ! file(params.subject_fasta, checkIfExists: true) ){
@@ -184,7 +191,7 @@ try {
 }
 
 /*
-Check if blastn threads parameter is a number higher than 0
+Check if blastn threads parameter is 0 or lower; if it is, send error message
 */
 if ( params.blastn_threads <= 0 ) {
     log.error "invalid --blastn_threads; use a positive integer value"
@@ -212,18 +219,37 @@ if ( params.number_of_hits != "best" && params.number_of_hits != "all" ) {
 }
 
 /*
-  TODO (iaguilar) perform output_dir parameter validation
+Check if blastn max_target_seqs parameter is 0 or lower; if it is, send error message
+*/
+if ( params.blastn_max_target_seqs <= 0 ) {
+    log.error "invalid --blastn_max_target_seqs; use a positive integer value"
+    exit 1
+}
+
+/*
+Check if blastn evalue parameter is 0 or lower; if it is, send error message
+*/
+if ( params.blastn_evalue <= 0 ) {
+    log.error "invalid --blastn_evalue; use a real number"
+    exit 1
+}
+
+/*
+  TODO (iaguilar) perform output_dir parameter validation, with the following rules:
     -when it is not provided, goes to default value
-    -when no value is passed, gives error message and asks for fullpath
+    -when no value is passed (no --output_dir flag), gives error message and asks for fullpath
+	finish TODO block
+
   Output directory definition
   Default value to create directory is the parent dir of --query_fasta
+	thus, this must be defined after the "Check if query OR subject fasta files are missing" block
 */
 params.output_dir = file(params.query_fasta).getParent()
 
 /*
   Results and Intermediate directory definition
   They are always relative to the base Output Directory
-  and they always include the pipeline name in the variable defined in this Script
+  and they always include the pipeline name in the variable (pipeline_name) defined by this Script
 
   This directories will be automatically created by the pipeline to store files during the run
 */
@@ -239,31 +265,38 @@ The ExtendAlign Nextflow Pipeline
 - A Short Sequence Extended Alignment tool
 v${version}
 ==========================================
-""".stripIndent()
-/* define function to store run summary info */
-def summary = [:]
+"""
+log.info "--Nextflow metadata--"
+/* define function to store nextflow metadata summary info */
+def nfsummary = [:]
 /* log parameter values beign used into summary */
 /* For the following runtime metadata origins, see https://www.nextflow.io/docs/latest/metadata.html */
-summary['NF resumed execution?'] = workflow.resume
-summary['NF Run Name']			= workflow.runName
-summary['NF Current user']		= workflow.userName
+nfsummary['Resumed run?'] = workflow.resume
+nfsummary['Run Name']			= workflow.runName
+nfsummary['Current user']		= workflow.userName
 /* string transform the time and date of run start; remove : chars and replace spaces by underscores */
-summary['NF Start time']			= workflow.start.toString().replace(":", "").replace(" ", "_")
-summary['NF Script dir']		 = workflow.projectDir
-summary['NF Working dir']		 = workflow.workDir
-summary['NF Current dir']		= workflow.launchDir
-summary['Input Query']			= params.query_fasta
-summary['Input Subject']			= params.subject_fasta
-summary['Base Output Dir']		= params.output_dir
-summary['Results Dir']		= results_dir
-summary['Intermediate Dir']		= intermediates_dir
-summary['Blastn threads']			= params.blastn_threads
-summary['Blastn strand']			= params.blastn_strand
-summary['Number of hits']			= params.number_of_hits
-summary['NF Launched command'] = workflow.commandLine
+nfsummary['Start time']			= workflow.start.toString().replace(":", "").replace(" ", "_")
+nfsummary['Script dir']		 = workflow.projectDir
+nfsummary['Working dir']		 = workflow.workDir
+nfsummary['Current dir']		= workflow.launchDir
+nfsummary['Launch command'] = workflow.commandLine
+log.info nfsummary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
+log.info "\n\n--ExtendAlign Parameters--"
+/* define function to store nextflow metadata summary info */
+def pipelinesummary = [:]
+/* log parameter values beign used into summary */
+pipelinesummary['Query']			= params.query_fasta
+pipelinesummary['Subject']			= params.subject_fasta
+pipelinesummary['Results Dir']		= results_dir
+pipelinesummary['Intermediate Dir']		= intermediates_dir
+pipelinesummary['Blastn threads']			= params.blastn_threads
+pipelinesummary['Blastn strand']			= params.blastn_strand
+pipelinesummary['Blastn max_target_seqs']			= params.blastn_max_target_seqs
+pipelinesummary['Blastn evalue']			= params.blastn_evalue
+pipelinesummary['Number of hits']			= params.number_of_hits
 /* print stored summary info */
-log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
-log.info "=========================================="
+log.info pipelinesummary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
+log.info "==========================================\nPipeline Start"
 
 /*//////////////////////////////
   PIPELINE START
@@ -440,7 +473,9 @@ process _001_blastn_alignment {
   bash runmk.sh \
     BLAST_DATABASE="${dbname}.EAfa" \
     BLAST_THREADS="${params.blastn_threads}" \
-    BLAST_STRAND="${params.blastn_strand}"
+    BLAST_STRAND="${params.blastn_strand}" \
+		BLAST_MAX_TARGET_SEQS="${params.blastn_max_target_seqs}" \
+	  BLAST_EVALUE="${params.blastn_evalue}"
 	"""
 
 }
@@ -618,7 +653,8 @@ Channel
 
 process _006_generate_EA_report {
 
-  publishDir "${intermediates_dir}/_006_generate_EA_report/",mode:"copy"
+	/* Since this is the intended results file, it goes into the result directory */
+	publishDir "${results_dir}/",mode:"copy"
 
   input:
   file ea_complete_tsv from results_005_append_queries_with_no_hits

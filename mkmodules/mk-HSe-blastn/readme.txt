@@ -70,6 +70,16 @@ BLAST_THREADS="1"
 # Choice of "both", "minus", or "plus".
 BLAST_STRAND="both"
 
+##
+# Number of aligned sequences to keep
+BLAST_MAX_TARGET_SEQS="100"
+
+##
+# Expect value (E) for saving hits
+BLAST_EVALUE="10"
+
+NOTE: find more about blastn parameters here:https://www.ncbi.nlm.nih.gov/books/NBK279684/
+
 Testing the module:
 
 1. Locally test this module by running

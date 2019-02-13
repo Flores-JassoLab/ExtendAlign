@@ -15,5 +15,7 @@ bash runmk.sh -a \
   BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa.EAfa" \
   BLAST_THREADS="1" \
   BLAST_STRAND="both" \
+  BLAST_MAX_TARGET_SEQS="100" \
+  BLAST_EVALUE="10" \
 && mv test/data/*.blastn.tsv test/results \
 && echo "[>>>] Module Test Successful"

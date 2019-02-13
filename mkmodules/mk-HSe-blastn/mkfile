@@ -31,8 +31,8 @@ MKSHELL=/bin/bash
 		-word_size 7 \
 		-dust no \
 		-soft_masking false \
-		-max_target_seqs 100 \
-		-evalue 10 \
+		-max_target_seqs $BLAST_MAX_TARGET_SEQS \
+		-evalue $BLAST_EVALUE \
 		-num_threads $BLAST_THREADS \
 		-strand $BLAST_STRAND \
 		-outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand" \

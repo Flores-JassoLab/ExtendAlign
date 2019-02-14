@@ -4,7 +4,7 @@
 **Date:** February-2019  
 
 ## To-do:
-NONE  
+  NONE  
 
 ## Module description: 
   Run blastn in High Sensitivity (HSe) mode with an ExtendAlign fasta query file over a ExtendAlign fasta blast database previously created.

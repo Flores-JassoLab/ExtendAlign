@@ -1,9 +1,9 @@
 ##
 # mkfile script with dependency rules for:
-#		1. Creating a blastn results TSV file from .EAfa files, by comparing it against a blast generated REFERENCE_DB
-#			Note: Unlike the base blastn version, this EA version outputs the query and subject original sequence length, which will be used downstream to define the length of EA extension
+# 1. Creating a HSe-blastn results TSV file from .EAfa files, by comparing it against a blast generated REFERENCE_DB
+# Note: Unlike the base blastn version, this EA version outputs the query and subject original sequence length, which will be used downstream to define the length of EA extension
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about 'mk' dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
 ## Define shell command line which will be used to run recipes
 MKSHELL=/bin/bash

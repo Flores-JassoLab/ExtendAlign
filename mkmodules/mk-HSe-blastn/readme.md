@@ -1,21 +1,20 @@
 ## mk-HSe-blastn
 
-**Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
-**Date:** February-2019  
+**Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
+**Date:** February-2019
 
 ## To-do:
-  NONE  
+  NONE
 
-## Module description: 
-  Run blastn in High Sensitivity (HSe) mode with an ExtendAlign fasta query file over a ExtendAlign fasta blast database previously created.
-  
+## Module Description:
+  Blastn run in High Sensitivity (HSe) mode with an ExtendAlign fasta query file over an ExtendAlign fasta blastn database previously created.
+
 1. Blastn run allows gapped alignments and uses the smallest word size (7).
 2. Unlike basic blastn results, `HSe-blastn` reports the original query and subject sequence lengths.
 3. The query and subject length values will be used in modules downstream to decide if an alignment can be extended by ExtendAlign.
 
 ## Module Dependencies:
-  Blastn from NCBI [BLAST 2.8.1+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
-  Citation: Camacho, Christiam, et al. "BLAST+: architecture and applications." BMC bioinformatics 10.1 (2009): 421.
+  NCBI [BLAST 2.8.1+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download) (Camacho, Christiam, et al. "BLAST+: architecture and applications." BMC bioinformatics 10.1 (2009): 421).
 
 ### Input:
   A fasta file with `.EAfa` extension.
@@ -61,7 +60,7 @@ Output File Column Descriptions:
   sstrand: Subject Strand where the alignment hit was located
 ```
 
-## Module parameters:
+## Module Parameters:
 
 Path to main ExtendAlign fasta file that defines the blastn database.
 An ExtendAlign blast database is created by an upstream module (mk-create_blastdb).

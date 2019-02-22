@@ -1,5 +1,4 @@
 #mk-bedtools_getfasta
-
 **Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 **Date:** February-2019
 
@@ -20,7 +19,7 @@ Adds extended nucleotide (nt) sequences to ExtendAlign's `HSe-blastn` results fi
 5. Extractions are performed in bulk using the `bedtools getfasta` command.
 6. In short, extensions are done to a one-column file, each row corresponds to a blastn hit result. Four one-column files are created: 1) query 5'end, 2) query 3'end, 3) subject 5'end, and 4) subject 3'end extensions.
 7. Bed coordinates for `getfasta` are temporary modified to avoid a bug were `HSe-blastn` hits with no extension necessary would yield an incomplete number of rows in the results.
-8. The multiple one-column files format makes it easy to just paste all the columns into the custom ExtendAlign `HSe-blastn` results to add the extracted nucleotides to their corresponding row.
+8. The multiple one-column files format makes it easy to just paste all the columns into ExtendAlign `HSe-blastn` results to add the extracted nucleotides to their corresponding row.
 9. Do remember that a previous module (`mk-get_EA_coordinates`) includes a failsafe to avoid asking for extensions of more nucleotides than can be evenly compared between query and subject extension (*i.e.* if at 5'end, query can be extended 5 nt, but subject can only be extended 3 nt, only 3 nt will be extracted for both, query and subject).
 
 ## Module Dependencies:
@@ -30,10 +29,9 @@ Bedtools getfasta from [bedtools v2.27.1](https://bedtools.readthedocs.io/en/lat
 `devnotes/Correct_fasta_extraction_evidence.xlsx` is a file showing proof of correct nucleotide extraction, for plus and minus `HSe-blastn` hits, using results from test data. (It should be replaced by a proper diagram in pdf or png format.)
 
 ### Input:
-A custom `HSe-blastn` output (TAB separated file) with `.EAcoordinates.tsv` extension.
+A `HSe-blastn` output (TAB separated file) with `.EAcoordinates.tsv` extension.
 
 Example line(s):
-
 ```
 qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand q5end_extension_length q3end_extension_length s5end_extension_length s3end_extension_length overlap5end_extension_length overlap3end_extension_length q5end_extension_start q5end_extension_end q3end_extension_start q3end_extension_end s5end_extension_start s5end_extension_end s3end_extension_start s3end_extension_end strand
   26 hsa-miR-1226-5p.MIMAT0005576 71 mmu-mir-6927.MI0022774 76.923 26 6 0 1 26 1 26 0.039 23.5 plus 0 0 0 45 0 0 1 1 26 26 1 1 26 26 +
@@ -46,7 +44,7 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 * This type of file is created by the `mk-get_EA_coordinates` module.
 
 ### Output:
-A custom `HSe-blastn` output (TAB separated file) with `.extended_nucleotides.tsv` extension.
+A `HSe-blastn` output (TAB separated file) with `.extended_nucleotides.tsv` extension.
 
 This extended nucleotides file contains extra columns for the common `HSe-blastn` format and `.EAcoordinates.tsv` format.
 

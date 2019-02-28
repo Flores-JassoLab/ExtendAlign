@@ -52,17 +52,17 @@ Output File Column Descriptions: see readme.txt in module `mk-HSe-blastn` for ba
 `q3end_extension_length:` For query, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.
 `s5end_extension_length:` For subject, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.
 `s3end_extension_length:` For subject, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.
-`overlap5end_extension_length:` For 5' end, maximum number of extension length shared by query and subject; *e.g.* query 5'-end length is 7 nt, Subject 5end is 3nt, thus, the overlap5end_extension_length is the minimal value of those two, which is 3nt.
-`overlap3end_extension_length:` For 3' end, maximum number of extension length shared by query and subject; e.g. Query 3end length is 0nt, Subject 3end is 9nt, thus, the overlap5end_extension_length is the minimal value of those two, which is 0nt.
-`q5end_extension_start:` For Query 5' end, sequence position where the nucleotides should begin to be extracted from the query fasta.
-`q5end_extension_end:` For Query 5' end, sequence position where the nucleotides should finish to be extracted.
-`q3end_extension_start:` For Query 3' end, sequence position where the nucleotides should begin to be extracted.
-`s5end_extension_start:` For Subject 5' end, sequence position where the nucleotides should begin to be extracted from the query fasta.
-`q3end_extension_end:` For Query 3' end, sequence position where the nucleotides should finish to be extracted.
-`s5end_extension_end:` For Subject 5' end, sequence position where the nucleotides should finish to be extracted.
-`s3end_extension_start:` For Subject 3' end, sequence position where the nucleotides should begin to be extracted.
-`s3end_extension_end:` For Subject 3' end, sequence position where the nucleotides should finish to be extracted.
-`strand:` + or - code for the blastn result strandness (will be required in +/- format by downstream process).
+`overlap5end_extension_length:` For 5'-end, maximum number of extension length shared by query and subject; *e.g.* query 5'-end length is 7 nt, subject 5'-end is 3 nt, thus, the `overlap5end_extension_length` is the minimal value of those two, which is 3 nt.
+`overlap3end_extension_length:` For 3'-end, maximum number of extension length shared by query and subject; *e.g.* query 3'-end length is 0 nt, subject 3'-end is 9 nt, thus, the `overlap5end_extension_length` is the minimal value of those two, which is 0 nt.
+`q5end_extension_start:` For query 5'-end, sequence position where the nucleotides should begin to be extracted from the query fasta.
+`q5end_extension_end:` For query 5'-end, sequence position where the nucleotides should finish to be extracted.
+`q3end_extension_start:` For query 3'-end, sequence position where the nucleotides should begin to be extracted.
+`s5end_extension_start:` For subject 5'-end, sequence position where the nucleotides should begin to be extracted from the query fasta.
+`q3end_extension_end:` For query 3'-end, sequence position where the nucleotides should finish to be extracted.
+`s5end_extension_end:` For subject 5'-end, sequence position where the nucleotides should finish to be extracted.
+`s3end_extension_start:` For subject 3'-end, sequence position where the nucleotides should begin to be extracted.
+`s3end_extension_end:` For subject 3'-end, sequence position where the nucleotides should finish to be extracted.
+`strand:` + or - code for the `HSe-blastn` result strandness (will be required in +/- format by downstream process).
 
 
 ## Module parameters:

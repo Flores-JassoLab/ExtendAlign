@@ -1,21 +1,21 @@
-##
+### mk-EA_report ###
 # mkfile script with dependency rules for:
-#		1. Creating a summarized version of the Extend Align results
-#		2. The ouput of this module is intended to be the final pipeline result and the file presented to the user
-#		3. As such, this output should be informative and clear for the user
+#	1. Creating a summarized version of the ExtendAlign results.
+#	2. The ouput of this module is intended to be the final pipeline result and the file presented to the user.
+#	3. As such, this output should be informative and clear for the user.
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
 ## Define shell command line which will be used to run recipes
 MKSHELL=/bin/bash
 
-## Simplify EA results into an output to be presented to the user
-# parse EA table with a simple awk
+## Simplify ExtendAlign results into an output to be presented to the user.
+## Parse ExtendAlign table with awk.
 %_EA_report.tsv: %.with_nohits.tsv
-	## extractcolumns of interest, which are: query id, subject id, query length, total mismatch, total match, identity
+	## Extract columns of interest, which are: query id, subject id, query length, total mismatch, total match, identity
 	awk '
 		###
-		# Definition of input and output Field Separator as tab
+		## Definition of input and output field separator as TAB
 		BEGIN {OFS=FS="\t"}
 		## Replace header
 		NR == 1 { print "query_name", "subject_name", "query_length", "EA_alignment_length", "EA_total_mismatch", "EA_total_match", "EA_pident", "blastn_pident" }
@@ -30,13 +30,13 @@ MKSHELL=/bin/bash
 				EA_pident= $39
 				blastn_pident= $5
 			##
-			# Restart value
+			## Restart value
 				EA_total_match="ERR"
-			# Calculate number of matches using EA length minus EA total mismatch
-			# TODO (iaguilar) it is posible to precalculate this and print it as a column in the mk-mismatch_recalculation module
+			## Calculate number of matches using EA length minus EA total mismatch
+			## To-do: (iaguilar) it is posible to precalculate this and print it as a column in the mk-mismatch_recalculation module
 				EA_total_match= EA_alignment_length - EA_total_mismatch
 			##
-			# Print summarized line
+			## Print summarized line
 			print query_name, subject_name, query_length, EA_alignment_length, EA_total_mismatch, EA_total_match, EA_pident, blastn_pident
 		}
 	' $prereq > $target.build \

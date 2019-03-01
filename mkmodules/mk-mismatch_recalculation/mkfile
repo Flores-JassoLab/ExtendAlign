@@ -1,37 +1,37 @@
-##
+### mk-mismatch_recalculation ###
 # mkfile script with dependency rules for:
-#		1. Adding recalculated EApident (Extend Align percent identity) values to a custom EA blastn results table
-#		2. Recalculation is performed by comparing extended nucleotides beyond the original blastn alignment coordinates
-#		3. Extended number of mismatches is performed by comparing nucleotide strings position by position
-#		4. Total mismatches is calculated as: extended mismatches + blastn mismatches + blastn number of nt gaps
-#		5. extended alignment length is calculated as: length + overlap5end_extension_length + overlap3end_extension_length
-#		6. EApident is calculated as: (extended_alignment_length - total mismatches) / extended alignment length * 100
-#		7. In the end, a .recalculatedmm.tsv file is created, with each original EA blastn hit plus new columns that contain the recalculated values for EApident
+#	1. Adding recalculated ExtendAlign percent identity (EApident) values to a custom ExtendAlign HSe-blastn results table.
+#	2. Recalculation is performed by comparing extended nucleotides beyond the original blastn alignment coordinates.
+#	3. Extended number of mismatches is performed by comparing nucleotide strings position by position.
+#	4. Total mismatches is calculated as: extended mismatches + blastn mismatches + blastn number of nt gaps.
+#	5. Extended alignment length is calculated as: length + overlap5end_extension_length + overlap3end_extension_length.
+#	6. EApident is calculated as: (extended_alignment_length - total mismatches) / extended alignment length * 100.
+#	7. In the end, a .recalculatedmm.tsv file is created, with each original ExtendAlign HSe-blastn hit plus new columns that contain the recalculated values for EApident.
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
-## Define shell command line which will be used to run recipes
+## Define shell command line which will be used to run scripts.
 MKSHELL=/bin/bash
 
 ## Parse the columns from the extended nucleotides TSV input with awk
 ## For each row (each extended blastn hit) calculate the following:
 %.recalculatedmm.tsv: %.extended_nucleotides.tsv
-	#		extended_5end_mismatch: by positional comparison of extended sequences at Query 5'end vs Subject 5'end
-	#		extended_3end_mismatch: by positional comparison of extended sequences at Query 3'end vs Subject 3'end
-	#		total_mismatch: by summing the values at extended_5end_mismatch + extended_3end_mismatch + mismatch + gaps (see readme.txt for column definition)
-	#		extended_alignment_length: by blastn reported alignment length + overlap5end_extension_length + overlap3end_extension_length
-	#		^^in human terms: the original alignment length reported by blastn, plus the number of nucleotides used by EA to compare 5' and 3' ends against the subject
-	#		extend_align_pident: as percentage, by (extended_alignment_length - total mismatches) / extended alignment length * 100
+	#	extended_5end_mismatch: by positional comparison of extended sequences at Query 5'end vs Subject 5'end
+	#	extended_3end_mismatch: by positional comparison of extended sequences at Query 3'end vs Subject 3'end
+	#	total_mismatch: by adding the values at extended_5end_mismatch + extended_3end_mismatch + mismatch + gaps (see readme.txt for column definition)
+	#	extended_alignment_length: by blastn reported alignment length + overlap5end_extension_length + overlap3end_extension_length
+	#	^^in human terms: the original alignment length reported by HSe-blastn, plus the number of nucleotides used by ExtendAlign to compare 5' and 3' ends against the subject
+	#	extend_align_pident: as percentage, by (extended_alignment_length - total mismatches) / extended alignment length * 100
 	awk '
 		###
-		# Definition of input and output Field Separator as tab
+		# Definition of input and output field separator as TAB.
 		BEGIN { FS=OFS="\t" }
-		# Append new column names to header
+		# Append new column names to header.
 		NR == 1 { print $0, "extended_5end_mismatch", "extended_3end_mismatch", "total_mismatch", "extended_alignment_length", "extend_align_pident"}
-		# Operate in rows other than header, which is the first line (NR higher than 1)
+		# Operate in rows other than header, which is the first line (NR higher than 1).
 		NR > 1 {
 			###
-			# Definition of important input columns
+			# Definition of important input columns.
 				query_length= $1
 				blastn_alignment_length= $6
 				blastn_mismatch= $7
@@ -43,36 +43,36 @@ MKSHELL=/bin/bash
 				subject_5end_extended_sequence= $33
 				subject_3end_extended_sequence= $34
 			###
-			# Start the final calculation variables with ERR values
+			# Start the final calculation variables with ERR values.
 				extended_5end_mismatch= "ERR"
 				extended_3end_mismatch= "ERR"
 				total_mismatch= "ERR"
 				extended_alignment_length= "ERR"
 				extend_align_pident= "ERR"
 			###
-			# Split the extended Query 5 end nucleotides by character into an array
+			# Split the extended query 5'-end nucleotides by character into an array.
 				split(query_5end_extended_sequence, query_5end_nucleotides, "")
-			# Split the extended Query 3 end nucleotides by character into an array
+			# Split the extended query 3'-end nucleotides by character into an array.
 				split(query_3end_extended_sequence, query_3end_nucleotides, "")
 			##
-			# Split the extended Subject 5 end nucleotides by character into an array
+			# Split the extended subject 5'-end nucleotides by character into an array.
 				split(subject_5end_extended_sequence, subject_5end_nucleotides, "")
-			# Split the extended subject 3 end nucleotides by character into an array
+			# Split the extended subject 3'-end nucleotides by character into an array.
 				split(subject_3end_extended_sequence, subject_3end_nucleotides, "")
 			###
-			# Calculate mismatches by positional comparison (i.e. 1st nt at query end vs 1st nucleotide at subject end; etc)
-			# restart the mismtach variable at 0 value
+			# Calculate mismatches by positional comparison (i.e. 1st nt at query end vs 1st nucleotide at subject end; etc),
+			# restart the mismtach variable at 0 value.
 				extended_5end_mismatch=0
-			# Calculate mismatch for 5end by looping through the nucleotide arrays and comparing by the i position
-			# if the nucleotide is different, sum 1 to the mismatch variable
+			# Calculate mismatch for 5'-end by looping through the nucleotide arrays and comparing by the i position,
+			# if the nucleotide is different, sum 1 to the mismatch variable.
 				for (i=1; i <= length(query_5end_extended_sequence); i++) {
 					if ( query_5end_nucleotides[i] != subject_5end_nucleotides[i] )
 						extended_5end_mismatch++
 				}
-			# restart the mismtach variable at 0 value
+			# Restart the mismtach variable at 0 value.
 				extended_3end_mismatch=0
-			# Calculate mismatch for 3end by looping through the nucleotide arrays and comparing by the i position
-			# if the nucleotide is different, sum 1 to the mismatch variable
+			# Calculate mismatch for 3'-end by looping through the nucleotide arrays and comparing by the i position,
+			# if the nucleotide is different, sum 1 to the mismatch variable.
 				for (i=1; i <= length(query_3end_extended_sequence); i++) {
 					if ( query_3end_nucleotides[i] != subject_3end_nucleotides[i] )
 						extended_3end_mismatch++

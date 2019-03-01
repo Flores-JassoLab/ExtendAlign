@@ -1,25 +1,25 @@
-##
+### mk-create_EAfasta ###
 # mkfile script with dependency rules for:
-#		1. Transforming a fasta file to Extend Aling fasta format
+#	1. Transforming a fasta file to ExtendAling fasta format.
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
-## Define shell command line which will be used to run recipes
+## Define shell command line which will be used to run scripts.
 MKSHELL=/bin/bash
 
-## Use seqkit and awk to add sequence length to the sequence headers in a fasta file
+## Use seqkit and awk to add sequence length to the sequence headers in a fasta file.
 ## seqkit solution taken from the answer of user "SmallChess" at https://www.biostars.org/p/235052/
 %.EAfa: %
-	## use seqkit to transform fasta to column separated format, including the sequence length
+	## Use seqkit to transform fasta to column separated format, including the sequence length.
 	## seqkit STDOUT in this line follows the bellow format:
 	##			Sequence_ID Nucleotide_sequence Sequence_length
 	seqkit fx2tab --length $prereq \
 	| awk '
-			## Use \n as field separator to reform fasta line format
+			## Use \n as field separator to reform fasta line format.
 			BEGIN{OFS="\n"}
 			## Add ">" as fasta header, followed by the Sequence_length ($3) reported by seqkit,
 			## ^^ then a custom separator string "{EA}", the Sequence_ID ($1),
-			## ^^ and finally, separated by a newline, the Nucleotide_sequence ($2)
+			## ^^ and finally, separated by a newline, the Nucleotide_sequence ($2).
 			{ print ">"$3"{EA}"$1, $2}
 		' > $target.build \
 	&& mv $target.build $target

@@ -1,28 +1,28 @@
-##
+### mk-append_nohits ###
 # mkfile script with dependency rules for:
-#		1. Appending rows for queries that had no hit in the EA blastn results
-#		2. Basic blastn command line tool does not explicitly report when a query had no hit, so we append this info
+#	1. Appending rows for queries that had no hit in the ExtendAlign HSe-blastn results.
+#	2. Basic blastn command line tool does not explicitly report when a query had no hit, so we append this info.
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
-## Define shell command line which will be used to run recipes
+## Define shell command line which will be used to run recipes.
 MKSHELL=/bin/bash
 
-## Append the rows with no-hit queries to the EA blastn result TSV
+## Append the rows with no-hit queries to the ExtendAlign HSe-blastn result TSV.
 %.with_nohits.tsv: %.recalculatedmm.tsv %.nohit_results.tmp
 	cat $prereq > $target.build \
 	&& mv $target.build $target
 
-## Create rows with nohit values ("." char) for queries with no hit
+## Create rows with nohit values ("." char) for queries with no hit.
 %.nohit_results.tmp: %.queries_with_hits.tmp %.all_intitial_queries.tmp
-	## concatenate query ids from prereqs
-	# sort them
-	# print the unique lines (i.e. lines that appeared only in one of the prereq files)
+	## Concatenate query ids from prereqs
+	# Sort them
+	# Print unique lines (i.e. lines that appeared only in one of the prereq files)
 	#	^^ code assumes that if a query id appeared only once, it was in the "all_initial_queries.tmp" file
-	#	^^ and that said query id were absent from the "queries_with_hits.tmp" file that comes from the EA blastn results table
+	#	^^ and that said query id were absent from the "queries_with_hits.tmp" file that comes from the ExtendAlign HSe-blastn results table
 	## Once the query ids with no hit have been found,
-	# for each one, create a EA blastn result line, filling every field with a "." value except the subject id value
-	# subject id value will be set to "NO_HIT"
+	# for each one, create an ExtendAlign HSe-blastn result line, filling every field with a "." value except the subject id value
+	# subject id value will be set to "NO_HIT".
 	## For code legibility sake, we are going to use awk to make explicit definitions of every value corresponding to a EA blastn record
 	cat $prereq \
 	| sort \
@@ -36,8 +36,8 @@ MKSHELL=/bin/bash
 				qseqid=$1
 			## Define subject of alignment as NO_HIT
 				sseqid="NO_HIT"
-			## explicit definition of column values, for code legibility we will assign blocks ov values,
-			# 	^^altough most of them will use a dot character
+			## Explicit definition of column values, for code legibility we will assign blocks or values,
+			# 	^^altough most of them will use a dot (.) character
 				qlength="."
 				slength="."
 				pident="."
@@ -89,22 +89,22 @@ MKSHELL=/bin/bash
 		' > $target.build \
 		&& mv $target.build $target
 
-## Extract query id from the EA blastn results table
+## Extract query id from ExtendAlign HSe-blastn results table
 %.queries_with_hits.tmp: %.recalculatedmm.tsv
-	## remove header with tail -n+2
-	# extract query ID from column 2 (cut -f2)
-	# sort by queryID alphanumerically (-V) and keep only unique lines (-u)
+	## Remove header with tail -n+2
+	# Extract query ID from column 2 (cut -f2)
+	# Sort by queryID alphanumerically (-V) and keep only unique lines (-u)
 	tail -n+2 $prereq \
 	| cut -f2 \
 	| sort -V -u > $target.build \
 	&& mv $target.build $target
 
-## Extract a list of unique query id from the EA fasta file, the same fasta file that was used as input for the mk-HSe-blastn module
+## Extract a list of unique query id from the ExtendAlign fasta file, the same fasta file that was used as input for the mk-HSe-blastn module
 %.all_intitial_queries.tmp: %.EAfa
-	## extract all fasta headers with grep
-	# using sed: delete ">" char	and split query length and query id by replacing the EA custom sep string "{EA}" with tabs
-	# keep only field 2, which contains the query id
-	# sort by queryID alphanumerically (-V) and keep only unique lines (-u)
+	## Extract all fasta headers with grep
+	# Using sed: delete ">" char and split query length and query id by replacing the ExtendAlign custom sep string "{EA}" with tabs
+	# Keep only field 2, which contains the query id
+	# Sort by query ID alphanumerically (-V) and keep only unique lines (-u)
 	grep "^>" $prereq \
 	| sed -e "s#>##" -e "s#{EA}#\t#" \
 	| cut -f2 \

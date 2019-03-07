@@ -8,7 +8,6 @@
 /results*/
 /reports*/
 condor*
-/config*/
 config.mk
 /ignore/*
 /prueba*/

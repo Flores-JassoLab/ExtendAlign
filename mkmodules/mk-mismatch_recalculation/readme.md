@@ -2,7 +2,7 @@
 **Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 **Date:** February-2019
 
-## To-do:
+## TODO:
 NONE
 
 ## Module description:

@@ -2,7 +2,7 @@
 **Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 **Date:** February-2019
 
-## To-do:
+## TODO:
  (*iaguilar*) Clean code comments. There is a lot of narrative redundancy, although extensive commentary IS necessary since the module performs several complex tasks. Maybe a `devnotes/` dir and files could be used to explain in extend what code does and the reason of it.
  (*iaguilar*) Create pdf file with images or diagrams explaining the method for fasta extraction, since it makes use of bed intermediates and coordinate correction, which is really not that human friendly to understand even from extensive code comments.
 

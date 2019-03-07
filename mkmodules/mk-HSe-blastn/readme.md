@@ -2,7 +2,7 @@
 **Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 **Date:** February-2019
 
-## To-do:
+## TODO:
 NONE
 
 ## Module Description:

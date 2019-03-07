@@ -3,7 +3,7 @@
 **Date:** February-2019
 
 
-## To-do:
+## TODO:
   (*iaguilar*) Test if this module works with whole genome fasta files or with fasta file with big contigs.
 
 ## Module Description:

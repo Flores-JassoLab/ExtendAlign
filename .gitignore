@@ -38,3 +38,6 @@ test/data/query/Extend_Align_results/
 
 ## Ignore results directories
 *results*/
+
+## Ignore .orig files created during git conflict solving
+*.orig

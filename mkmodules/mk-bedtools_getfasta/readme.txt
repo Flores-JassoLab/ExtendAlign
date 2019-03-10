@@ -60,7 +60,7 @@ Input:
 
 Output:
   A custom blastn output TAB separated file, with .extended_nucleotides.tsv extension.
-  This extended nucleotides file contains extra columns for the common blastn format and .EAcoordinates.tsv format
+  This extended nucleotides file contains extra columns for the EAblastn format and .EAcoordinates.tsv format
   Example line(s):
   ````
   qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand q5end_extension_length q3end_extension_length s5end_extension_length s3end_extension_length overlap5end_extension_length overlap3end_extension_length q5end_extension_start q5end_extension_end q3end_extension_start q3end_extension_end s5end_extension_start s5end_extension_end s3end_extension_start s3end_extension_end strand query_5end_extended_nt query_3end_extended_nt subject_5end_extended_nt subject_3end_extended_nt
@@ -79,7 +79,7 @@ Output:
   subject_3end_extended_nt: Query extended nucleotides at the 5' end
   """"
   Note(s):
-    - *extended_nt columns should contain only ATCG characters; for RNA query of subject sequences you have to take into considerations that T's represent U's, changed for the sake of harmony in downstream comparison
+    - *extended_nt columns should contain only ATCG characters; for RNA query of subject sequences you have to take into consideration that T's represent U's, changed for the sake of harmony in downstream comparison
     - *extended_nt columns will contain the "." character when no extension was necessary
     - *extended_nt columns will contain the "ERR" value if something went wrong with the extension
 

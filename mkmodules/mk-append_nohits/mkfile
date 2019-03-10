@@ -36,7 +36,7 @@ MKSHELL=/bin/bash
 				qseqid=$1
 			## Define subject of alignment as NO_HIT
 				sseqid="NO_HIT"
-			## explicit definition of column values, for code legibility we will assign blocks ov values,
+			## explicit definition of column values, for code legibility we will assign blocks of values,
 			# 	^^altough most of them will use a dot character
 				qlength="."
 				slength="."
@@ -51,6 +51,12 @@ MKSHELL=/bin/bash
 				evalue="."
 				bitscore="."
 				sstrand="."
+				qseq="."
+				sseq="."
+				qmismatch_in_gap="."
+				smismatch_in_gap="."
+				query_mismatch="."
+				subject_mismatch="."
 				q5end_extension_length="."
 				q3end_extension_length="."
 				s5end_extension_length="."
@@ -72,19 +78,23 @@ MKSHELL=/bin/bash
 				subject_3end_extended_nt="."
 				extended_5end_mismatch="."
 				extended_3end_mismatch="."
+				query_overhang_5end_mismatch="."
+				query_overhang_3end_mismatch="."
 				total_mismatch="."
-				extended_alignment_length="."
 				extend_align_pident="."
 			###
 			## Print values
 				print qlength, qseqid, slength, sseqid, pident, alnlength, mismatch, gaps, qstart, qend,
-							sstart, send, evalue, bitscore, sstrand, q5end_extension_length, q3end_extension_length,
+							sstart, send, evalue, bitscore, sstrand,
+							qseq, sseq,	qmismatch_in_gap, smismatch_in_gap, query_mismatch, subject_mismatch,
+							q5end_extension_length, q3end_extension_length,
 							s5end_extension_length, s3end_extension_length, overlap5end_extension_length,
 							overlap3end_extension_length, q5end_extension_start, q5end_extension_end, q3end_extension_start,
 							q3end_extension_end, s5end_extension_start, s5end_extension_end, s3end_extension_start,
 							s3end_extension_end, strand, query_5end_extended_nt, query_3end_extended_nt, subject_5end_extended_nt,
-							subject_3end_extended_nt, extended_5end_mismatch, extended_3end_mismatch, total_mismatch,
-							extended_alignment_length, extend_align_pident
+							subject_3end_extended_nt, extended_5end_mismatch, extended_3end_mismatch,
+							query_overhang_5end_mismatch,	query_overhang_3end_mismatch,
+							total_mismatch, extend_align_pident
 			}
 		' > $target.build \
 		&& mv $target.build $target

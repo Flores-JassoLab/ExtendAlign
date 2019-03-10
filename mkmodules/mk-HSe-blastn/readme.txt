@@ -31,12 +31,12 @@ Output:
 	A custom blastn output TAB separated file, with .blastn.tsv extension
 	Example line(s):
 	````
-  qlength qseqid  slength sseqid  pident  length  mismatch        gaps    qstart  qend    sstart  send      evalue  bitscore        sstrand
-  22      hsa-let-7a-5p.MIMAT0000062      96      mmu-let-7a-2.MI0000557  100.000 22      0       0122      17      38      6.54e-06        35.9    plus
+	qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand qseq sseq
+	22 hsa-let-7a-5p.MIMAT0000062 96 mmu-let-7a-2.MI0000557 100.000 22 0 0 1 22 17 38 6.54e-06 35.9 plus TGAGGTAGTAGGTTGTATAGTT TGAGGTAGTAGGTTGTATAGTT
 	````
 	Note(s):
 	- "qlength" and "slength" columns are custom Extend Align outputs
-  - Basic column description taken from: https://www.ncbi.nlm.nih.gov/books/NBK279684/
+  - Basic blastn column description taken from: https://www.ncbi.nlm.nih.gov/books/NBK279684/
 
   Output File Column Descriptions:
   """"
@@ -55,6 +55,8 @@ Output:
   evalue: Expect value
   bitscore: Bit score
   sstrand: Subject Strand where the alignment hit was located
+	qseq: Aligned part of query sequence
+	sseq: Aligned part of subject sequence
   """"
 
 Module parameters:

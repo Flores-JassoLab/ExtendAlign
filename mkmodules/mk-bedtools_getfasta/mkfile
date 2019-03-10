@@ -100,11 +100,11 @@ MKSHELL=/bin/bash
 ## The bed must contain the sequence id, which is in the following fields:
 # column 2 = qseqid
 ## Also, for query5end, the columns with the coordinates are in the following fields:
-# column 22 = q5end_extension_start
-# column 23 = q5end_extension_end
+# column 28 = q5end_extension_start
+# column 29 = q5end_extension_end
 ## Then in accordance with the BED format (see https://genome.ucsc.edu/FAQ/FAQformat.html#format1), we include a dummy (".") value for the "name" and "score" bed columns
 ## Finally, the symbol for hit strandness is in the field:
-# column 30 = strand
+# column 36 = strand
 #	!NOTE: For query coordinates, strand should always be "+" since blastn results always report query coordinates in the plus strand
 ## In the end, this bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
@@ -121,8 +121,8 @@ MKSHELL=/bin/bash
 			# Definition of bed column values before printing
 			# ^^see recipe comments above for more info
 				sequence_id = $2
-				extension_start = $22
-				extension_end = $23
+				extension_start = $28
+				extension_end = $29
 				dummy_name = "."
 				dummy_score = "."
 			# For query coordinates, strand should always be "+"
@@ -215,11 +215,11 @@ MKSHELL=/bin/bash
 ## The bed must contain the sequence id, which is in the following fields:
 # column 2 = qseqid
 ## Also, for query3end, the columns with the coordinates are in the following fields:
-# column 24 = q3end_extension_start
-# column 25 = q3end_extension_end
+# column 30 = q3end_extension_start
+# column 31 = q3end_extension_end
 ## Then in accordance with the BED format (see https://genome.ucsc.edu/FAQ/FAQformat.html#format1), we include a dummy (".") value for the "name" and "score" bed columns
 ## Finally, the symbol for hit strandness is in the field:
-# column 30 = strand
+# column 36 = strand
 #	!NOTE: For query coordinates, strand should always be "+" since blastn results always report query coordinates in the plus strand
 ## In the end, this bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
@@ -236,8 +236,8 @@ MKSHELL=/bin/bash
 			# Definition of bed column values before printing
 			# ^^see recipe comments above for more info
 				sequence_id = $2
-				extension_start = $24
-				extension_end = $25
+				extension_start = $30
+				extension_end = $31
 				dummy_name = "."
 				dummy_score = "."
 			# For query coordinates, strand should always be "+"
@@ -338,11 +338,11 @@ MKSHELL=/bin/bash
 ## The bed must contain the sequence id, which is in the following fields:
 # column 4 = sseqid
 ## Also, for subject5end, the columns with the coordinates are in the following fields:
-# column 26 = s5end_extension_start
-# column 27 = s5end_extension_end
+# column 32 = s5end_extension_start
+# column 33 = s5end_extension_end
 ## Then in accordance with the BED format (see https://genome.ucsc.edu/FAQ/FAQformat.html#format1), we include a dummy (".") value for the "name" and "score" bed columns
 ## Finally, the symbol for hit strandness is in the field:
-# column 30 = strand
+# column 36 = strand
 ## In the end, the bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
 %.subject5end.bed.tmp: %.EAcoordinates.tsv
@@ -358,11 +358,11 @@ MKSHELL=/bin/bash
 			# Definition of bed column values before printing
 			# ^^see recipe comments above for more info
 				sequence_id = $4
-				extension_start = $26
-				extension_end = $27
+				extension_start = $32
+				extension_end = $33
 				dummy_name = "."
 				dummy_score = "."
-				strand = $30
+				strand = $36
 			###
 			# print bed columns
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand
@@ -459,11 +459,11 @@ MKSHELL=/bin/bash
 ## The bed must contain the sequence id, which is in the following fields:
 # column 4 = sseqid
 ## Also, for subject3end, the columns with the coordinates are in the following fields:
-# column 28 = s3end_extension_start
-# column 29 = s3end_extension_end
+# column 34 = s3end_extension_start
+# column 35 = s3end_extension_end
 ## Then in accordance with the BED format (see https://genome.ucsc.edu/FAQ/FAQformat.html#format1), we include a dummy (".") value for the "name" and "score" bed columns
 ## Finally, the symbol for hit strandness is in the field:
-# column 30 = strand
+# column 36 = strand
 ## In the end, the bed file contains the following TAB separated columns: sequence_id extension_start extension_end dummy_name dummy_score strand
 ## A simple AWK recipe will do the job
 %.subject3end.bed.tmp: %.EAcoordinates.tsv
@@ -479,11 +479,11 @@ MKSHELL=/bin/bash
 			# Definition of bed column values before printing
 			# ^^see recipe comments above for more info
 				sequence_id = $4
-				extension_start = $28
-				extension_end = $29
+				extension_start = $34
+				extension_end = $35
 				dummy_name = "."
 				dummy_score = "."
-				strand = $30
+				strand = $36
 			###
 			# print bed columns
 				print sequence_id, extension_start, extension_end, dummy_name, dummy_score, strand

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## This small script creates the targets for mk, then makes a request for each of them
-## It works with the following fasta file extensions: ".with_nohits.tsv"
+## It works with the following file extensions: ".with_nohits.tsv"
 ## This files will be defined as the primary prereqs for mk
 ## The names of the final targets for mk will be defined by replacing the .with_nohits.tsv extension with: "_EA_report.tsv"
   ## ^^since at the end of the summary process, *_EA_report.tsv files are created

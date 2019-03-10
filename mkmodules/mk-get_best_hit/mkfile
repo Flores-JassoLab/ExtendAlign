@@ -1,7 +1,7 @@
 ##
 # mkfile script with dependency rules for:
-#		1. Extracting the best hit result for each query in a blastn output file
-#		2. First, the script will sort the blastn output by alignment length and number of mismatches
+#		1. Extracting the best hit result for each query in an EA blastn output file
+#		2. First, the script will sort the EA blastn output by alignment length and number of query mismatches (this already takes into account gap configurations)
 #		3. Then, awk will print only the first time a query ID appears
 #		4. In the end, we will keep one line of blastn results per each queryID
 #
@@ -11,23 +11,20 @@
 MKSHELL=/bin/bash
 
 ## Use sort to find the best hits by ordering blastn results by longest alignment (field 6 in the blastn results),
-##	^^then by least number of mismatches (field 7 in the blastn results),
-##	^^then by least number of gaps (field 8 in the blastn results),
+##	^^then by least number of query mismatches (field 20 in the customized EA blastn results),
 ## then run awk, checking the query sequence ID column ($2), to print lines only the first time a query ID appears (seen[ ]++)
-%.blastnbesthit.tsv: %.blastn.tsv
+%.EAblastnbesthit.tsv: %.EAblastn.tsv
 	# put the original header into the temporary target
 	head -n1 $prereq > $target.build
 	# run tail -n+2 to avoid sorting the header
 	# sort numerically descending field 6 (alignment length)
-	# then, numerically ascending field 7 (number of mismatches)
-	# then, numerically ascending field 8 (number of gaps)
+	# then, numerically ascending field 20 (number of query mismatches)
 	# the sorted lines will pass to awk to print lines only the first time a query ID appears (seen[$2]++)
 	# finally, results are appended to the temporary target that contains the original header
 	tail -n+2 $prereq \
 	| sort \
 		-k 6,6nr \
-		-k 7,7n \
-		-k 8,8n \
+		-k 20,20n \
 	| awk ' !seen[$2]++ ' \
 	>> $target.build \
 	&& mv $target.build $target

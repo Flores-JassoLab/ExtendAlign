@@ -3,10 +3,12 @@
 #		1. Adding recalculated EApident (Extend Align percent identity) values to a custom EA blastn results table
 #		2. Recalculation is performed by comparing extended nucleotides beyond the original blastn alignment coordinates
 #		3. Extended number of mismatches is performed by comparing nucleotide strings position by position
-#		4. Total mismatches is calculated as: extended mismatches + blastn mismatches + blastn number of nt gaps
-#		5. extended alignment length is calculated as: length + overlap5end_extension_length + overlap3end_extension_length
-#		6. EApident is calculated as: (extended_alignment_length - total mismatches) / extended alignment length * 100
-#		7. In the end, a .recalculatedmm.tsv file is created, with each original EA blastn hit plus new columns that contain the recalculated values for EApident
+#		4. Total mismatches is calculated as:
+#					extended mismatches +
+#					EAblastn query mismatches (this includes original blastn mm plus EA mm found in the gaps) +
+#					query overhang nucleotides (nucleotides in the query not used by the extension process are considered as mismatches)
+#		5. EApident is calculated from a QUERY point of view as: (query_length - total mismatches) / query length * 100
+#		6. In the end, a .recalculatedmm.tsv file is created, with each original EA blastn hit plus new columns that contain the recalculated values for EApident
 #
 ## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
@@ -18,36 +20,37 @@ MKSHELL=/bin/bash
 %.recalculatedmm.tsv: %.extended_nucleotides.tsv
 	#		extended_5end_mismatch: by positional comparison of extended sequences at Query 5'end vs Subject 5'end
 	#		extended_3end_mismatch: by positional comparison of extended sequences at Query 3'end vs Subject 3'end
-	#		total_mismatch: by summing the values at extended_5end_mismatch + extended_3end_mismatch + mismatch + gaps (see readme.txt for column definition)
-	#		extended_alignment_length: by blastn reported alignment length + overlap5end_extension_length + overlap3end_extension_length
-	#		^^in human terms: the original alignment length reported by blastn, plus the number of nucleotides used by EA to compare 5' and 3' ends against the subject
-	#		extend_align_pident: as percentage, by (extended_alignment_length - total mismatches) / extended alignment length * 100
+	#		query_overhang_5end_mismatch: by substracting: q5end_extension_length - overlap5end_extension_length
+	#		query_overhang_3end_mismatch: by substracting: q3end_extension_length - overlap3end_extension_length
+	#		total_mismatch: by summing the values at extended_5end_mismatch + extended_3end_mismatch + query mismatch
+	#		extend_align_pident: as percentage, by (query_length - total_mismatches) / query_length * 100
 	awk '
 		###
 		# Definition of input and output Field Separator as tab
 		BEGIN { FS=OFS="\t" }
 		# Append new column names to header
-		NR == 1 { print $0, "extended_5end_mismatch", "extended_3end_mismatch", "total_mismatch", "extended_alignment_length", "extend_align_pident"}
+		NR == 1 { print $0, "extended_5end_mismatch", "extended_3end_mismatch", "query_overhang_5end_mismatch", "query_overhang_3end_mismatch", "total_mismatch","extend_align_pident"}
 		# Operate in rows other than header, which is the first line (NR higher than 1)
 		NR > 1 {
 			###
 			# Definition of important input columns
 				query_length= $1
-				blastn_alignment_length= $6
-				blastn_mismatch= $7
-				blastn_gaps= $8
-				overlap5end_extension_length= $20
-				overlap3end_extension_length= $21
-				query_5end_extended_sequence= $31
-				query_3end_extended_sequence= $32
-				subject_5end_extended_sequence= $33
-				subject_3end_extended_sequence= $34
+				query_mismatch= $20
+				q5end_extension_length= $22
+				q3end_extension_length= $23
+				overlap5end_extension_length= $26
+				overlap3end_extension_length= $27
+				query_5end_extended_sequence= $37
+				query_3end_extended_sequence= $38
+				subject_5end_extended_sequence= $39
+				subject_3end_extended_sequence= $40
 			###
 			# Start the final calculation variables with ERR values
 				extended_5end_mismatch= "ERR"
 				extended_3end_mismatch= "ERR"
+				query_overhang_5end_mismatch= "ERR"
+				query_overhang_5end_mismatch= "ERR"
 				total_mismatch= "ERR"
-				extended_alignment_length= "ERR"
 				extend_align_pident= "ERR"
 			###
 			# Split the extended Query 5 end nucleotides by character into an array
@@ -77,12 +80,13 @@ MKSHELL=/bin/bash
 					if ( query_3end_nucleotides[i] != subject_3end_nucleotides[i] )
 						extended_3end_mismatch++
 				}
+			## Calculate mismatches from overhang nucleotides not used by the extension process
+				query_overhang_5end_mismatch= q5end_extension_length - overlap5end_extension_length
+				query_overhang_3end_mismatch= q3end_extension_length - overlap3end_extension_length
 			## Calculate total mismatches by extended_5end_mismatch + extended_3end_mismatch + mismatch + gaps
-				total_mismatch= extended_5end_mismatch + extended_3end_mismatch + blastn_mismatch + blastn_gaps
-			## Calculate extended alignment length
-				extended_alignment_length= blastn_alignment_length + overlap5end_extension_length + overlap3end_extension_length
+				total_mismatch= extended_5end_mismatch + extended_3end_mismatch + query_mismatch + query_overhang_5end_mismatch + query_overhang_3end_mismatch
 			## Calculate by (extended_alignment_length - total_mismatch) / extended_alignment_length multiplied by 100 for percentage notation
-				extend_align_pident= (extended_alignment_length - total_mismatch)/ extended_alignment_length * 100
-		print $0, extended_5end_mismatch, extended_3end_mismatch, total_mismatch, extended_alignment_length, extend_align_pident
+				extend_align_pident= (query_length - total_mismatch)/ query_length * 100
+		print $0, extended_5end_mismatch, extended_3end_mismatch, query_overhang_5end_mismatch, query_overhang_3end_mismatch, total_mismatch, extend_align_pident
 		} ' $prereq > $target.build \
 		&& mv $target.build $target

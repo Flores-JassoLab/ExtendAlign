@@ -7,7 +7,7 @@
 ## Define shell command line which will be used to run recipes
 MKSHELL=/bin/bash
 
-## Uuse blastn makeblastdb to create the battery of blast database files
+## Use blastn makeblastdb to create the battery of blast database files
 ## Here, we only request the .nsq file, but every other db file will be crated along
 %.nsq: %
 	makeblastdb \

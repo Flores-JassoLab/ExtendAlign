@@ -9,16 +9,16 @@
 MKSHELL=/bin/bash
 
 ## Use blastn to compare a fasta query file ($prereq) with a previouly created blast DataBase
-## BLAST_DATABASE and BLAST_THREADS has to be parameters passed from the CLI execution
+## BLAST_DATABASE, BLAST_MAX_TARGET_SEQS, BLAST_EVALUE, BLAST_THREADS and BLAST_STRAND have to be parameters passed from the CLI execution
 ## 	^^ see this submodule readme.txt file for parameter definition
 %.blastn.tsv: %.EAfa
 	## Since blast results come with no header by default, first we print the header line for the results
 	##	^^ for code readability, we code the header names separated by commas and then replace them (tr) by tabs
 	## 	^^ please note that our header definition adds the qlength and slength to the -outfmt requested to blastn
-	echo "qlength,qseqid,slength,sseqid,pident,length,mismatch,gaps,qstart,qend,sstart,send,evalue,bitscore,sstrand" \
+	echo "qlength,qseqid,slength,sseqid,pident,length,mismatch,gaps,qstart,qend,sstart,send,evalue,bitscore,sstrand,qseq,sseq" \
 	| tr "," "\t" > $target.build
-	## Now, to proper blasting; blastn results will be appended to results file with header
-	## before appending them, well parse them with sed to change the EA custom separator for a tab
+	## Now, on to proper blasting; blastn results will be appended to results file with header
+	## before appending them, we will parse them with sed to change the EA custom separator for a tab
 	##	^^this will place the query and subject original length number in every line
 	blastn \
 		-query $prereq \
@@ -35,6 +35,6 @@ MKSHELL=/bin/bash
 		-evalue $BLAST_EVALUE \
 		-num_threads $BLAST_THREADS \
 		-strand $BLAST_STRAND \
-		-outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand" \
+		-outfmt "6 qseqid sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand qseq sseq" \
 	| sed "s#{EA}#\t#g" >> $target.build \
 	&& mv $target.build $target

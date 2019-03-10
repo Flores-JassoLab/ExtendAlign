@@ -32,3 +32,9 @@ test/data/query/Extend_Align_results/
 ## ignore .fai files
 ## If needed by bedtools, they are created during the run by bedtools itself
 *.fai
+
+## ignore temporary files
+*.tmp
+
+## Ignore results directories
+*results*/

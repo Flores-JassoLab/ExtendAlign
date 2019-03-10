@@ -8,7 +8,7 @@ The FLORES-JASSO LAB presents...
 - A Short Sequence Extended Alignment tool
 
 ==================================================================
-Version: 0.2.0
+Version: 0.2.2
 Project repository: https://github.com/Flores-JassoLab/ExtendAlign
 ==================================================================
 Authors:
@@ -37,7 +37,8 @@ Pre-processing:
 
 Core-processing:
   _001_blastn_alignment
-    _001sub1_keep_besthits
+	_001x1_recalculate_gap_mismatches
+  	_001sub1_keep_besthits
   _002_add_EA_coordinates_for_extraction
   _003_add_EA_extension_nucleotides
   _004_add_EA_percent_identity
@@ -93,7 +94,7 @@ def helpMessage() {
   Define pipeline version
   If you bump the number, remember to bump it in the header description at the begining of this script too
 */
-version = "0.2.1"
+version = "0.2.2"
 
 /*//////////////////////////////
   Define pipeline Name
@@ -322,6 +323,9 @@ module_mk_B2_subject_blastDB_creation = "${workflow.projectDir}/mkmodules/mk-cre
 /* _001_blastn_alignment */
 module_mk_001_blastn_alignment = "${workflow.projectDir}/mkmodules/mk-HSe-blastn"
 
+/* _001x1_recalculate_gap_mismatches */
+module_mk_001x1_recalculate_gap_mismatches = "${workflow.projectDir}/mkmodules/mk-recalculate_ngap"
+
 /* _001sub1_keep_besthits */
 module_mk_001sub1_keep_besthits = "${workflow.projectDir}/mkmodules/mk-get_best_hit"
 
@@ -480,10 +484,35 @@ process _001_blastn_alignment {
 
 }
 
+/* Process _001x1_recalculate_gap_mismatches */
+
+/* Read mkfile module files */
+Channel
+	.fromPath("${module_mk_001x1_recalculate_gap_mismatches}/*")
+	.toList()
+	.set{ mkfiles_001x1 }
+
+process _001x1_recalculate_gap_mismatches {
+
+	publishDir "${intermediates_dir}/_001x1_recalculate_gap_mismatches/",mode:"copy"
+
+	input:
+  file tsv from results_001_blastn_alignment
+	file mk_files from mkfiles_001x1
+
+	output:
+  file "*.EAblastn.tsv" into results_001x1_recalculate_gap_mismatches
+
+	"""
+  bash runmk.sh
+	"""
+
+}
+
 /*
   ==Pipeline branching point==
   If user asked for --number_of_hits "best" hit mode
-  then the results_001_blastn_alignment channel have to pass for the _001sub1_keep_besthits
+  then the results_001x1_recalculate_gap_mismatches channel have to pass for the _001sub1_keep_besthits
 */
 
 if ( params.number_of_hits == "best") {
@@ -501,11 +530,11 @@ if ( params.number_of_hits == "best") {
   	publishDir "${intermediates_dir}/_001sub1_keep_besthits/",mode:"copy"
 
   	input:
-    file blastn_tsv from results_001_blastn_alignment
+    file blastn_tsv from results_001x1_recalculate_gap_mismatches
   	file mk_files from mkfiles_001sub1
 
   	output:
-    file "*.blastnbesthit.tsv" into results_001sub1_keep_besthits
+    file "*.EAblastnbesthit.tsv" into results_001sub1_keep_besthits
 
   	"""
     bash runmk.sh
@@ -517,7 +546,7 @@ if ( params.number_of_hits == "best") {
 
 /*
   To handle the user option of --number_of_hits = "best" | "all"
-  Let's conditionaly define the channel that will become the input for the next process: _002_add_EA_coordinates_for_extraction
+  Let's conditionally define the channel that will become the input for the next process: _002_add_EA_coordinates_for_extraction
 */
 
 if ( params.number_of_hits == "best" ) {
@@ -525,8 +554,8 @@ if ( params.number_of_hits == "best" ) {
   results_001sub1_keep_besthits
     .set{ conditional_input_for_002 }
 } else {
-  // directly use the channel from the normal blastn process
-  results_001_blastn_alignment
+  // directly use the channel from the normal EAblastn process
+  results_001x1_recalculate_gap_mismatches
     .set{ conditional_input_for_002 }
 }
 

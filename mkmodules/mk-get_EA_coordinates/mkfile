@@ -11,13 +11,13 @@ MKSHELL=/bin/bash
 
 ## Extract the coordinates where alignment extension should be performed
 # As of this version (FEB 2019) coordinate extarction is performed by an auxiliary script to improve code legibility
-# since we need to create 2 very similar recipes or mk rule in this mkfile, to handle both .blastn.tsv or .blastnbesthit.tsv file extension
+# ^^since we need to create 2 very similar recipes or mk rule in this mkfile, to handle both .blastn.tsv or .blastnbesthit.tsv file extension
 # rule for .blastnbesthit.tsv extension prereq
-%.EAcoordinates.tsv: %.blastnbesthit.tsv
+%.EAcoordinates.tsv: %.EAblastnbesthit.tsv
 	bash coordinate_definition.sh $prereq > $target.build \
 	&& mv $target.build $target
 
 ## Same rule as above, but for .blastn.tsv extension prereq
-%.EAcoordinates.tsv: %.blastn.tsv
+%.EAcoordinates.tsv: %.EAblastn.tsv
 	bash coordinate_definition.sh $prereq > $target.build \
 	&& mv $target.build $target

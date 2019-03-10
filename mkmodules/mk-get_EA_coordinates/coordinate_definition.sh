@@ -29,8 +29,8 @@ INPUT_FILE="$1"
 # 8. Define the coordinates for the query 3' start and end of extension
 # 9. Define the coordinates for the subject 5' start and end of extension
 # 10. Define the coordinates for the subject 3' start and end of extension
-## All of the above may see like a hassle just to get to points 7-10, but as of this version (article preprint, FEB 2019), explicit printing of the intermediate values is important for debugging
-## Also, this may look cleaner in R, but that would introduce an extra requirement other than good ol' awk
+## All of the above may seem like a hassle just to get to points 7-10, but as of this version (article preprint, FEB 2019), explicit printing of the intermediate values is important for debugging
+## Also, this may look cleaner in R, but that would introduce an extra pipeline requirement other than good ol' awk
 awk '
   ###
   # Definition of input and output Field Separator as tab

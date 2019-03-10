@@ -21,12 +21,12 @@ Module Dependencies:
 	NONE
 
 Input:
-  A custom blastn output TAB separated file, with .blastn.tsv or .blastnbesthit.tsv extension
+  A custom blastn output TAB separated file, with .EAblastn.tsv or .EAblastnbesthit.tsv extension
   Example line(s):
   ````
-  qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand
-  26 hsa-miR-1226-5p.MIMAT0005576 71 mmu-mir-6927.MI0022774 76.923 26 6 0 1 26 1 26 0.039 23.5 plus
-  26 hsa-miR-4700-3p.MIMAT0019797 79 mmu-mir-700.MI0004684 69.231 26 8 0 1 26 28 3 2.8 17.3 minus
+	qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand qseq sseq qmismatch_in_gap smismatch_in_gap query_mismatch subject_mismatch
+	26 hsa-miR-1226-5p.MIMAT0005576 71 mmu-mir-6927.MI0022774 76.923 26 6 0 1 26 1 26 0.039 23.5 plus GTGAGGGCATGCAGGCCTGGATGGGG GTGAGGGGATCCAGCCCAGGCTAGGG 0 0 6 6
+	26 hsa-miR-4700-3p.MIMAT0019797 79 mmu-mir-700.MI0004684 69.231 26 8 0 1 26 28 3 2.8 17.3 minus CACAGGACTGACTCCTCACCCCAGTG CACAGGAAGGAGCCTTACTCCCAGTG 0 0 8 8
   ````
 
   Note(s):
@@ -37,14 +37,14 @@ Output:
   This coordinates file contains extra columns for the common blastn format
 	Example line(s):
 	````
-  qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand q5end_extension_length q3end_extension_length s5end_extension_length s3end_extension_length overlap5end_extension_length overlap3end_extension_length q5end_extension_start q5end_extension_end q3end_extension_start q3end_extension_end s5end_extension_start s5end_extension_end s3end_extension_start s3end_extension_end strand
-  26 hsa-miR-1226-5p.MIMAT0005576 71 mmu-mir-6927.MI0022774 76.923 26 6 0 1 26 1 26 0.039 23.5 plus 0 0 0 45 0 0 1 1 26 26 1 1 26 26 +
-  26 hsa-miR-4700-3p.MIMAT0019797 79 mmu-mir-700.MI0004684 69.231 26 8 0 1 26 28 3 2.8 17.3 minus 0 0 51 2 0 0 1 1 26 26 28 28 3 3 -
+	qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand qseq sseq qmismatch_in_gap smismatch_in_gap query_mismatch subject_mismatch q5end_extension_length q3end_extension_length s5end_extension_length s3end_extension_length overlap5end_extension_length overlap3end_extension_length q5end_extension_start q5end_extension_end q3end_extension_start q3end_extension_end s5end_extension_start s5end_extension_end s3end_extension_start s3end_extension_end strand
+	26 hsa-miR-1226-5p.MIMAT0005576 71 mmu-mir-6927.MI0022774 76.923 26 6 0 1 26 1 26 0.039 23.5 plus GTGAGGGCATGCAGGCCTGGATGGGG GTGAGGGGATCCAGCCCAGGCTAGGG 0 0 6 6 0 0 0 45 0 0 1 1 26 26 1 1 26 26 +
+	26 hsa-miR-4700-3p.MIMAT0019797 79 mmu-mir-700.MI0004684 69.231 26 8 0 1 26 28 3 2.8 17.3 minus CACAGGACTGACTCCTCACCCCAGTG CACAGGAAGGAGCCTTACTCCCAGTG 0 0 8 8 0 0 51 2 0 0 1 1 26 26 28 28 3 3 -
 	````
   Note(s):
     - For this example, tabs ware replaced by simple white spaces
 
-  Output File Column Descriptions: see readme.txt in module mk-HSe-blastn for basic column description;
+  Output File Column Descriptions: see readme.txt in module mk-recalculate_ngap for basic column description;
   new columns are described as follows:
   """"
   q5end_extension_length: For Query, number of nucleotides at 5' end that were not included in the blastn reported alignment

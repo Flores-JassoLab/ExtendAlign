@@ -10,7 +10,7 @@ Module description: add recalculated EApident (Extend Align percent identity) va
   b. Recalculation is performed by positional comparison of corresponding extended nucleotides
   c. EApident is defined as the number of total MATCHES (taking into account extended align nucleotide comparison)
       ^^ in the Extended Alignment region (which is the original blastn alignment region + the nucleotides used to compare the 5'end and 3'end extensions)
-      ^^ divided by the Extended Alignment length
+      ^^ divided by the QUERY length
 
 Module Dependencies:
 	NONE
@@ -19,8 +19,8 @@ Input:
   A custom blastn output TAB separated file, with .extended_nucleotides.tsv extension
   Example line(s):
   ````
-  qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand q5end_extension_length q3end_extension_length s5end_extension_length s3end_extension_length overlap5end_extension_length overlap3end_extension_length q5end_extension_start q5end_extension_end q3end_extension_start q3end_extension_end s5end_extension_start s5end_extension_end s3end_extension_start s3end_extension_end strand query_5end_extended_nt query_3end_extended_nt subject_5end_extended_nt subject_3end_extended_nt
-  22 hsa-miR-642b-3p.MIMAT0018444 111 mmu-mir-6396.MI0021931 90.909 11 1 0 11 21 76 86 7.2 15.8 plus 10 1 75 25 10 1 1 11 21 22 66 76 86 87 + AGACACATTT C TATCCGGGCA A
+	qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart send evalue bitscore sstrand qseq sseq qmismatch_in_gap smismatch_in_gap query_mismatch subject_mismatch q5end_extension_length q3end_extension_length s5end_extension_length s3end_extension_length overlap5end_extension_length overlap3end_extension_length q5end_extension_start q5end_extension_end q3end_extension_start q3end_extension_end s5end_extension_start s5end_extension_end s3end_extension_start s3end_extension_end strand query_5end_extended_nt query_3end_extended_nt subject_5end_extended_nt subject_3end_extended_nt
+  22 hsa-miR-642b-3p.MIMAT0018444 111 mmu-mir-6396.MI0021931 90.909 11 1 0 11 21 76 86 7.2 15.8 plus GGAGAGGGACC GGAGAGGTACC 0 0 1 1 10 1 75 25 10 1 1 11 21 22 66 76 86 87 + AGACACATTT C TATCCGGGCA A
   ````
   Note(s):
     - For this example, tabs ware replaced by simple white spaces
@@ -36,16 +36,17 @@ Output:
   ````
   Note(s):
     - For this example, tabs ware replaced by simple white spaces
-    - Do note the last 5 columns, with the extended alignment data
+    - Do note the last 6 columns, with the extended alignment data
 
   Output File Column Descriptions: see readme.txt in module mk-bedtools_getfasta for previous column description;
   new columns are described as follows:
   """"
   extended_5end_mismatch: number of mismatches found when comparing, nt by nt, the strings in query_5end_extended_nt vs subject_5end_extended_nt
   extended_3end_mismatch: number of mismatches found when comparing, nt by nt, the strings in query_3end_extended_nt vs subject_3end_extended_nt
-  total_mismatch: total mismatches in the extended alignment; calculated as the sum of values in columns extended_5end_mismatch + extended_3end_mismatch + mismatch	+ gaps
-  extended_alignment_length: recalculated length of nucleotides included in the extended alignment; calculated as the sum of columns length + overlap5end_extension_length +	overlap3end_extension_length
-  extend_align_pident: recalculated percent identity when taking into account the total mismatch and extended alignment length
+	query_overhang_5end_mismatch: number of nucleotides not used by the extension at the query 5'end overhang
+	query_overhang_3end_mismatch: number of nucleotides not used by the extension at the query 3'end overhang
+  total_mismatch: total mismatches in the extended alignment; calculated as the sum of values in columns extended_5end_mismatch + extended_3end_mismatch + query_mismatch + query_overhang_5end_mismatch + query_overhang_3end_mismatch
+  extend_align_pident: recalculated percent identity when taking into account the total mismatch and QUERY length
   """"
   Note(s):
     - all of this columns should have integer values; no negative values should appear

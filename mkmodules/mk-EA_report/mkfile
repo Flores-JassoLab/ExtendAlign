@@ -12,32 +12,31 @@ MKSHELL=/bin/bash
 ## Simplify EA results into an output to be presented to the user
 # parse EA table with a simple awk
 %_EA_report.tsv: %.with_nohits.tsv
-	## extractcolumns of interest, which are: query id, subject id, query length, total mismatch, total match, identity
+	## extractcolumns of interest, which are: query id, subject id, query length, total mismatch, total match, blastn percent identity, EA percent identity
 	awk '
 		###
 		# Definition of input and output Field Separator as tab
 		BEGIN {OFS=FS="\t"}
 		## Replace header
-		NR == 1 { print "query_name", "subject_name", "query_length", "EA_alignment_length", "EA_total_mismatch", "EA_total_match", "EA_pident", "blastn_pident" }
+		NR == 1 { print "query_name", "subject_name", "query_length", "EA_total_mismatch", "EA_total_match", "EA_pident", "blastn_pident" }
 		## Summarize results
 		NR > 1 {
 			## Define important columns
 				query_name= $2
 				subject_name= $4
 				query_length= $1
-				EA_alignment_length= $38
-				EA_total_mismatch= $37
-				EA_pident= $39
+				EA_total_mismatch= $45
+				EA_pident= $46
 				blastn_pident= $5
 			##
 			# Restart value
 				EA_total_match="ERR"
-			# Calculate number of matches using EA length minus EA total mismatch
+			# Calculate number of matches using query length minus EA total mismatch
 			# TODO (iaguilar) it is posible to precalculate this and print it as a column in the mk-mismatch_recalculation module
-				EA_total_match= EA_alignment_length - EA_total_mismatch
+				EA_total_match= query_length - EA_total_mismatch
 			##
 			# Print summarized line
-			print query_name, subject_name, query_length, EA_alignment_length, EA_total_mismatch, EA_total_match, EA_pident, blastn_pident
+			print query_name, subject_name, query_length, EA_total_mismatch, EA_total_match, EA_pident, blastn_pident
 		}
 	' $prereq > $target.build \
 	&& mv $target.build $target

@@ -1,4 +1,4 @@
-##
+### mk-mismatch_recalculation ###
 # mkfile script with dependency rules for:
 #		1. Adding recalculated EApident (Extend Align percent identity) values to a custom EA blastn results table
 #		2. Recalculation is performed by comparing extended nucleotides beyond the original blastn alignment coordinates
@@ -10,9 +10,9 @@
 #		5. EApident is calculated from a QUERY point of view as: (query_length - total mismatches) / query length * 100
 #		6. In the end, a .recalculatedmm.tsv file is created, with each original EA blastn hit plus new columns that contain the recalculated values for EApident
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
-## Define shell command line which will be used to run recipes
+## Define shell command line which will be used to run scripts.
 MKSHELL=/bin/bash
 
 ## Parse the columns from the extended nucleotides TSV input with awk
@@ -33,7 +33,7 @@ MKSHELL=/bin/bash
 		# Operate in rows other than header, which is the first line (NR higher than 1)
 		NR > 1 {
 			###
-			# Definition of important input columns
+			# Definition of important input columns.
 				query_length= $1
 				query_mismatch= $20
 				q5end_extension_length= $22
@@ -45,7 +45,7 @@ MKSHELL=/bin/bash
 				subject_5end_extended_sequence= $39
 				subject_3end_extended_sequence= $40
 			###
-			# Start the final calculation variables with ERR values
+			# Start the final calculation variables with ERR values.
 				extended_5end_mismatch= "ERR"
 				extended_3end_mismatch= "ERR"
 				query_overhang_5end_mismatch= "ERR"
@@ -53,29 +53,29 @@ MKSHELL=/bin/bash
 				total_mismatch= "ERR"
 				extend_align_pident= "ERR"
 			###
-			# Split the extended Query 5 end nucleotides by character into an array
+			# Split the extended query 5'-end nucleotides by character into an array.
 				split(query_5end_extended_sequence, query_5end_nucleotides, "")
-			# Split the extended Query 3 end nucleotides by character into an array
+			# Split the extended query 3'-end nucleotides by character into an array.
 				split(query_3end_extended_sequence, query_3end_nucleotides, "")
 			##
-			# Split the extended Subject 5 end nucleotides by character into an array
+			# Split the extended subject 5'-end nucleotides by character into an array.
 				split(subject_5end_extended_sequence, subject_5end_nucleotides, "")
-			# Split the extended subject 3 end nucleotides by character into an array
+			# Split the extended subject 3'-end nucleotides by character into an array.
 				split(subject_3end_extended_sequence, subject_3end_nucleotides, "")
 			###
-			# Calculate mismatches by positional comparison (i.e. 1st nt at query end vs 1st nucleotide at subject end; etc)
-			# restart the mismtach variable at 0 value
+			# Calculate mismatches by positional comparison (i.e. 1st nt at query end vs 1st nucleotide at subject end; etc),
+			# restart the mismtach variable at 0 value.
 				extended_5end_mismatch=0
-			# Calculate mismatch for 5end by looping through the nucleotide arrays and comparing by the i position
-			# if the nucleotide is different, sum 1 to the mismatch variable
+			# Calculate mismatch for 5'-end by looping through the nucleotide arrays and comparing by the i position,
+			# if the nucleotide is different, sum 1 to the mismatch variable.
 				for (i=1; i <= length(query_5end_extended_sequence); i++) {
 					if ( query_5end_nucleotides[i] != subject_5end_nucleotides[i] )
 						extended_5end_mismatch++
 				}
-			# restart the mismtach variable at 0 value
+			# Restart the mismtach variable at 0 value.
 				extended_3end_mismatch=0
-			# Calculate mismatch for 3end by looping through the nucleotide arrays and comparing by the i position
-			# if the nucleotide is different, sum 1 to the mismatch variable
+			# Calculate mismatch for 3'-end by looping through the nucleotide arrays and comparing by the i position,
+			# if the nucleotide is different, sum 1 to the mismatch variable.
 				for (i=1; i <= length(query_3end_extended_sequence); i++) {
 					if ( query_3end_nucleotides[i] != subject_3end_nucleotides[i] )
 						extended_3end_mismatch++

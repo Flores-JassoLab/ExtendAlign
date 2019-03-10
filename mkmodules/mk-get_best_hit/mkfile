@@ -1,20 +1,20 @@
-##
+### mk-get_best_hit ###
 # mkfile script with dependency rules for:
 #		1. Extracting the best hit result for each query in an EA blastn output file
 #		2. First, the script will sort the EA blastn output by alignment length and number of query mismatches (this already takes into account gap configurations)
 #		3. Then, awk will print only the first time a query ID appears
 #		4. In the end, we will keep one line of blastn results per each queryID
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
-
-## Define shell command line which will be used to run recipes
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+#
+## Define shell command line which will be used to run scripts.
 MKSHELL=/bin/bash
 
 ## Use sort to find the best hits by ordering blastn results by longest alignment (field 6 in the blastn results),
 ##	^^then by least number of query mismatches (field 20 in the customized EA blastn results),
 ## then run awk, checking the query sequence ID column ($2), to print lines only the first time a query ID appears (seen[ ]++)
 %.EAblastnbesthit.tsv: %.EAblastn.tsv
-	# put the original header into the temporary target
+	# Write the original header into the temporary target
 	head -n1 $prereq > $target.build
 	# run tail -n+2 to avoid sorting the header
 	# sort numerically descending field 6 (alignment length)

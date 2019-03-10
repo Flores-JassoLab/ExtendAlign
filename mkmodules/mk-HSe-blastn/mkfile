@@ -1,25 +1,26 @@
-##
+### mk-HSe-blastn ###
 # mkfile script with dependency rules for:
-#		1. Creating a blastn results TSV file from .EAfa files, by comparing it against a blast generated REFERENCE_DB
-#			Note: Unlike the base blastn version, this EA version outputs the query and subject original sequence length, which will be used downstream to define the length of EA extension
+#	1. Creating a HSe-blastn results TSV file from .EAfa files, by comparing it against a blast generated REFERENCE_DB.
+# NOTE: Unlike the base blastn version, this ExtendAlign version outputs the query and subject original sequence length, 
+# which will be used downstream to define the length of the ExtendAlign extension.
 #
-## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+## For more information about 'mk' dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
 
-## Define shell command line which will be used to run recipes
+## Define shell command line which will be used to run scripts.
 MKSHELL=/bin/bash
 
 ## Use blastn to compare a fasta query file ($prereq) with a previouly created blast DataBase
 ## BLAST_DATABASE, BLAST_MAX_TARGET_SEQS, BLAST_EVALUE, BLAST_THREADS and BLAST_STRAND have to be parameters passed from the CLI execution
-## 	^^ see this submodule readme.txt file for parameter definition
+## 	^^ see this submodule readme file for parameter definition
 %.blastn.tsv: %.EAfa
-	## Since blast results come with no header by default, first we print the header line for the results
-	##	^^ for code readability, we code the header names separated by commas and then replace them (tr) by tabs
-	## 	^^ please note that our header definition adds the qlength and slength to the -outfmt requested to blastn
+	## Since blast results come with no header by default, first we print the header line for the results.
+	##	^^ For code readability, we code the header names separated by commas and then replace them (tr) by tabs.
+	## 	^^ Please note that our header definition adds the qlength and slength to the -outfmt requested to blastn.
 	echo "qlength,qseqid,slength,sseqid,pident,length,mismatch,gaps,qstart,qend,sstart,send,evalue,bitscore,sstrand,qseq,sseq" \
 	| tr "," "\t" > $target.build
-	## Now, on to proper blasting; blastn results will be appended to results file with header
-	## before appending them, we will parse them with sed to change the EA custom separator for a tab
-	##	^^this will place the query and subject original length number in every line
+	## Now, for proper blasting; blastn results will be appended to results file with header.
+	## before appending them, well parse them with sed to change the EA custom separator for a TAB,
+	##	^^this will place the query and subject original length number in every line.
 	blastn \
 		-query $prereq \
 		-db $BLAST_DATABASE \

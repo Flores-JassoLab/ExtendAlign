@@ -4,9 +4,15 @@ ExtendAlign is a tool, implemented with Nextflow, that combines the strength of 
 and also the refinement provided by a query-based end-to-end alignment in reporting accurately the number of m/mm for short queries.
 
 ---
+
+### Workflow overview ###
+
+![General Workflow](dev_notes/Workflow.png)
+
+---
 ## Features
 
-**- v 0.2.2**
+### - v 0.2.2
 
 * Supports DNA, RNA, or DNA  vs RNA alignments
 
@@ -22,11 +28,15 @@ and also the refinement provided by a query-based end-to-end alignment in report
 
 ## Requirements
 
-ExtendAlign is compatible with the following OS: [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
+### Compatible OS*:
 
-ExtendAlign depends on the following tools:
+* [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
 
-| Req.      | Version  | Required Commands * |
+\* ExtendAlign may run in other UNIX based OS and versions, but testing is required.
+
+### Software:
+
+| Requirement      | Version  | Required Commands * |
 |:---------:|--------:|:-------------------:|
 | [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.25.0 | bedtools |
 | [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.2.31+ | makeblastdb , blastn |
@@ -48,7 +58,7 @@ $ git clone https://github.com/Flores-JassoLab/ExtendAlign
 
 ---
 
-## Test
+### Test
 
 To run the basic pipeline test:
 
@@ -91,7 +101,7 @@ nextflow run extend_align.nf --help
 
 ---
 
-## Cluster integration
+### Cluster integration
 
 For scalability, this pipeline uses the executor component from Nextflow, as described [here](https://www.nextflow.io/docs/latest/executor.html); especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.html#sge) and [HTCondor](https://www.nextflow.io/docs/latest/executor.html#htcondor) integration capabilities to manage process distribution and computational resources.
 
@@ -133,7 +143,7 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 * For this example, TABs were replaced by simple white spaces.
 * Do note the difference between the **hsa-miR-1226-5p.MIMAT0005576** hit, and the **hsa-miR-8083.MIMAT0031010** NO_HIT line
 
-Output File Column Descriptions:
+#### Output File Column Descriptions:
 ```
 query_name: Name or ID of the sequence used as query for alignment.
 subject_name: Name or ID of the sequence where a hit was found.

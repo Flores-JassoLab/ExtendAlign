@@ -1,3 +1,0 @@
-#!/bin/execlineb -S0
-define total_mismatch 23
-sort -k ${total_mismatch},${total_mismatch}n "${@}"

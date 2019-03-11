@@ -1,9 +1,0 @@
-#! /usr/bin/awk -f
-#
-# The input format is described at
-@include "ea_format"
-
-# we are interested in
-{
-	print $query_name, $mismatch, $gaps, $extended_mismatch, $total_mismatch, $query_start, $query_end, $query_length, ($query_length - $alignment_length),  $query_5_seq, $subj_5_seq, $query_3_seq, $subj_3_seq
-}

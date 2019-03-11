@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.query_fasta
-}
-i2t.query_length

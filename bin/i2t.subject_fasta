@@ -1,6 +1,0 @@
-#!/bin/execlineb -P
-multisubstitute {
-	importas	${SUBJECT_FASTA}	${SUBJECT_FASTA}
-	importas	${SUBJECT_FASTA}	${SUBJECT_FASTA}
-}
-change-ext	".fa"	".fa.nhr"

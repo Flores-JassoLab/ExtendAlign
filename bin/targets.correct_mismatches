@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.extended_alignment
-}
-i2t.correct_mismatches

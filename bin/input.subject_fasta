@@ -1,7 +1,0 @@
-#!/bin/execlineb -P
-importas SUBJECT_FASTA SUBJECT_FASTA
-find
-	-L
-	${SUBJECT_FASTA}
-	-type f
-	( -name *.fa -o -name *.fna )

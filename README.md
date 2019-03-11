@@ -5,14 +5,14 @@ and also the refinement provided by a query-based end-to-end alignment in report
 
 ---
 
-### Workflow overview ###
+### Workflow overview
 
 ![General Workflow](dev_notes/Workflow.png)
 
 ---
-## Features
+#### Features
 
-### - v 0.2.2
+**- v 0.2.2**
 
 * Supports DNA, RNA, or DNA  vs RNA alignments
 
@@ -28,13 +28,13 @@ and also the refinement provided by a query-based end-to-end alignment in report
 
 ## Requirements
 
-### Compatible OS*:
+#### Compatible OS*:
 
 * [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
 
 \* ExtendAlign may run in other UNIX based OS and versions, but testing is required.
 
-### Software:
+#### Software:
 
 | Requirement      | Version  | Required Commands * |
 |:---------:|--------:|:-------------------:|
@@ -50,7 +50,7 @@ and also the refinement provided by a query-based end-to-end alignment in report
 
 ---
 
-## Installation
+### Installation
 Download ExtendAlign from Github repository:  
 ```
 $ git clone https://github.com/Flores-JassoLab/ExtendAlign
@@ -58,7 +58,7 @@ $ git clone https://github.com/Flores-JassoLab/ExtendAlign
 
 ---
 
-### Test
+#### Test
 
 To run the basic pipeline test:
 
@@ -84,7 +84,7 @@ test/results/Extend_Align_results/hsa-miRNAs22.fa_EA_report.tsv
 
 ---
 
-## Usage
+### Usage
 
 To run ExtendAlign go to the pipeline directory and execute the following:
 
@@ -101,7 +101,7 @@ nextflow run extend_align.nf --help
 
 ---
 
-### Cluster integration
+#### Cluster integration
 
 For scalability, this pipeline uses the executor component from Nextflow, as described [here](https://www.nextflow.io/docs/latest/executor.html); especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.html#sge) and [HTCondor](https://www.nextflow.io/docs/latest/executor.html#htcondor) integration capabilities to manage process distribution and computational resources.
 
@@ -113,7 +113,7 @@ nextflow run extend_align.nf --help
 ```
 ---
 
-## Pipeline Inputs
+### Pipeline Inputs
 
 1. A query fasta file with `.fa`, `.fna` or `.fasta` extension.  
 Example line(s):
@@ -129,7 +129,7 @@ Example line(s):
 UUCACUGUGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACCCACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUAAGGUGAU
 ```
 
-## Pipeline Results
+### Pipeline Results
 
 1. An ExtendAlign analysis summary, in TSV format.  
 Example line(s):
@@ -157,7 +157,7 @@ blastn_pident: Original `HSe-blastn` percent identity.
 
 ---
 
-## Citation
+### Citation
 
 If you find Extend Align helpful for your research, please include the following citation in your work:
 
@@ -169,7 +169,7 @@ Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for del
 
 ---
 
-## Dev Team
+#### Dev Team
 
 - Bioinformatics Development   
  Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
@@ -180,6 +180,6 @@ Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for del
 
 ---
 
-## Contact
+### Contact
 If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email
 <iaguilaror@gmail.com>

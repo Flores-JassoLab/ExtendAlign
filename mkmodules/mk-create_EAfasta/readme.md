@@ -1,5 +1,6 @@
 # mk-create_EAfasta
 **Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
+
 **Date:** February-2019
 
 
@@ -10,8 +11,11 @@
 Transformation of a fasta file into an ExtendAlign fasta file (`.EAfa`).
 
 1. This module takes a fasta file and adds the sequence length value to the sequence header.
+
 2. The sequence length value attached to the sequence header is needed for downstream quick decision making, in particular, to determine how many nucleotides is it possible to extend a blastn hit.
+
 3. For ExtendAlign, both query and subject fasta files need to be transformed into `.EAfa` format.
+
 4. This module saves up execution time, since sequence length is determined only once per sequence, instead of every time it shows up in downstream blastn results.
 
 ## Module Dependencies:

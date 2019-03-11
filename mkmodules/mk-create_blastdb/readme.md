@@ -1,5 +1,6 @@
 # mk-create_blastdb
 **Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
+
 **Date:** February-2019
 
 ## TODO:
@@ -46,4 +47,3 @@ bash testmodule.sh
 ```
 
 2. `[>>>] Module Test Successful` should be printed in the console...
-

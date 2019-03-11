@@ -3,7 +3,7 @@ Author(s): Israel Aguilar (iaguilaror@gmail.com)
 Date: FEB 2019
 
 TODO:
-	NONE
+	_(iaguilar)_ convert this file to markdown format
 
 Module description: add number of mismatched nucleotides due to gaps introduced to query and subject sequences, respectively
   a. This module calculates the number of "-" characters in the blastn query sequence used for alignment

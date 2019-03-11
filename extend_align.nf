@@ -60,7 +60,7 @@ def helpMessage() {
 
   nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
   				[--number_of_hits all|best] [--blastn_threads int_value] [--blastn_strand both|plus|minus]
-  				[--blastn_max_target_seqs int_value] [--blastn_evalue real_value]
+  				[--blastn_max_target_seqs int_value] [--blastn_evalue real_value] [-profile sge|condor] [-resume]
 
 	  --query_fasta    <- DNA or RNA fasta file with query sequences;
 				accepted extensions are .fa .fna and .fasta
@@ -85,6 +85,22 @@ def helpMessage() {
 				default: 100
 	  --blastn_evalue  <- Expect value (E) for saving hits;
 				default: 10
+	  -profile	   <- Run pipeline using configurations compatible with cluster computing environments
+				default: not activated; jobs are run locally
+				sge	= submit pipeline processes as SGE jobs
+				condor	= submit pipeline processes as HTCondor jobs
+				Note. Before running EA with cluster compatibility make sure you configure your credentials in the following files:
+				for SGE, config_profiles/sge.config
+				for HTCondor, config_profiles/condor.config
+				Read more here: https://www.nextflow.io/docs/latest/config.html#config-profiles
+	  -resume	   <- Use cached results if the executed project has been run before;
+				default: not activated
+				This native NF option checks if anything has changed from a previous pipeline execution.
+				Then, it resumes the run from the last successful stage.
+				i.e. If for some reason your previous run got interrupted,
+				running the -resume option will take it from the last successful pipeline stage
+				instead of starting over
+				Read more here: https://www.nextflow.io/docs/latest/getstarted.html#getstart-resume
 	  --help           <- Shows Pipeline Information
 	  --version        <- Show ExtendAlign version
 	""".stripIndent()

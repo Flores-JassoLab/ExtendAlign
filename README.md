@@ -10,7 +10,7 @@ and also the refinement provided by a query-based end-to-end alignment in report
 
 * Supports DNA, RNA, or DNA  vs RNA alignments
 
-* Results report include info about queries with no alignment hits
+* Results include info about queries with no alignment hits
 
 * Extend Align percent identity recalculation is reported relative to query length
 
@@ -21,6 +21,10 @@ and also the refinement provided by a query-based end-to-end alignment in report
 ---
 
 ## Requirements
+
+ExtendAlign is compatible with the following OS: [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
+
+ExtendAlign depends on the following tools:
 
 | Req.      | Version  | Required Commands * |
 |:---------:|--------:|:-------------------:|
@@ -75,50 +79,71 @@ test/results/Extend_Align_results/hsa-miRNAs22.fa_EA_report.tsv
 To run ExtendAlign go to the pipeline directory and execute the following:
 
 ```
-nextflow run extend_align.nf --query_fasta query.fa --subject_fasta subject.fa [--output_dir path to results ]
+nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
 [--number_of_hits all|best] [--blastn_threads int_value] [--blastn_strand both|plus|minus]
-[--blastn_max_target_seqs int_value] [--blastn_evalue real_value]
+[--blastn_max_target_seqs int_value] [--blastn_evalue real_value] [-profile sge|condor] [-resume]
 ```
 
-`--query_fasta` DNA or RNA fasta file with query sequences. Accepted extensions are `.fa`, `.fna` and `.fasta`  
-
-`--subject_fasta` DNA or RNA fasta file with subject sequences. Accepted extensions are `.fa`, `.fna` and `.fasta`  
-
-### Options
-
-`--output_dir` Directory where results, intermediate and log files will be stored. Default: same dir where `--query_fasta resides`.  
-
-`--number_of_hits` Amount of HSe-blastn hits extended by ExtendAlign for each query. Default: **best**  
-  * all  = Every hit found by HSe-blastn is extended and reported by ExtendAlign.  
-  * best = Only the best HSe-blastn hit (one per query) is extended and reported by ExtendAlign.  
-  ***NOTE.*** Defined using the basic HSe-blastn alignment values, by the following algorithm: best hit is the one with higher alignment length, and the lowest number of mismatches (including mismatched query nucleotides due to subject gaps).  
-
-`--blastn_threads` Number of threads to use in blastn search. Default: **1**  
-
-`--blastn_strand` Subject strand to align against during blastn. Default: **both**  
-
-  * plus  = Report hits found in subject's plus strand.  
-  * minus = Report hits found in subject's minus strand.  
-  * both  = Reports plus and minus alignments.  
-
-`--blastn_max_target_seqs` Number of aligned sequences to keep. Default: **100**  
-
-`--blastn_evalue` Expect value (E) for saving hits. Default: **10**  
-
-`--help` Pipeline information.  
-`--version` ExtendAlign version.  
+For information about options and parameters, run:
+```
+nextflow run extend_align.nf --help
+```
 
 ---
 
 ## Cluster integration
 
-TODO: (iaguilar) explain `-profile sge / -profile condor` usage
+For scalability, this pipeline uses the executor component from Nextflow, as described [here](https://www.nextflow.io/docs/latest/executor.html); especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.html#sge) and [HTCondor](https://www.nextflow.io/docs/latest/executor.html#htcondor) integration capabilities to manage process distribution and computational resources.
 
+The _config_profiles/sge.config_ and/or _config_profiles/condor.config_ must be properly configured before launching Cluster runs. Said configuration files define variables regarding queue, parallelization environments and resources requested by every process in the pipeline.
+
+For information about the `-profile sge|condor` option , run:
+```
+nextflow run extend_align.nf --help
+```
 ---
 
-## Inputs and results
+## Pipeline Inputs
 
-TODO: (iaguilar) explain input / results file formats
+1. A query fasta file with `.fa`, `.fna` or `.fasta` extension.  
+Example line(s):
+```
+>hsa-let-7a-5p.MIMAT0000062
+UGAGGUAGUAGGUUGUAUAGUU
+```
+
+2. A subject fasta file with `.fa`, `.fna` or `.fasta` extension.  
+Example line(s):
+```
+>mmu-let-7a-1.MI0000556
+UUCACUGUGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACCCACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUAAGGUGAU
+```
+
+## Pipeline Results
+
+1. An ExtendAlign analysis summary, in TSV format.  
+Example line(s):
+```
+query_name subject_name query_length EA_alignment_length EA_total_mismatch EA_total_match EA_pident blastn_pident
+hsa-miR-1226-5p.MIMAT0005576 mmu-mir-6927.MI0022774 26 26 6 20 76.9231 76.923
+hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
+```
+
+**Note(s):**
+* For this example, TABs were replaced by simple white spaces.
+* Do note the difference between the **hsa-miR-1226-5p.MIMAT0005576** hit, and the **hsa-miR-8083.MIMAT0031010** NO_HIT line
+
+Output File Column Descriptions:
+```
+query_name: Name or ID of the sequence used as query for alignment.
+subject_name: Name or ID of the sequence where a hit was found.
+query_length: Length of the query.
+EA_alignment_length: Number of query nucleotides included in the extended alignment.
+EA_total_mismatch: Number of mismatches found in the extended alignment.
+EA_total_match: Number of matches found in the extended alignment.
+EA_pident: ExtendAlign recalculated percent identity.
+blastn_pident: Original `HSe-blastn` percent identity.
+```
 
 ---
 
@@ -137,14 +162,11 @@ Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for del
 ## Dev Team
 
 - Bioinformatics Development   
- Israel Aguilar-Ordonez <iaguilaror@gmail>   
+ Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
  Mariana Flores-Torres <mflores@inmegen.edu.mx>  
  Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  
+ Karla Lozano-Gonzalez <klg1219sh@gmail.com>   
  Fabian Flores-Jasso <cfflores@inmegen.gob.mx>  
-
-- Nextflow Port   
- Israel Aguilar-Ordonez <iaguilaror@gmail>   
- Karla Lozano-Gonzalez <klg1219sh@gmail.com>
 
 ---
 

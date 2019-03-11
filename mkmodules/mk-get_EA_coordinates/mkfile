@@ -1,0 +1,23 @@
+### mk-get_EA_coordinates ###
+# mkfile script with dependency rules for:
+#	1. Defining the bed coordinates for fasta nt extension in a ExtendAlign HSe-blastn results table.
+#	2. Operations are performed by the following auxiliary script:
+#			./coordinate_definition.sh
+#
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+#
+## Define shell command line which will be used to run scripts.
+MKSHELL=/bin/bash
+
+## Extract the coordinates where alignment extension should be performed.
+# As of this version (February-2019) coordinate extarction is performed by an auxiliary script to improve code legibility.
+# since we need to create 2 very similar recipes or mk rule in this mkfile, to handle both .EAblastn.tsv or .EAblastnbesthit.tsv file extension
+# rule for .EAblastnbesthit.tsv extension prereq
+%.EAcoordinates.tsv: %.EAblastnbesthit.tsv
+	bash coordinate_definition.sh $prereq > $target.build \
+	&& mv $target.build $target
+
+## Same rule as above, but for .EAblastn.tsv extension prereq
+%.EAcoordinates.tsv: %.EAblastn.tsv
+	bash coordinate_definition.sh $prereq > $target.build \
+	&& mv $target.build $target

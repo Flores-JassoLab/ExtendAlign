@@ -1,8 +1,0 @@
-#!/bin/execlineb -S0
-#
-# Sends the command line to stderr to diagnose errors
-#
-foreground { fdmove 1 2 env }
-foreground { fdmove 1 2 echo ------------------- }
-foreground { fdmove 1 2 echo ${@} }
-${@}

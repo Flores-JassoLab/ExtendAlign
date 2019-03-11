@@ -1,5 +1,0 @@
-#!/bin/execlineb -S0
-sed
-	-r
-	-s "s/U/T/g"
-	${@}

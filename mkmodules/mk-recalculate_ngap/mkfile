@@ -1,0 +1,55 @@
+##
+# mkfile script with dependency rules for:
+#		1. Create an EAblastn results TSV file .blastn files, with the query_mismatch and subject_mismatch numbers.
+#		These values reflect an updated number of mismatches for query and subject, since original blastn mismatch report does not take into account the number of gappen nucleotides
+#		These values are calculating by taking into account the qmismatch_in_gap (number of nucleotide gaps introduced in the SUBJECT) and smismatch_in_gap (number of nucleotide gaps introduced in the QUERY) to each record
+#			Note: The base blastn version "gaps" value reports unreferenced gaps, this means you can't know if the gaps were introduced in the query or the subject,
+#			^^ Since EA will report the percent identity from the query point of view, we need to know exactly how many gapped nucleotides were included in the subject sequence (this number corresponds to a number of gapped mismatches in the query)
+#		Really important!!!: note the QUERY mismatches in gap is calculated by analizing the SUBJECT sequence, and visceversa
+#
+## for more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+
+## Define shell command line which will be used to run recipes
+MKSHELL=/bin/bash
+
+## Use awk's gsub() function to count the number of "-" characters in query sequence, and in subject sequence
+%.EAblastn.tsv:Q: %.blastn.tsv
+	## Awk will do the work...
+	awk '
+		###
+		# Definition of input and output Field Separator as tab
+			BEGIN {OFS=FS="\t"}
+		###
+		# First line, print header, adding new column names
+			NR == 1 {
+				print $0,
+				"qmismatch_in_gap","smismatch_in_gap","query_mismatch","subject_mismatch"
+			}
+		###
+	  # Data body operations block
+	    NR > 1 {
+			## Define named variables to reference columns
+	    # query nucleotide sequence fragment used for the alignment
+				query_sequence=$16
+	    # subject nucleotide sequence fragment used for the alignment
+				subject_sequence=$17
+			# blastn reported mismatches
+				blastn_mismatch=$7
+			## Restart values to default
+				qmismatch_in_gap=NA
+				smismatch_in_gap=NA
+				query_mismatch=NA
+				subject_mismatch=NA
+			## Calculate QUERY gapped mismatches as the number of gaps introduced in the SUBJECT sequence
+				qmismatch_in_gap=gsub("-","",subject_sequence)
+			## Calculate SUBJECT gapped mismatches as the number of gaps introduced in the QUERY sequence
+				smismatch_in_gap=gsub("-","",query_sequence)
+			## Calculate total mismatches in the query portion of the alignment
+				query_mismatch=blastn_mismatch + qmismatch_in_gap
+			## Calculate total mismatches in the subject portion of the alignment
+				subject_mismatch=blastn_mismatch + smismatch_in_gap
+			## print original line + new values
+				print $0,qmismatch_in_gap,smismatch_in_gap,query_mismatch,subject_mismatch
+			}
+	' $prereq > $target.build \
+	&& mv $target.build $target

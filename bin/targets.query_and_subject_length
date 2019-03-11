@@ -1,5 +1,0 @@
-#!/bin/execlineb -P
-pipeline {
-	targets.best_blast_alignment
-}
-i2t.query_and_subject_length

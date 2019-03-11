@@ -1,0 +1,16 @@
+### mk-create_blastdb ###
+# mkfile script with dependency rules for:
+#	1. Creating a blast database from .fa , .fna , or .fasta files
+#
+## For more information about mk dependency control, see https://9fans.github.io/plan9port/man/man1/mk.html
+
+## Define shell command line which will be used to run scripts.
+MKSHELL=/bin/bash
+
+## Use blastn makeblastdb to create the battery of blast database files.
+## Here, we only request the .nsq file, but every other db file will be crated along.
+%.nsq: %
+	makeblastdb \
+		-in $prereq \
+		-parse_seqids \
+		-dbtype nucl

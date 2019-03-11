@@ -1,6 +1,0 @@
-#!/bin/execlineb -S0
-importas -i target target
-backtick outdir { dirname -z ${target} }
-importas -i outdir outdir
-foreground { mkdir -p ${outdir} }
-${@}

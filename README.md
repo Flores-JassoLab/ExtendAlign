@@ -1,128 +1,185 @@
 ExtendAlign
-============
+===========
+ExtendAlign is a tool, implemented with Nextflow, that combines the strength of a multi-hit local alignment,
+and also the refinement provided by a query-based end-to-end alignment in reporting accurately the number of m/mm for short queries.
 
-A computational algorithm for delivering multiple, local end-to-end alignments.
+---
 
+### Workflow overview
 
-Usage
-=====
+![General Workflow](dev_notes/Workflow.png)
 
-ExtendAlign has three flavors (branches):
+---
+#### Features
 
-  - **best-hit:** Performs sense/antisense alignemnts and reports the number of match/mismatch of the best alignment for each query.
-  - **all-hits:** Performs sense/antisense alignments and does not select the best alignent, reports all hits given by HSe-blastn.
-  - **plus-strand:** Performs only sense alignments and reports the number of match/mismatch for the best alignment for each query.
+**- v 0.2.2**
 
-To **download** the code use:
+* Supports DNA, RNA, or DNA  vs RNA alignments
 
+* Results include info about queries with no alignment hits
+
+* Extend Align percent identity recalculation is reported relative to query length
+
+* Easy integration with SGE or Condor Cluster environments
+
+* Guaranteed scalability and reproducibility via a Nextflow-based framework
+
+---
+
+## Requirements
+
+#### Compatible OS*:
+
+* [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
+
+\* ExtendAlign may run in other UNIX based OS and versions, but testing is required.
+
+#### Software:
+
+| Requirement      | Version  | Required Commands * |
+|:---------:|--------:|:-------------------:|
+| [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.25.0 | bedtools |
+| [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.2.31+ | makeblastdb , blastn |
+| [NextFlow](https://www.nextflow.io/docs/latest/getstarted.html) | 19.01 | nextflow |
+| [Seqkit](https://github.com/shenwei356/seqkit) | v0.10.0 | seqkit |
+| [plan9 port](https://github.com/9fans/plan9port) | latest (as of 10/10/2019 ) | mk ** |
+
+\* These commands must be accessible from your $PATH (i.e. you should be able to invoke them from your command line).  
+
+\** plan9 port builds many binaries, but you ONLY need the `mk` utility to be accessible from your command line.
+
+---
+
+### Installation
+Download ExtendAlign from Github repository:  
 ```
-$ YOUR_FLAVOR_CHOICE=best-hit
-$ git clone https://github.com/Flores-JassoLab/ExtendAlign --branch $YOUR_FLAVOR_CHOICE
-```
-
-For any version, place the sequences to be aligned (query) in fasta format into the `data/query` directory.
-
-Place the sequences to be used as reference (subject) in fasta format into the `data/subject` directory and execute:
-
-```
-$ bin/make-config
-$ bin/activate
-$ targets | xargs mk
-```
-
-Your results will be on `reports/` when the process ends.
-
-The reports consist on a table containing the following information, separated by tabs:
-
-```
-query_name, subj_name, query_length, complete_query_seq, complete_subj_seq, total_match, total_mismatch
-```
-
-If the process is too slow for you, `split` the query files before using ExtendAlign.
-
-
-Test data set
-=============
-
-A test dataset is included at ` test/data/query/hsa-miRNAs22.fa` `test/data/subject/mmu-premiRNAs22.fa`:
-
-To test if the scripts are working as expected.
-
-```
-$ mk test
-```
-
-You can confirm our results are reproducible,
-using branch `all-hits`:
-
-```
-$ mk our-paper-results
+$ git clone https://github.com/Flores-JassoLab/ExtendAlign
 ```
 
+---
 
-Options
-=======
+#### Test
 
-`NPROC` environment variable can be specified to run multiple processes simultaneously.
+To run the basic pipeline test:
 
-```
-$ targets | xargs env NPROC=$(grep proc /proc/cpuinfo | wc -l ) mk
-```
-
-
-Requirements
-============
-
-  - [`blast`](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
-  - [`coreutils`](https://www.gnu.org/software/coreutils/coreutils.html "Basic file, shell and text manipulation utilities of the GNU operating system.")
-  - [`execline`](http://www.skarnet.org/software/execline/ "execline is a (non-interactive) scripting language")
-  - [`findutils`](https://www.gnu.org/software/findutils/ "Basic directory searching utilities of the GNU operating system.")
-  - [`mk`](http://doc.cat-v.org/bell_labs/mk/mk.pdf "A successor for `make`.")
-  - [`samtools`](http://www.htslib.org/download/ "Utilities for interacting with and post-processing short DNA sequence read alignments")
-
-
-To install requirements:
-#### Install instructions for Debian/Ubuntu systems.
-
-To solve dependencies, execute: 
+Execute:
 
 ```
-sudo apt update
-sudo apt install blast2 coreutils findutils 9base s6
+./runtest.sh
 ```
 
-To finish the `mk` configuration, execute:
+Your console will be filled with the Nextflow log for the run; after every process has been submitted, the following message will appear:
 
 ```
-echo 'export PATH=$PATH:/usr/lib/plan9/bin' >> ~/.bashrc
+======
+ Extend Align: Basic pipeline TEST SUCCESSFUL
+======
 ```
 
-For [`samtools`](http://www.htslib.org/download/) and its dependencies [`htslib`](http://www.htslib.org/download/), and [`execline`](http://skarnet.org/software/execline/) and its dependencies [`skalibs`](http://skarnet.org/software/skalibs/) and [`s6`](http://skarnet.org/software/s6/), you have to download the source packages, decompress, change to decompressed folder and execute these three commands for each one:
+The ExtendAlign results for the test data will be crated at the following file:
 
 ```
-./configure
-make
-sudo make install
+test/results/Extend_Align_results/hsa-miRNAs22.fa_EA_report.tsv
 ```
 
-The source package can be download from:
+---
 
-  - [`htslib`](http://www.htslib.org/download/)
-  - [`skalibs`](http://skarnet.org/software/skalibs/)
-  - [`s6`](http://skarnet.org/software/s6/)
-  - [`samtools`](http://www.htslib.org/download/)
-  - [`execline`](http://skarnet.org/software/execline/)
+### Usage
+
+To run ExtendAlign go to the pipeline directory and execute the following:
+
+```
+nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
+[--number_of_hits all|best] [--blastn_threads int_value] [--blastn_strand both|plus|minus]
+[--blastn_max_target_seqs int_value] [--blastn_evalue real_value] [-profile sge|condor] [-resume]
+```
+
+For information about options and parameters, run:
+```
+nextflow run extend_align.nf --help
+```
+
+---
+
+#### Cluster integration
+
+For scalability, this pipeline uses the executor component from Nextflow, as described [here](https://www.nextflow.io/docs/latest/executor.html); especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.html#sge) and [HTCondor](https://www.nextflow.io/docs/latest/executor.html#htcondor) integration capabilities to manage process distribution and computational resources.
+
+The _config_profiles/sge.config_ and/or _config_profiles/condor.config_ must be properly configured before launching Cluster runs. Said configuration files define variables regarding queue, parallelization environments and resources requested by every process in the pipeline.
+
+For information about the `-profile sge|condor` option , run:
+```
+nextflow run extend_align.nf --help
+```
+---
+
+### Pipeline Inputs
+
+1. A query fasta file with `.fa`, `.fna` or `.fasta` extension.  
+Example line(s):
+```
+>hsa-let-7a-5p.MIMAT0000062
+UGAGGUAGUAGGUUGUAUAGUU
+```
+
+2. A subject fasta file with `.fa`, `.fna` or `.fasta` extension.  
+Example line(s):
+```
+>mmu-let-7a-1.MI0000556
+UUCACUGUGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACCCACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUAAGGUGAU
+```
+
+### Pipeline Results
+
+1. An ExtendAlign analysis summary, in TSV format.  
+Example line(s):
+```
+query_name subject_name query_length EA_alignment_length EA_total_mismatch EA_total_match EA_pident blastn_pident
+hsa-miR-1226-5p.MIMAT0005576 mmu-mir-6927.MI0022774 26 26 6 20 76.9231 76.923
+hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
+```
+
+**Note(s):**
+* For this example, TABs were replaced by simple white spaces.
+* Do note the difference between the **hsa-miR-1226-5p.MIMAT0005576** hit, and the **hsa-miR-8083.MIMAT0031010** NO_HIT line
+
+#### Output File Column Descriptions:
+```
+query_name: Name or ID of the sequence used as query for alignment.
+subject_name: Name or ID of the sequence where a hit was found.
+query_length: Length of the query.
+EA_alignment_length: Number of query nucleotides included in the extended alignment.
+EA_total_mismatch: Number of mismatches found in the extended alignment.
+EA_total_match: Number of matches found in the extended alignment.
+EA_pident: ExtendAlign recalculated percent identity.
+blastn_pident: Original `HSe-blastn` percent identity.
+```
+
+---
+
+### Citation
+
+If you find Extend Align helpful for your research, please include the following citation in your work:
+
+Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
 
 
-References
-==========
+* Preprint version can be found at:
+<https://www.biorxiv.org/content/early/2018/12/08/475707>
 
-Please cite as «Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments». https://www.biorxiv.org/content/early/2018/12/08/475707
+---
 
+#### Dev Team
 
-Contact
-=======
+- Bioinformatics Development   
+ Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
+ Mariana Flores-Torres <mflores@inmegen.edu.mx>  
+ Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  
+ Karla Lozano-Gonzalez <klg1219sh@gmail.com>   
+ Fabian Flores-Jasso <cfflores@inmegen.gob.mx>  
 
-Doubts or comments?
+---
 
-Dr Fabian Flores-Jasso <cfflores@inmegen.gob.mx>
+### Contact
+If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email
+<iaguilaror@gmail.com>

@@ -169,6 +169,10 @@ Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for del
 
 ---
 
+### Contact
+If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email
+<iaguilaror@gmail.com>
+
 #### Dev Team
 
 - Bioinformatics Development   
@@ -177,9 +181,3 @@ Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for del
  Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  
  Karla Lozano-Gonzalez <klg1219sh@gmail.com>   
  Fabian Flores-Jasso <cfflores@inmegen.gob.mx>  
-
----
-
-### Contact
-If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email
-<iaguilaror@gmail.com>

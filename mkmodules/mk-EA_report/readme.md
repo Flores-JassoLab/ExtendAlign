@@ -4,7 +4,7 @@
 **Date:** February-2019
 
 ## TODO:
-*(iaguilar)* update example lines for output
+*( iaguilar )* update example lines for output
 
 ## Module description:
 Generate a summarized ExtendAlign results table.
@@ -49,7 +49,7 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 * Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.
 
 Output File Column Descriptions:
-```
+
 `query_name`: Name or ID of the sequence used as query for alignment.
 `subject_name`: Name or ID of the sequence where a hit was found.
 `query_length`: Length of the query.
@@ -58,7 +58,7 @@ Output File Column Descriptions:
 `EA_total_match`: Number of matches found in the extended alignment.
 `EA_pident`: ExtendAlign recalculated percent identity.
 `blastn_pident`: Original `HSe-blastn` percent identity.
-```
+
 
 ## Module parameters:
 NONE

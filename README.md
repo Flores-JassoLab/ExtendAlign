@@ -175,9 +175,8 @@ If you have questions, requests, or bugs to report, please open an [issue](https
 
 #### Dev Team
 
-- Bioinformatics Development   
- Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
- Mariana Flores-Torres <mflores@inmegen.edu.mx>  
- Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  
- Karla Lozano-Gonzalez <klg1219sh@gmail.com>   
- Fabian Flores-Jasso <cfflores@inmegen.gob.mx>  
+Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
+Mariana Flores-Torres <mflores@inmegen.edu.mx>  
+Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  
+Karla Lozano-Gonzalez <klg1219sh@gmail.com>   
+Fabian Flores-Jasso <cfflores@inmegen.gob.mx>  

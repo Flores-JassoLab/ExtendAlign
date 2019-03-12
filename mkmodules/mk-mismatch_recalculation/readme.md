@@ -1,6 +1,6 @@
 # mk-mismatch_recalculation
-**Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 
+**Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 **Date:** February-2019
 
 ## TODO:
@@ -49,17 +49,15 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 Output File Column Descriptions: see readme.md in module `mk-bedtools_getfasta` for previous column description.
 
 New columns are described as follows:
-```
-extended_5end_mismatch: number of mismatches found when comparing, nt by nt, the strings in query_5end_extended_nt vs subject_5end_extended_nt
-extended_3end_mismatch: number of mismatches found when comparing, nt by nt, the strings in query_3end_extended_nt vs subject_3end_extended_nt
-query_overhang_5end_mismatch: number of nucleotides not used by the extension at the query 5'end overhang
-query_overhang_3end_mismatch: number of nucleotides not used by the extension at the query 3'end overhang
-total_mismatch: total mismatches in the extended alignment; calculated as the sum of values in columns extended_5end_mismatch + extended_3end_mismatch + query_mismatch + query_overhang_5end_mismatch + query_overhang_3end_mismatch
-extend_align_pident: recalculated percent identity when taking into account the total mismatch and QUERY length
-```
+
+`extended_5end_mismatch`: Number of mismatches found when comparing, nucleotide by nucleotide, the strings in `query_5end_extended_nt` vs `subject_5end_extended_nt`.
+`extended_3end_mismatch`: Number of mismatches found when comparing, nucleotide by nucleotide, the strings in `query_3end_extended_nt` vs `subject_3end_extended_nt`.
+`query_overhang_5end_mismatch`: Number of nucleotides not used by the extension at the query 5'end overhang.
+`query_overhang_3end_mismatch`: Number of nucleotides not used by the extension at the query 3'end overhang.
+`total_mismatch`: Total mismatches in the extended alignment; calculated as the sum of values in columns `extended_5end_mismatch` + `extended_3end_mismatch` + `query_mismatch` + `query_overhang_5end_mismatch` + `query_overhang_3end_mismatch`.
+`extend_align_pident`: Recalculated percent identity when taking into account the total mismatch and query length.
 
 **Note(s):**
-
 * All of this columns should have integer values; no negative values should appear.
 * `EApident` is in percentage format (*i.e.* 96.35 means 96.35 %); max value should be 100.
 * In case of errors during internal calculations, any of this columns will show the default value which is `ERR`.

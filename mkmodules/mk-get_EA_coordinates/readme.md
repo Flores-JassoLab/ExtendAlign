@@ -55,7 +55,6 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 
 Output File Column Descriptions: see readme.md in module `mk-HSe-blastn` for basic column description; new columns are described as follows:
 
-```
 `q5end_extension_length:` For query, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.
 `q3end_extension_length:` For query, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.
 `s5end_extension_length:` For subject, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.
@@ -71,7 +70,6 @@ Output File Column Descriptions: see readme.md in module `mk-HSe-blastn` for bas
 `s3end_extension_start:` For subject 3'-end, sequence position where the nucleotides should begin to be extracted.
 `s3end_extension_end:` For subject 3'-end, sequence position where the nucleotides should finish to be extracted.
 `strand:` + or - code for the `HSe-blastn` result strandness (will be required in +/- format by downstream process).
-```
 
 ## Module parameters:
 NONE

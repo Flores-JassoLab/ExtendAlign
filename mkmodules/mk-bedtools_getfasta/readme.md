@@ -1,13 +1,11 @@
 #mk-bedtools_getfasta
 **Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
-
 **Date:** February-2019
 
 ## TODO:
+ ( *iaguilar* ) Clean code comments. There is a lot of narrative redundancy, although extensive commentary IS necessary since the module performs several complex tasks. Maybe a `devnotes/` dir and files could be used to explain in extend what code does and the reason of it.
 
- (*iaguilar*) Clean code comments. There is a lot of narrative redundancy, although extensive commentary IS necessary since the module performs several complex tasks. Maybe a `devnotes/` dir and files could be used to explain in extend what code does and the reason of it.
-
- (*iaguilar*) Create pdf file with images or diagrams explaining the method for fasta extraction, since it makes use of bed intermediates and coordinate correction, which is really not that human friendly to understand even from extensive code comments.
+ ( *iaguilar* ) Create pdf file with images or diagrams explaining the method for fasta extraction, since it makes use of bed intermediates and coordinate correction, which is really not that human friendly to understand even from extensive code comments.
 
 ## Module description:
 Adds extended nucleotide (nt) sequences to ExtendAlign's `HSe-blastn` results file.
@@ -33,7 +31,6 @@ Adds extended nucleotide (nt) sequences to ExtendAlign's `HSe-blastn` results fi
 9. Do remember that a previous module (`mk-get_EA_coordinates`) includes a failsafe to avoid asking for extensions of more nucleotides than can be evenly compared between query and subject extension (*i.e.* if at 5'end, query can be extended 5 nt, but subject can only be extended 3 nt, only 3 nt will be extracted for both, query and subject).
 
 ## Module Dependencies:
-
 Bedtools getfasta from [bedtools v2.27.1](https://bedtools.readthedocs.io/en/latest/) (Quinlan AR and Hall IM, 2010. BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics. 26, 6, pp. 841–842).
 
 ### Developer Notes:
@@ -50,8 +47,7 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-
-* For this example, tabs ware replaced by simple white spaces.
+* For this example, TABs were replaced by white spaces.
 * This type of file is created by the `mk-get_EA_coordinates` module.
 
 ### Output:
@@ -66,14 +62,12 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-
-* For this example, tabs ware replaced by simple white spaces.
+* For this example, TABs were replaced by  white spaces.
 * Do note the last 4 columns, with the extracted nucleotides.
 
 For Output File Column description: see readme.md in module `mk-get_EA_coordinates` for previous column description.
 
 New columns are described as follows:
-
 `query_5end_extended_nt`: Query extended nucleotides at the 5'-end, extracted from the upstream flanking position of the blastn alignment.
 `query_3end_extended_nt`: Query extended nucleotides at the 3'-end, extracted from the downstream flanking position of the blastn alignment.
 `subject_5end_extended_nt`: Query extended nucleotides at the 5'-end.
@@ -81,13 +75,11 @@ New columns are described as follows:
 
 
 **Note(s):**
-
 * `*extended_nt` columns should contain only ATCG characters; for RNA query of subject sequences you have to take into considerations that T's represent U's, changed for the sake of harmony in downstream comparison.
 * `*extended_nt` columns will contain the `.` character when no extension was necessary.
 * `*extended_nt` columns will contain the `ERR` value if something went wrong with the extension.
 
 ## Temporary files:
-```
 `*.query.harmonized.fa.tmp`: Modified input query fasta, with U nucleotides changed to T to enable RNA/DNA comparisons by a downstream module. All nucleotides are changed to uppercase.
 `*.query.harmonized.fa.tmp.fai`: Fasta index created by bedtools when accessing `*.query.harmonized.fa.tmp`.
 `*.query5end.bed.tmp`: For query 5'-end, modified bed format coordinates taken from the .`EAcoordinates.tsv` input. Modifications consists in shifting 1 nt the bed coordinates to extract an extra nucleotide; this solves a bug when downstream bedtools operates in coordinates where no fasta extension is neccesary.
@@ -100,27 +92,23 @@ New columns are described as follows:
 `*.subject3end.bedfasta.tmp`: For subject, same as `*.query5end.bedfasta.tmp`.
 `*.subject5end.bed.tmp`: For subject, same as `*.query3end.bed.tmp`.
 `*.subject5end.bedfasta.tmp`: For subject, same as `*.query3end.bedfasta.tmp`.
-```
 
 ## Module Parameters:
-
-Path to the original QUERY FASTA used as input of the ExtendAlign pipeline.
+Path to the original query fastq used as input of the ExtendAlign pipeline.
 This will be the file where the nucleotides for query extension will be extracted from:
 
 ```
 QUERY_FASTA="../../test/data/query/hsa-miRNAs22.fa"
 ```
 
-Path to the original SUBJECT FASTA used as input of the ExtendAlign pipeline.
+Path to the original subject fasta used as input of the ExtendAlign pipeline.
 This where nucleotides for subject extension will be extracted from,
 
 ```
 SUBJECT_FASTA="../../test/data/subject/mmu-premiRNAs22.fa"
 ```
 
-
 # Testing the module:
-
 1. Test this module locally by running,
 
 ```
@@ -128,3 +116,4 @@ bash testmodule.sh
 ```
 
 2. `[>>>] Module Test Successful` should be printed in the console...
+

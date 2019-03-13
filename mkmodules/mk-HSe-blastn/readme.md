@@ -2,8 +2,12 @@
 **Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
 **Date:** February-2019  
 
+---
+
 ## TODO:
 NONE
+
+---
 
 ## Module Description:
 Blastn run in High Sensitivity (HSe) mode with an ExtendAlign fasta query file over an ExtendAlign fasta blastn database previously created.
@@ -12,8 +16,12 @@ Blastn run in High Sensitivity (HSe) mode with an ExtendAlign fasta query file o
 2. Unlike basic blastn results, `HSe-blastn` reports the original query and subject sequence lengths.  
 3. The query and subject length values will be used in modules downstream to decide if an alignment can be extended by ExtendAlign.  
 
+---
+
 ## Module Dependencies:
 NCBI [BLAST 2.8.1+](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download) (Camacho, Christiam, et al. "BLAST+: architecture and applications." BMC bioinformatics 10.1 (2009): 421).
+
+---
 
 ### Input:
 A fasta file with `.EAfa` extension.
@@ -26,6 +34,8 @@ UGAGGUAGUAGGUUGUAUAGUU
 
 **Note(s):**
 * The string`NUMBER{EA}` at the beginning of the fasta header, corresponds to a custom string added by a previous ExtendAlign module (`mk-create_EAfasta`).
+
+---
 
 ### Output:
 A custom blastn output TAB separated file, with `.blastn.tsv` extension.
@@ -60,6 +70,8 @@ Output File Column Descriptions:
 `qseq`: Aligned part of query sequence.  
 `sseq`: Aligned part of subject sequence.    
 
+---
+
 ## Module Parameters:
 Path to main ExtendAlign fasta file that defines the blastn database.
 An ExtendAlign blast database is created by an upstream module (`mk-create_blastdb`).
@@ -90,6 +102,8 @@ BLAST_EVALUE="10"
 
 **Note(s):**
 * To find more about blastn parameters [BLAST® Command Line Applications User Manual](https://www.ncbi.nlm.nih.gov/books/NBK279684/).
+
+---
 
 ## Testing the module:
 

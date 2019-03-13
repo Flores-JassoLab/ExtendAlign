@@ -1,6 +1,5 @@
 ## mk-HSe-blastn
 **Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
-
 **Date:** February-2019
 
 ## TODO:
@@ -10,9 +9,7 @@ NONE
 Blastn run in High Sensitivity (HSe) mode with an ExtendAlign fasta query file over an ExtendAlign fasta blastn database previously created.
 
 1. Blastn run allows gapped alignments and uses the smallest word size (7).
-
 2. Unlike basic blastn results, `HSe-blastn` reports the original query and subject sequence lengths.
-
 3. The query and subject length values will be used in modules downstream to decide if an alignment can be extended by ExtendAlign.
 
 ## Module Dependencies:
@@ -28,7 +25,6 @@ UGAGGUAGUAGGUUGUAUAGUU
 ```
 
 **Note(s):**
-
 * The string`NUMBER{EA}` at the beginning of the fasta header, corresponds to a custom string added by a previous ExtendAlign module (`mk-create_EAfasta`).
 
 ### Output:
@@ -41,14 +37,11 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-
 * `qlength` and `slength` columns are custom ExtendAlign outputs.
 * Basic column description taken from [BLAST® Command Line Applications User Manual](https://www.ncbi.nlm.nih.gov/books/NBK279684/).
 
 
 Output File Column Descriptions:
-
-```
 `qlength`: Nucleotide length for the query that was aligned in this hit.
 `qseqid`: Fasta header for query sequence.
 `slength`: Nucleotide length for the subject that was aligned in this hit.
@@ -66,10 +59,8 @@ Output File Column Descriptions:
 `sstrand`: Subject Strand where the alignment hit was located.
 `qseq`: Aligned part of query sequence
 `sseq`: Aligned part of subject sequence
-```
 
 ## Module Parameters:
-
 Path to main ExtendAlign fasta file that defines the blastn database.
 An ExtendAlign blast database is created by an upstream module (`mk-create_blastdb`).
 ```
@@ -98,7 +89,6 @@ BLAST_EVALUE="10"
 ```
 
 **Note(s):**
-
 * To find more about blastn parameters [BLAST® Command Line Applications User Manual](https://www.ncbi.nlm.nih.gov/books/NBK279684/).
 
 ## Testing the module:
@@ -109,3 +99,4 @@ bash testmodule.sh
 ```
 
 2. ```[>>>] Module Test Successful``` should be printed in the console...
+

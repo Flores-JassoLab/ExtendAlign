@@ -1,5 +1,5 @@
-#mk-bedtools_getfasta
-**Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
+# mk-bedtools_getfasta  
+**Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
 **Date:** February-2019
 
 ## TODO:
@@ -22,7 +22,7 @@ Adds extended nucleotide (nt) sequences to ExtendAlign's `HSe-blastn` results fi
 
 5. Extractions are performed in bulk using the `bedtools getfasta` command.
 
-6. In short, extensions are done to a one-column file, each row corresponds to a blastn hit result. Four one-column files are created: 1) query 5'end, 2) query 3'end, 3) subject 5'end, and 4) subject 3'end extensions.
+6. In short, extensions are done to a one-column file, each row corresponds to a blastn hit result. Four one-column files are created: **1)** query 5'end, **2)** query 3'end, **3)** subject 5'end, and **4)** subject 3'end extensions.
 
 7. Bed coordinates for `getfasta` are temporary modified to avoid a bug were `HSe-blastn` hits with no extension necessary would yield an incomplete number of rows in the results.
 
@@ -62,16 +62,19 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by  white spaces.
+* For this example, TABs were replaced by white spaces.
 * Do note the last 4 columns, with the extracted nucleotides.
 
 For Output File Column description: see readme.md in module `mk-get_EA_coordinates` for previous column description.
 
 New columns are described as follows:
-`query_5end_extended_nt`: Query extended nucleotides at the 5'-end, extracted from the upstream flanking position of the blastn alignment.
-`query_3end_extended_nt`: Query extended nucleotides at the 3'-end, extracted from the downstream flanking position of the blastn alignment.
-`subject_5end_extended_nt`: Query extended nucleotides at the 5'-end.
-`subject_3end_extended_nt`: Query extended nucleotides at the 5'-end.
+`query_5end_extended_nt`: Query extended nucleotides at the 5'-end, extracted from the upstream flanking position of the blastn alignment.  
+
+`query_3end_extended_nt`: Query extended nucleotides at the 3'-end, extracted from the downstream flanking position of the blastn alignment.  
+
+`subject_5end_extended_nt`: Query extended nucleotides at the 5'-end.  
+
+`subject_3end_extended_nt`: Query extended nucleotides at the 5'-end.  
 
 
 **Note(s):**
@@ -80,18 +83,18 @@ New columns are described as follows:
 * `*extended_nt` columns will contain the `ERR` value if something went wrong with the extension.
 
 ## Temporary files:
-`*.query.harmonized.fa.tmp`: Modified input query fasta, with U nucleotides changed to T to enable RNA/DNA comparisons by a downstream module. All nucleotides are changed to uppercase.
-`*.query.harmonized.fa.tmp.fai`: Fasta index created by bedtools when accessing `*.query.harmonized.fa.tmp`.
-`*.query5end.bed.tmp`: For query 5'-end, modified bed format coordinates taken from the .`EAcoordinates.tsv` input. Modifications consists in shifting 1 nt the bed coordinates to extract an extra nucleotide; this solves a bug when downstream bedtools operates in coordinates where no fasta extension is neccesary.
-`*.query5end.bedfasta.tmp`:  For query 5'-end, single column file with the extracted nucleotides. When no extention required = `.` value; faulty extention = `ERR` value. Each row corresponds to the same row number in the `*.EAcoordinates.tsv input`.
-`*.query3end.bed.tmp`: For query 3'-end, same as `*.query5end.bed.tmp`.
-`*.query3end.bedfasta.tmp`:  For query-3' end, same as `*.query5end.bedfasta.tmp`
-`*.subject.harmonized.fa.tmp`: For subject fasta, same as `*.query.harmonized.fa.tmp`.
-`*.subject.harmonized.fa.tmp.fai`: Fasta index created by bedtools.
-`*.subject3end.bed.tmp`: For subject, same as `*.query5end.bed.tmp`.
-`*.subject3end.bedfasta.tmp`: For subject, same as `*.query5end.bedfasta.tmp`.
-`*.subject5end.bed.tmp`: For subject, same as `*.query3end.bed.tmp`.
-`*.subject5end.bedfasta.tmp`: For subject, same as `*.query3end.bedfasta.tmp`.
+`*.query.harmonized.fa.tmp`: Modified input query fasta, with U nucleotides changed to T to enable RNA/DNA comparisons by a downstream module. All nucleotides are changed to uppercase.  
+`*.query.harmonized.fa.tmp.fai`: Fasta index created by bedtools when accessing `*.query.harmonized.fa.tmp`.  
+`*.query5end.bed.tmp`: For query 5'-end, modified bed format coordinates taken from the .`EAcoordinates.tsv` input. Modifications consists in shifting 1 nt the bed coordinates to extract an extra nucleotide; this solves a bug when downstream bedtools operates in coordinates where no fasta extension is neccesary.  
+`*.query5end.bedfasta.tmp`:  For query 5'-end, single column file with the extracted nucleotides. When no extention required = `.` value; faulty extention = `ERR` value. Each row corresponds to the same row number in the `*.EAcoordinates.tsv input`.  
+`*.query3end.bed.tmp`: For query 3'-end, same as `*.query5end.bed.tmp`.  
+`*.query3end.bedfasta.tmp`:  For query-3' end, same as `*.query5end.bedfasta.tmp`  
+`*.subject.harmonized.fa.tmp`: For subject fasta, same as `*.query.harmonized.fa.tmp`.  
+`*.subject.harmonized.fa.tmp.fai`: Fasta index created by bedtools.  
+`*.subject3end.bed.tmp`: For subject, same as `*.query5end.bed.tmp`.  
+`*.subject3end.bedfasta.tmp`: For subject, same as `*.query5end.bedfasta.tmp`.  
+`*.subject5end.bed.tmp`: For subject, same as `*.query3end.bed.tmp`.  
+`*.subject5end.bedfasta.tmp`: For subject, same as `*.query3end.bedfasta.tmp`.  
 
 ## Module Parameters:
 Path to the original query fastq used as input of the ExtendAlign pipeline.

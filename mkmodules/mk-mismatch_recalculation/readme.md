@@ -1,5 +1,4 @@
 # mk-mismatch_recalculation
-
 **Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
 **Date:** February-2019
 
@@ -29,7 +28,7 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by simple white spaces.
+* For this example, TABs were replaced by white spaces.
 * This type of file was created by the `mk-bedtools_getfasta` module.
 
 ### Output:
@@ -43,7 +42,7 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by simple white spaces.
+* For this example, TABs were replaced by white spaces.
 * Do note the addition of the last 6 columns in the output file, with the extended alignment data.
 
 Output File Column Descriptions: see readme.md in module `mk-bedtools_getfasta` for previous column description.
@@ -73,3 +72,4 @@ bash testmodule.sh
 ```
 
 2. `[>>>] Module Test Successful` should be printed in the console...
+

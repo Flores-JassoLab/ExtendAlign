@@ -1,10 +1,13 @@
-# mk-append_nohits
-**Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
+# mk-append_nohits  
+**Author(s):** Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
+**Date:** February-2019  
 
-**Date:** February-2019
+---
 
 ## TODO:
 NONE
+
+---
 
 ## Module Description:
 Add rows with information for querys that had no hit in ExtendAlign `HSe-blastn`.
@@ -13,13 +16,17 @@ Add rows with information for querys that had no hit in ExtendAlign `HSe-blastn`
 2. By comparing this data, we can determine which ExtendAlign fasta query IDs are missing from the ExtendAlign `HSe-blastn` results table.
 3. A dummy results table is created for the missing query IDs.
 4. For every missing query ID, a row is created with the `NO_HIT` legend in the subject ID column and `.` values in other columns.
-5. **IMPORTANT!!** Values for the missing queries are declared explicitly in the mkfile recipe `%.nohit_results.tmp`. This means that if the number and/or order of the columns in the input `*.recalculatedmm.tsv` format is changed, the script `%.nohit_results.tmp` recipe in this module must be adjusted.
+    **IMPORTANT!!** Values for the missing queries are declared explicitly in the mkfile recipe `%.nohit_results.tmp`. This means that if the number and/or order of the columns in the input `*.recalculatedmm.tsv` format is changed, the script `%.nohit_results.tmp` recipe in this module must be adjusted.
+
+---
 
 ## Module Dependencies:
 NONE
 
+---
+
 ### Input:
-    a. A fasta file with `.EAfa` extension.
+A fasta file with `.EAfa` extension.
 
 Example line(s):
 ```
@@ -30,7 +37,8 @@ UGAGGUAGUAGGUUGUAUAGUU
 **Note(s):**
 * The `NUMBER{EA}` string of characters at the start of the fasta header, is a custom string added by a previous EA module (`mk-create_EAfasta`).
 
-    b. ExtendAlign `HSe-blastn` output TAB separated file, with `.recalculatedmm.tsv` extension, see readme.md at `mk-mismatch_recalculation` module for column description.
+
+ExtendAlign `HSe-blastn` output TAB separated file, with `.recalculatedmm.tsv` extension, see readme.md at `mk-mismatch_recalculation` module for column description.
 
 Example line(s):
 ```
@@ -42,9 +50,11 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 * For this example, TABs were replaced by simple white spaces.
 * This type of file is created by the `mk-mismatch_recalculation` module.
 
+---
+
 ### Output:
-ExtendAlign `HSe-blastn` output TAB separated file, with `.with_nohits.tsv` extension.
-This results file includes the extra rows for queries with no ExtendAlign `HSe-blastn` hits.
+ExtendAlign `HSe-blastn` output TAB separated file, with `.with_nohits.tsv` extension.  
+This results file includes the extra rows for queries with no ExtendAlign `HSe-blastn` hits.  
 
 Example line(s):
 ```
@@ -56,19 +66,23 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by simple white spaces.
-* Do note the difference between the **hsa-miR-1226-5p.MIMAT0005576** hit, and the **hsa-miR-8083.MIMAT0031010** NO_HIT line
+* For this example, TABs were replaced by simple white spaces.  
+* Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit, and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.  
 
 Output File Column Descriptions: see readme.txt in module `mk-mismatch_recalculation`.
+
+---
 
 ## Module Parameters:
 NONE
 
-## Testing the module:
+---
 
+## Testing the module:
 1. Test this module locally by running,
 ```
 bash testmodule.sh
 ```
 
 2. `[>>>] Module Test Successful` should be printed in the console...
+

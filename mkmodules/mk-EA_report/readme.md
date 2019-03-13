@@ -1,7 +1,6 @@
-# mk-EA_report
-**Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
-
-**Date:** February-2019
+# mk-EA_report  
+**Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
+**Date:** February-2019  
 
 ## TODO:
 *( iaguilar )* update example lines for output
@@ -29,15 +28,15 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by simple white spaces.
-* Do note the difference between the **hsa-miR-1226-5p.MIMAT0005576** hit, and the **hsa-miR-8083.MIMAT0031010** NO_HIT line
+* For this example, TABs were replaced by white spaces.  
+* Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit, and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.  
 
 Input File Column Descriptions: see readme.md in `module mk-append_nohits`.
 
 ### Output:
 An ExtendAlign analysis summary, TAB separated file.
 
-Example line(s):
+Example line(s):  
 ```
 query_name subject_name query_length EA_alignment_length EA_total_mismatch EA_total_match EA_pident blastn_pident
 hsa-miR-1226-5p.MIMAT0005576 mmu-mir-6927.MI0022774 26 26 6 20 76.9231 76.923
@@ -45,19 +44,19 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by simple white spaces.
-* Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.
+* For this example, TABs were replaced by simple white spaces.  
+* Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.  
 
-Output File Column Descriptions:
+Output File Column Descriptions:  
 
-`query_name`: Name or ID of the sequence used as query for alignment.
-`subject_name`: Name or ID of the sequence where a hit was found.
-`query_length`: Length of the query.
-`EA_alignment_length`: Number of query nucleotides included in the extended alignment.
-`EA_total_mismatch`: Number of mismatches found in the extended alignment.
-`EA_total_match`: Number of matches found in the extended alignment.
-`EA_pident`: ExtendAlign recalculated percent identity.
-`blastn_pident`: Original `HSe-blastn` percent identity.
+`query_name`: Name or ID of the sequence used as query for alignment.  
+`subject_name`: Name or ID of the sequence where a hit was found.  
+`query_length`: Length of the query.  
+`EA_alignment_length`: Number of query nucleotides included in the extended alignment.  
+`EA_total_mismatch`: Number of mismatches found in the extended alignment.  
+`EA_total_match`: Number of matches found in the extended alignment.  
+`EA_pident`: ExtendAlign recalculated percent identity.  
+`blastn_pident`: Original `HSe-blastn` percent identity.  
 
 
 ## Module parameters:

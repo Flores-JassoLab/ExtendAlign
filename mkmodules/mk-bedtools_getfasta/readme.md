@@ -50,9 +50,9 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 * For this example, TABs were replaced by white spaces.
 * This type of file is created by the `mk-get_EA_coordinates` module.
 
+
 ### Output:
 A `HSe-blastn` output (TAB separated file) with `.extended_nucleotides.tsv` extension.
-
 This extended nucleotides file contains extra columns for the common `HSe-blastn` format and `.EAcoordinates.tsv` format.
 
 Example line(s):
@@ -61,13 +61,13 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 22 hsa-miR-642b-3p.MIMAT0018444 111 mmu-mir-6396.MI0021931 90.909 11 1 0 11 21 76 86 7.2 15.8 plus 10 1 75 25 10 1 1 11 21 22 66 76 86 87 + AGACACATTT C TATCCGGGCA A
 ```
 
+
 **Note(s):**
 * For this example, TABs were replaced by white spaces.
 * Do note the last 4 columns, with the extracted nucleotides.
 
 For Output File Column description: see readme.md in module `mk-get_EA_coordinates` for previous column description.
-
-New columns are described as follows:
+New columns are described as follows:  
 `query_5end_extended_nt`: Query extended nucleotides at the 5'-end, extracted from the upstream flanking position of the blastn alignment.  
 
 `query_3end_extended_nt`: Query extended nucleotides at the 3'-end, extracted from the downstream flanking position of the blastn alignment.  

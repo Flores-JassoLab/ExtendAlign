@@ -1,7 +1,7 @@
 ExtendAlign
 ===========
 ExtendAlign is a tool, implemented with Nextflow, that combines the strength of a multi-hit local alignment,
-and also the refinement provided by a query-based end-to-end alignment in reporting accurately the number of m/mm for short queries.
+and also the refinement provided by a query-based end-to-end alignment in reporting accurately the number of matches and mismatches.
 
 ---
 
@@ -22,7 +22,6 @@ and also the refinement provided by a query-based end-to-end alignment in report
 ---
 
 ## Requirements
-
 #### Compatible OS*:
 * [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
 
@@ -33,13 +32,13 @@ and also the refinement provided by a query-based end-to-end alignment in report
 |:---------:|:--------:|:-------------------:|
 | [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.25.0 | bedtools |
 | [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.2.31+ | makeblastdb , blastn |
-| [NextFlow](https://www.nextflow.io/docs/latest/getstarted.html) | 19.01 | nextflow |
+| [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) | 19.01 | nextflow |
 | [Seqkit](https://github.com/shenwei356/seqkit) | v0.10.0 | seqkit |
-| [plan9 port](https://github.com/9fans/plan9port) | latest (as of 10/10/2019 ) | mk ** |
+| [Plan9 port](https://github.com/9fans/plan9port) | Latest (as of 10/10/2019 ) | mk ** |
 
-\* These commands must be accessible from your $PATH (*i.e.* you should be able to invoke them from your command line).  
+\* These commands must be accessible from your `$PATH` (*i.e.* you should be able to invoke them from your command line).  
 
-\** plan9 port builds many binaries, but you ONLY need the `mk` utility to be accessible from your command line.
+\** Plan9 port builds many binaries, but you ONLY need the `mk` utility to be accessible from your command line.
 
 ---
 
@@ -67,7 +66,6 @@ Your console will be filled with the Nextflow log for the run; after every proce
 ```
 
 The ExtendAlign results for the test data will be crated at the following file:
-
 ```
 test/results/Extend_Align_results/hsa-miRNAs22.fa_EA_report.tsv
 ```
@@ -76,7 +74,6 @@ test/results/Extend_Align_results/hsa-miRNAs22.fa_EA_report.tsv
 
 ### Usage
 To run ExtendAlign go to the pipeline directory and execute the following:
-
 ```
 nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
 [--number_of_hits all|best] [--blastn_threads int_value] [--blastn_strand both|plus|minus]
@@ -96,7 +93,7 @@ especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.htm
 integration capabilities to manage process distribution and computational resources.
 
 The _config_profiles/sge.config_ and/or _config_profiles/condor.config_ must be properly configured before launching cluster runs. 
-This configuration files define variables regarding queue, parallelization environments and resources requested by every process in the pipeline.
+This configuration files define variables regarding queue, parallelization environments and resources requested by every process in the pipeline.  
 
 For information about the `-profile sge|condor` option, run:
 ```
@@ -106,7 +103,6 @@ nextflow run extend_align.nf --help
 ---
 
 ### Pipeline Inputs
-
 1. A query fasta file with `.fa`, `.fna` or `.fasta` extension.  
 
 Example line(s):
@@ -124,7 +120,6 @@ UUCACUGUGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACCCACCACUGGGAGAUAACUAUACAAUCUACUGUC
 ```
 
 ### Pipeline Results
-
 1. An ExtendAlign analysis summary, in TSV format.  
 
 Example line(s):
@@ -135,24 +130,23 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 ```
 
 **Note(s):**
-* For this example, TABs were replaced by white spaces.
-* Do note the difference between the **hsa-miR-1226-5p.MIMAT0005576** hit, and the **hsa-miR-8083.MIMAT0031010** NO_HIT line.
+* For this example, TABs were replaced with white spaces.
+* Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.
 
 #### Output File Column Descriptions:
-`query_name`: Name or ID of the sequence used as query for alignment.
-`subject_name`: Name or ID of the sequence where a hit was found.
-`query_length`: Length of the query.
-`EA_alignment_length`: Number of query nucleotides included in the extended alignment.
-`EA_total_mismatch`: Number of mismatches found in the extended alignment.
-`EA_total_match`: Number of matches found in the extended alignment.
-`EA_pident`: ExtendAlign recalculated percent identity.
-`blastn_pident`: Original `HSe-blastn` percent identity.
+`query_name`: Name or ID of the sequence used as query for alignment.  
+`subject_name`: Name or ID of the sequence where a hit was found.  
+`query_length`: Length of the query.  
+`EA_alignment_length`: Number of query nucleotides included in the extended alignment.  
+`EA_total_mismatch`: Number of mismatches found in the extended alignment.  
+`EA_total_match`: Number of matches found in the extended alignment.  
+`EA_pident`: ExtendAlign recalculated percent identity.  
+`blastn_pident`: Original `HSe-blastn` percent identity.  
 
 ---
 
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
-
 Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
 
 * Preprint version can be found at:
@@ -165,7 +159,6 @@ If you have questions, requests, or bugs to report, please open an [issue](https
 <iaguilaror@gmail.com>
 
 #### Dev Team
-
 Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
 Mariana Flores-Torres <mariana.flo.tor@gmail.com>  
 Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  

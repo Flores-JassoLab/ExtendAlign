@@ -1,0 +1,2 @@
+TEST:VQ:
+	echo "mk is installed"

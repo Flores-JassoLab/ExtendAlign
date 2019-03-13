@@ -1,6 +1,12 @@
 #!/bin/bash
 
-nextflow run extend_align.nf \
+## Check that command requirements are reachable from CLI
+## then remove test/results dir
+## then Run NF
+bash test/requirements/dependency_checker.sh \
+&& echo -e "======\n Testing NF execution \n======" \
+&& rm -rf test/results/ \
+&& nextflow run extend_align.nf \
 	--query_fasta test/data/query/hsa-miRNAs22.fa \
 	--subject_fasta test/data/subject/sample_subject.fa \
 	--output_dir test/results/ \

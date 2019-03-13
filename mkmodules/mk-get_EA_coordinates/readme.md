@@ -1,16 +1,18 @@
-# mk-get_EA_coordinates
-**Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)
+# mk-get_EA_coordinates  
+**Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
+**Date:** February-2019  
 
-**Date:** February-2019
+---
 
 ## TODO:
 NONE
 
+---
+
 ## Module description:
-Add sequence coordinates to the ExtendAlign `HSe-blastn` results table to indicate where nucleotides should be extracted from for downstream bulk fasta extraction.
+Add sequence coordinates to the ExtendAlign `HSe-blastn` results table to indicate where nucleotides should be extracted from for downstream bulk fasta extraction.  
 
 1. This module calculates the length of extendable nucleotides at the 5'-end and 3'-end, of query and subjects.
-
 2. It takes into account the factors that affect a correct comparison of nucleotides, such as:  
    i. Query and subject length.  
 
@@ -19,14 +21,17 @@ Add sequence coordinates to the ExtendAlign `HSe-blastn` results table to indica
    iii. Strandness - in cases where the ExtendAlign `HSe-blastn` hit was reported as a hit in the minus strand of the subject (this requires mirrored operations of the sequence coordinates) *e.g.* the subject 5'-end extendable coordinates for a **minus** hit are extracted from the 3'-end portion of the original subject sequence.
 
 3. Using all of the data above, this module adds sequence coordinates to indicate where to perform nucleotide extraction to enable a downstream finer match/mismatch count in cases where alignments can be extended.
-
 4. **IMPORTANT!!:** This module does not perform the fasta extraction, or the extended match/mismatch recount. Leave that to other mkmodules.
+
+---
 
 ## Module Dependencies:
 NONE
 
+---
+
 ### Input:
-ExtendAlign `HSe-blastn` output TAB separated file, with `.EAblastn.tsv` or `.EAblastnbesthit.tsv` extension.
+ExtendAlign `HSe-blastn` output TAB separated file, with `.EAblastn.tsv` or `.EAblastnbesthit.tsv` extension.  
 
 Example line(s):
 ```
@@ -35,12 +40,14 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 26 hsa-miR-4700-3p.MIMAT0019797 79 mmu-mir-700.MI0004684 69.231 26 8 0 1 26 28 3 2.8 17.3 minus CACAGGACTGACTCCTCACCCCAGTG CACAGGAAGGAGCCTTACTCCCAGTG 0 0 8 8
 ```
 
-**Note(s):**
-* For this example, TABs were replaced by simple white spaces.
+**Note(s):**  
+* For this example, TABs were replaced by white spaces.  
+
+---
 
 ### Output:
-ExtendAlign `HSe-blastn` output TAB separated file, with `.EAcoordinates.tsv` extension.
-This coordinates file contains extra columns for the common blastn format.
+ExtendAlign `HSe-blastn` output TAB separated file, with `.EAcoordinates.tsv` extension.  
+This coordinates file contains extra columns for the common blastn format.  
 
 Example line(s):
 ```
@@ -51,35 +58,38 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 
 **Note(s):**
 
-* For this example, TABs were replaced by simple white spaces.
+* For this example, TABs were replaced by white spaces.  
 
-Output File Column Descriptions: see readme.md in module `mk-HSe-blastn` for basic column description; new columns are described as follows:
+Output File Column Descriptions: see readme.md in module `mk-HSe-blastn` for basic column description; new columns are described as follows:  
 
-`q5end_extension_length:` For query, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.
-`q3end_extension_length:` For query, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.
-`s5end_extension_length:` For subject, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.
-`s3end_extension_length:` For subject, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.
-`overlap5end_extension_length:` For 5'-end, maximum number of extension length shared by query and subject; *e.g.* query 5'-end length is 7 nt, subject 5'-end is 3 nt, thus, the `overlap5end_extension_length` is the minimal value of those two, which is 3 nt.
-`overlap3end_extension_length:` For 3'-end, maximum number of extension length shared by query and subject; *e.g.* query 3'-end length is 0 nt, subject 3'-end is 9 nt, thus, the `overlap5end_extension_length` is the minimal value of those two, which is 0 nt.
-`q5end_extension_start:` For query 5'-end, sequence position where the nucleotides should begin to be extracted from the query fasta.
-`q5end_extension_end:` For query 5'-end, sequence position where the nucleotides should finish to be extracted.
-`q3end_extension_start:` For query 3'-end, sequence position where the nucleotides should begin to be extracted.
-`s5end_extension_start:` For subject 5'-end, sequence position where the nucleotides should begin to be extracted from the query fasta.
-`q3end_extension_end:` For query 3'-end, sequence position where the nucleotides should finish to be extracted.
-`s5end_extension_end:` For subject 5'-end, sequence position where the nucleotides should finish to be extracted.
-`s3end_extension_start:` For subject 3'-end, sequence position where the nucleotides should begin to be extracted.
-`s3end_extension_end:` For subject 3'-end, sequence position where the nucleotides should finish to be extracted.
-`strand:` + or - code for the `HSe-blastn` result strandness (will be required in +/- format by downstream process).
+`q5end_extension_length:` For query, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.  
+`q3end_extension_length:` For query, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.  
+`s5end_extension_length:` For subject, number of nucleotides at 5'-end that were not included in the `HSe-blastn` reported alignment.  
+`s3end_extension_length:` For subject, number of nucleotides at 3'-end that were not included in the `HSe-blastn` reported alignment.  
+`overlap5end_extension_length:` For 5'-end, maximum number of extension length shared by query and subject; *e.g.* query 5'-end length is 7 nt, subject 5'-end is 3 nt, thus, the `overlap5end_extension_length` is the minimal value of those two, which is 3 nt.  
+`overlap3end_extension_length:` For 3'-end, maximum number of extension length shared by query and subject; *e.g.* query 3'-end length is 0 nt, subject 3'-end is 9 nt, thus, the `overlap5end_extension_length` is the minimal value of those two, which is 0 nt.  
+`q5end_extension_start:` For query 5'-end, sequence position where the nucleotides should begin to be extracted from the query fasta.  
+`q5end_extension_end:` For query 5'-end, sequence position where the nucleotides should finish to be extracted.  
+`q3end_extension_start:` For query 3'-end, sequence position where the nucleotides should begin to be extracted.  
+`s5end_extension_start:` For subject 5'-end, sequence position where the nucleotides should begin to be extracted from the query fasta.  
+`q3end_extension_end:` For query 3'-end, sequence position where the nucleotides should finish to be extracted.  
+`s5end_extension_end:` For subject 5'-end, sequence position where the nucleotides should finish to be extracted.  
+`s3end_extension_start:` For subject 3'-end, sequence position where the nucleotides should begin to be extracted.  
+`s3end_extension_end:` For subject 3'-end, sequence position where the nucleotides should finish to be extracted.  
+`strand:` + or - code for the `HSe-blastn` result strandness (will be required in +/- format by downstream process).  
+
+---
 
 ## Module parameters:
 NONE
 
+---
+
 ## Testing the module:
-
 1. Test this module locally by running,
-
 ```
 bash testmodule.sh
 ```
 
 2. `[>>>] Module Test Successful` should be printed in the console...
+

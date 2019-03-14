@@ -50,21 +50,20 @@ git clone https://github.com/Flores-JassoLab/ExtendAlign
 ---
 
 #### Test
-To run the basic pipeline test:
-
-Execute:
+To test if requirements are installed and ExtendAlign's execution using test data, run:
 ```
 ./runtest.sh
 ```
 
-Your console will be filled with the Nextflow log for the run; after every process has been submitted, the following message will appear:
+If requirements are correctly installed, your console should print the Nextflow log for the run, once every process has been submitted, 
+the following message will appear:
 ```
 ======
  Extend Align: Basic pipeline TEST SUCCESSFUL
 ======
 ```
 
-The ExtendAlign results for the test data will be crated at the following file:
+ExtendAlign results for test data should be in the following file:
 ```
 test/results/Extend_Align_results/sample_query_EA_report.tsv
 ```
@@ -72,7 +71,7 @@ test/results/Extend_Align_results/sample_query_EA_report.tsv
 ---
 
 ### Usage
-To run ExtendAlign go to the pipeline directory and execute the following:
+To run ExtendAlign go to the pipeline directory and execute:
 ```
 nextflow run extend_align.nf --query_fasta <path to input 1> --subject_fasta <path to input 2> [--output_dir path to results ]
 [--number_of_hits all|best] [--blastn_threads int_value] [--blastn_strand both|plus|minus]

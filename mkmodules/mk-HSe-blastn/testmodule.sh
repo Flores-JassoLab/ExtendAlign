@@ -12,7 +12,7 @@ echo "[>>.] results will be created in test/results"
 ## files are *.blastn.tsv
 ## During runmk.sh execution, pass the test parameters required by the main mk rules
 bash runmk.sh -a \
-  BLAST_DATABASE="../../test/data/blastdb/mmu-premiRNAs22.fa.EAfa" \
+  BLAST_DATABASE="test/reference/sample_subject.fa.EAfa" \
   BLAST_THREADS="1" \
   BLAST_STRAND="both" \
   BLAST_MAX_TARGET_SEQS="100" \

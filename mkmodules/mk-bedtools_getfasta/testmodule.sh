@@ -12,7 +12,7 @@ echo "[>>.] results will be created in test/results"
 ## files are *.extended_nucleotides.tsv, .bed.tmp and .bedfasta.tmp files
 ## During runmk.sh execution, pass the test parameters required by the main mk rules
 bash runmk.sh -a \
-  QUERY_FASTA="../../test/data/query/hsa-miRNAs22.fa" \
-  SUBJECT_FASTA="../../test/data/subject/mmu-premiRNAs22.fa" \
+  QUERY_FASTA="../../test/data/query/sample_query.fa" \
+    SUBJECT_FASTA="../../test/data/subject/sample_subject.fa" \
 && mv test/data/*.extended_nucleotides.tsv test/data/*.tmp*  test/results \
 && echo "[>>>] Module Test Successful"

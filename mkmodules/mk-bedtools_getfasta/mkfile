@@ -77,6 +77,7 @@ MKSHELL=/bin/bash
 			-tab \
 			-fi $stem.query.harmonized.fa.tmp \
 			-bed - \
+			-fo - \
 	| awk '
 			{
 			## Start sequence_nucleotides variable with missing value "NA"
@@ -192,6 +193,7 @@ MKSHELL=/bin/bash
 			-tab \
 			-fi $stem.query.harmonized.fa.tmp \
 			-bed - \
+			-fo - \
 	| awk '
 			{
 			## Start sequence_nucleotides variable with missing value "NA"
@@ -307,6 +309,7 @@ MKSHELL=/bin/bash
 			-tab \
 			-fi $stem.subject.harmonized.fa.tmp \
 			-bed - \
+			-fo - \
 	| awk '
 		###
 		# example of lines passed by STDOUT is: "mmu-mir-6927.MI0022774:0-1(+)   G"
@@ -428,6 +431,7 @@ MKSHELL=/bin/bash
 			-tab \
 			-fi $stem.subject.harmonized.fa.tmp \
 			-bed - \
+			-fo - \
 	| awk '
 		###
 		# example of lines passed by STDOUT is: "mmu-mir-6927.MI0022774:0-1(+)   G"

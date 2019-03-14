@@ -66,7 +66,7 @@ Your console will be filled with the Nextflow log for the run; after every proce
 
 The ExtendAlign results for the test data will be crated at the following file:
 ```
-test/results/Extend_Align_results/hsa-miRNAs22.fa_EA_report.tsv
+test/results/Extend_Align_results/sample_query_EA_report.tsv
 ```
 
 ---

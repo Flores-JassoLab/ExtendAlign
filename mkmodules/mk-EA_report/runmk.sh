@@ -7,7 +7,7 @@
   ## ^^since at the end of the summary process, *_EA_report.tsv files are created
 find -L . \
   -type f \
-  -name "*.with_nohits.tsv" \
-| sed "s#.with_nohits.tsv#_EA_report.tsv#" \
+  -name "*.fa.with_nohits.tsv" \
+| sed "s#.fa.with_nohits.tsv#_EA_report.tsv#" \
 | xargs mk $@
   ## ^^ "mk $@" enables to pass mk arguments from the main flow execution

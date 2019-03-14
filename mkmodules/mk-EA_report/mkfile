@@ -11,7 +11,7 @@ MKSHELL=/bin/bash
 
 ## Simplify ExtendAlign results into an output to be presented to the user.
 ## Parse ExtendAlign table with awk.
-%_EA_report.tsv: %.with_nohits.tsv
+%_EA_report.tsv: %.fa.with_nohits.tsv
 	## Extract columns of interest, which are: query id, subject id, query length, total mismatch, total match, blastn percent identity, EA percent identity
 	awk '
 		###

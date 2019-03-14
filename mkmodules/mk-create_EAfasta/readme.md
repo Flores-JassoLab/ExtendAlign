@@ -20,6 +20,7 @@ Transformation of a fasta file into an ExtendAlign fasta file (`.EAfa`).
 ---
 
 ## Module Dependencies:
+  Already included as an executable in this module; NO INSTALLATION needed:
   [Seqkit v0.10.0](https://github.com/shenwei356/seqkit) (W Shen, S Le, Y Li*, F Hu*. SeqKit: a cross-platform and ultrafast toolkit for FASTA/Q file manipulation. PLOS ONE. doi:10.1371/journal.pone.0163962).
 
 ---
@@ -62,4 +63,3 @@ bash testmodule.sh
 ```
 
 2. "[>>>] Module Test Successful" should be printed in the console...
-

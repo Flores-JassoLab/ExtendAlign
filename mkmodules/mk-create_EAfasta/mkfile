@@ -13,7 +13,7 @@ MKSHELL=/bin/bash
 	## Use seqkit to transform fasta to column separated format, including the sequence length.
 	## seqkit STDOUT in this line follows the bellow format:
 	##			Sequence_ID Nucleotide_sequence Sequence_length
-	seqkit fx2tab --length $prereq \
+	./seqkit fx2tab --length $prereq \
 	| awk '
 			## Use \n as field separator to reform fasta line format.
 			BEGIN{OFS="\n"}

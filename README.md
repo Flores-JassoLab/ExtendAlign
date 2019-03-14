@@ -147,7 +147,7 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
 
-* Flores-Torres, M. Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2018) 
+* Flores-Torres, M., Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2018) 
 ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
 
 Preprint version can be found at:

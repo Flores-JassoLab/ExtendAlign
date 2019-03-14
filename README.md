@@ -33,7 +33,6 @@ and also the refinement provided by a query-based end-to-end alignment in report
 | [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.25.0 | bedtools |
 | [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.2.31+ | makeblastdb , blastn |
 | [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) | 19.01 | nextflow |
-| [Seqkit](https://github.com/shenwei356/seqkit) | v0.10.0 | seqkit |
 | [Plan9 port](https://github.com/9fans/plan9port) | Latest (as of 10/10/2019 ) | mk ** |
 
 \* These commands must be accessible from your `$PATH` (*i.e.* you should be able to invoke them from your command line).  
@@ -88,11 +87,11 @@ nextflow run extend_align.nf --help
 ---
 
 ### Cluster integration
-For scalability, this pipeline uses the executor component from Nextflow, as described [here](https://www.nextflow.io/docs/latest/executor.html); 
-especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.html#sge) and [HTCondor](https://www.nextflow.io/docs/latest/executor.html#htcondor) 
+For scalability, this pipeline uses the executor component from Nextflow, as described [here](https://www.nextflow.io/docs/latest/executor.html);
+especifically, we use the [SGE](https://www.nextflow.io/docs/latest/executor.html#sge) and [HTCondor](https://www.nextflow.io/docs/latest/executor.html#htcondor)
 integration capabilities to manage process distribution and computational resources.
 
-The _config_profiles/sge.config_ and/or _config_profiles/condor.config_ must be properly configured before launching cluster runs. 
+The _config_profiles/sge.config_ and/or _config_profiles/condor.config_ must be properly configured before launching cluster runs.
 This configuration files define variables regarding queue, parallelization environments and resources requested by every process in the pipeline.  
 
 For information about the `-profile sge|condor` option, run:
@@ -147,10 +146,19 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
+
 Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
 
 * Preprint version can be found at:
-<https://www.biorxiv.org/content/early/2018/12/08/475707>
+<https://www.biorxiv.org/content/early/2018/12/08/475707>   
+
+Under the hood, ExtendAlign implements some widely known tools. Please include the following ciations in your work:
+
+Camacho, C., Coulouris, G., Avagyan, V., Ma, N., Papadopoulos, J., Bealer, K., & Madden, T. L. (2009). BLAST+: architecture and applications. BMC bioinformatics, 10(1), 421.
+
+Quinlan, A. R., & Hall, I. M. (2010). BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics, 26(6), 841-842.
+
+Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature biotechnology, 35(4), 316.
 
 ---
 

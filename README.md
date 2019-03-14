@@ -147,19 +147,17 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
 
-* Flores-Torres, M. *et al.* (2018) ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
+* Flores-Torres, M. Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2018) 
+ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
 
 Preprint version can be found at:
 <https://www.biorxiv.org/content/early/2018/12/08/475707>   
 
 #### References
-
 Under the hood ExtendAlign implements some widely known tools. Please include the following ciations in your work:
 
 * Camacho, C., Coulouris, G., Avagyan, V., Ma, N., Papadopoulos, J., Bealer, K., & Madden, T. L. (2009). BLAST+: architecture and applications. BMC bioinformatics, 10(1), 421.
-
 * Quinlan, A. R., & Hall, I. M. (2010). BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics, 26(6), 841-842.
-
 * Di Tommaso, P., Chatzou, M., Floden, E. W., Barja, P. P., Palumbo, E., & Notredame, C. (2017). Nextflow enables reproducible computational workflows. Nature biotechnology, 35(4), 316.
 
 ---

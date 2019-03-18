@@ -24,6 +24,7 @@ and also the refinement provided by a query-based end-to-end alignment in report
 ## Requirements
 #### Compatible OS*:
 * [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
+* [Ubuntu 18.04 LTS](http://releases.ubuntu.com/18.04/)
 
 \* ExtendAlign may run in other UNIX based OS and versions, but testing is required.
 

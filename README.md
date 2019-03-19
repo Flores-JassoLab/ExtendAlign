@@ -34,7 +34,8 @@ and also the refinement provided by a query-based end-to-end alignment in report
 | [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.25.0 | bedtools |
 | [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.2.31+ | makeblastdb , blastn |
 | [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) | 19.01 | nextflow |
-| [Plan9 port](https://github.com/9fans/plan9port) | Latest (as of 10/10/2019 ) | mk ** |
+| [Plan9 port](https://github.com/9fans/plan9port) | Latest (as of 10/10/2019 ) | mk \** |
+| [Seqkit](https://github.com/shenwei356/seqkit) | v0.10.1 | seqkit |
 
 \* These commands must be accessible from your `$PATH` (*i.e.* you should be able to invoke them from your command line).  
 

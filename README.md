@@ -145,6 +145,43 @@ hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
 
 ---
 
+### ExtendAlign directory structure
+````
+ExtendAlign						## Pipeline main directory.
+├── config_profiles					## Directory for cluster configuration files of this pipeline.
+│   ├── condor.config				## Configuration file  HTCcondor cluster configuration
+│   └── sge.config					## Configuration file for SGE cluster configuration.
+├── dev_notes					## Developers notes directory
+│   └── Workflow.png				## Flow diagram
+├── extend_align.nf				## Flow control script of this pipeline.
+├── mkmodules					## Directory for submodule organization 
+│   ├── mk-append_nohits			## Submodule to add rows with information for querys that had no hit in ExtendAlign
+│   ├── mk-bedtools_getfasta		## Submodule to add extended nucleotide sequences to ExtendAlign
+│   ├── mk-create_blastdb			## Submodule to create a blastn database from an ExtendAlign fasta file 
+│   ├── mk-create_EAfasta			## Submodule to transform a fasta file into an ExtendAlign fasta file
+│   ├── mk-EA_report				## Submodule to generate a summarized ExtendAlign results table
+│   ├── mk-get_best_hit				## Submodule to extract the best hit for every query in ExtendAlign results
+│   ├── mk-get_EA_coordinates		## Submodule to add sequence coordinates to ExtendAlign results
+│   ├── mk-HSe-blastn				## Submodule to run Blastn in High Sensitivity mode
+│   ├── mk-mismatch_recalculation	## Submodule to add recalculated ExtendAlign percent identity
+│   └── mk-recalculate_ngap			## Submodule to add number of mismatched nucleotides due to gaps introduced to query and subject sequences.
+├── nextflow.config				## Configuration file for this pipeline.
+├── README.md					## This document. General workflow description
+├── runtest.sh					## Execution script for pipeline testing.
+└── test							## Test directory.
+    ├── data						## Test data directory
+    │   ├── query					## Query directory
+    │   └── subject					## Subject directory
+    └── requirements				## Directory to test pipeline dependencies
+        ├── bedtools					## Directory to test bedtools correct installation
+        ├── blastn					## Directory to test blastn correct installation
+        ├── dependency_checker.sh 		## Script to verify dependencies installation 
+        ├── makeblastdb				## Directory to test makeblastdb correct installation
+        ├── mk						## Directory to test mk correct installation
+        └── nextflow					## Directory to test nextflow correct installation
+
+````
+
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
 

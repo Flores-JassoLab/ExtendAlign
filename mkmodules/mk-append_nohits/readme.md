@@ -86,3 +86,15 @@ bash testmodule.sh
 
 2. `[>>>] Module Test Successful` should be printed in the console...
 
+## mk-append_nohits directory structure
+
+````
+mk-append_nohits							## Module main directory
+├── mkfile								## File in mk format, specifying the rules for building every result requested by runmk.sh
+├── readme.md							## This document. General workflow description.
+├── runmk.sh								## Script to print every file required by this module
+├── test									## Test directory
+│   └── data								## Test data directory. Contains input files for testing.
+└── testmodule.sh							## Script to test module functunality using test data
+
+````

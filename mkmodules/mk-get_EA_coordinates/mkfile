@@ -10,7 +10,7 @@
 MKSHELL=/bin/bash
 
 ## Extract the coordinates where alignment extension should be performed.
-# As of this version (February-2019) coordinate extarction is performed by an auxiliary script to improve code legibility.
+# As of this version (February-2019) coordinate extraction is performed by an auxiliary script to improve code legibility.
 # since we need to create 2 very similar recipes or mk rule in this mkfile, to handle both .EAblastn.tsv or .EAblastnbesthit.tsv file extension
 # rule for .EAblastnbesthit.tsv extension prereq
 %.EAcoordinates.tsv: %.EAblastnbesthit.tsv

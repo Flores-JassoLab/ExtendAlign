@@ -24,7 +24,8 @@ MKSHELL=/bin/bash
 	tail -n+2 $prereq \
 	| sort \
 		-k 6,6nr \
-		-k 20,20n \
+		-k 7,7n \
+		-k 8,8n \
 	| awk ' !seen[$2]++ ' \
 	>> $target.build \
 	&& mv $target.build $target

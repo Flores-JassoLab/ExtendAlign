@@ -1,3 +1,7 @@
+![EA-image](dev_notes/ExtendAlign-image.jpeg)
+
+---
+
 ExtendAlign
 ===========
 ExtendAlign is a tool, implemented with Nextflow, that combines the strength of a multi-hit local alignment,
@@ -186,10 +190,10 @@ ExtendAlign						## Pipeline main directory.
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
 
 * Flores-Torres, M., Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2018) 
-ExtendAlign: a computational algorithm for delivering multiple, local end-to-end alignments.
+ExtendAlign: the post-analysis tool to correct and improve the alignment of dissimilar short sequences.  
 
 Preprint version can be found at:
-<https://www.biorxiv.org/content/early/2018/12/08/475707>   
+<https://www.biorxiv.org/content/10.1101/475707v3>   
 
 #### References
 Under the hood ExtendAlign implements some widely known tools. Please include the following ciations in your work:
@@ -201,8 +205,7 @@ Under the hood ExtendAlign implements some widely known tools. Please include th
 ---
 
 ### Contact
-If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email
-<iaguilaror@gmail.com>
+If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email <cfflores@inmegen.gob.mx>, <iaguilaror@gmail.com>, <mariana.flo.tor@gmail.com>  
 
 #### Dev Team
 Israel Aguilar-Ordonez <iaguilaror@gmail.com>   

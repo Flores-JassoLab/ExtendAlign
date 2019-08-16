@@ -205,11 +205,11 @@ Under the hood ExtendAlign implements some widely known tools. Please include th
 ---
 
 ### Contact
-If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email <cfflores@inmegen.gob.mx>, <iaguilaror@gmail.com>, <mariana.flo.tor@gmail.com>  
+If you have questions, requests, or bugs to report, please open an [issue](https://github.com/Flores-JassoLab/ExtendAlign/issues), or email <cfflores@inmegen.gob.mx>, <mflores@inmegen.edu.mx>, <iaguilaror@gmail.com>  
 
 #### Dev Team
 Israel Aguilar-Ordonez <iaguilaror@gmail.com>   
-Mariana Flores-Torres <mariana.flo.tor@gmail.com>  
+Mariana Flores-Torres <mflores@inmegen.edu.mx>  
 Joshua I. Haase-Hernández <jihaase@inmegen.gob.mx>  
 Karla Lozano-Gonzalez <klg1219sh@gmail.com>   
 Fabian Flores-Jasso <cfflores@inmegen.gob.mx>  

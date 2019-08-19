@@ -189,11 +189,11 @@ ExtendAlign						## Pipeline main directory.
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
 
-* Flores-Torres, M., Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2018) 
+* Flores-Torres, M., Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2019) 
 ExtendAlign: the post-analysis tool to correct and improve the alignment of dissimilar short sequences.  
 
 Preprint version can be found at:
-<https://www.biorxiv.org/content/10.1101/475707v3>   
+<https://www.biorxiv.org/content/10.1101/475707v4>   
 
 #### References
 Under the hood ExtendAlign implements some widely known tools. Please include the following ciations in your work:

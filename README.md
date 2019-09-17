@@ -1,9 +1,10 @@
+ExtendAlign
+===========
+
 ![EA-image](dev_notes/ExtendAlign-image.jpeg)
 
 ---
 
-ExtendAlign
-===========
 ExtendAlign is a tool, implemented with Nextflow, that combines the strength of a multi-hit local alignment,
 and also the refinement provided by a query-based end-to-end alignment in reporting accurately the number of matches and mismatches.
 

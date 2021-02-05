@@ -82,9 +82,9 @@ def helpMessage() {
 				minus = report hits found in subject's minus strand
 				both  = report all
 	  --blastn_max_target_seqs <- Number of aligned sequences to keep;
-				default: 100
+				default: 1000
 	  --blastn_evalue  <- Expect value (E) for saving hits;
-				default: 10
+				default: 1000
 	  -profile	   <- Run pipeline using configurations compatible with cluster computing environments
 				default: not activated; jobs are run locally
 				sge	= submit pipeline processes as SGE jobs

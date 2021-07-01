@@ -384,7 +384,7 @@ Channel
 
 process _A1_query_EAfasta_formating {
 
-	publishDir "${intermediates_dir}/_A1_query_EAfasta_formating/",mode:"copy"
+	publishDir "${intermediates_dir}/_A1_query_EAfasta_formating/",mode:"symlink"
 
 	input:
   file fasta from query_fasta_input
@@ -409,7 +409,7 @@ Channel
 
 process _B1_subject_EAfasta_formating {
 
-	publishDir "${intermediates_dir}/_B1_subject_EAfasta_formating/",mode:"copy"
+	publishDir "${intermediates_dir}/_B1_subject_EAfasta_formating/",mode:"symlink"
 
 	input:
   file fasta from subject_fasta_input
@@ -434,7 +434,7 @@ Channel
 
 process _B2_subject_blastDB_creation {
 
-	publishDir "${intermediates_dir}/_B2_subject_blastDB_creation/",mode:"copy"
+	publishDir "${intermediates_dir}/_B2_subject_blastDB_creation/",mode:"symlink"
 
 	input:
   file eafasta from results_B1_subject_EAfasta_formating
@@ -470,7 +470,7 @@ Channel
 
 process _001_blastn_alignment {
 
-	publishDir "${intermediates_dir}/_001_blastn_alignment/",mode:"copy"
+	publishDir "${intermediates_dir}/_001_blastn_alignment/",mode:"symlink"
 
 	input:
   file eafasta from results_A1_query_EAfasta_formating
@@ -510,7 +510,7 @@ Channel
 
 process _001x1_recalculate_gap_mismatches {
 
-	publishDir "${intermediates_dir}/_001x1_recalculate_gap_mismatches/",mode:"copy"
+	publishDir "${intermediates_dir}/_001x1_recalculate_gap_mismatches/",mode:"symlink"
 
 	input:
   file tsv from results_001_blastn_alignment
@@ -543,7 +543,7 @@ if ( params.number_of_hits == "best") {
 
   process _001sub1_keep_besthits {
 
-  	publishDir "${intermediates_dir}/_001sub1_keep_besthits/",mode:"copy"
+  	publishDir "${intermediates_dir}/_001sub1_keep_besthits/",mode:"symlink"
 
   	input:
     file blastn_tsv from results_001x1_recalculate_gap_mismatches
@@ -585,7 +585,7 @@ Channel
 
 process _002_add_EA_coordinates_for_extraction {
 
-  publishDir "${intermediates_dir}/_002_add_EA_coordinates_for_extraction/",mode:"copy"
+  publishDir "${intermediates_dir}/_002_add_EA_coordinates_for_extraction/",mode:"symlink"
 
   input:
   file blastn_tsv from conditional_input_for_002
@@ -610,7 +610,7 @@ Channel
 
 process _003_add_EA_extension_nucleotides {
 
-  publishDir "${intermediates_dir}/_003_add_EA_extension_nucleotides/",mode:"copy"
+  publishDir "${intermediates_dir}/_003_add_EA_extension_nucleotides/",mode:"symlink"
 
   input:
   file ea_coordinates_tsv from results_002_add_EA_coordinates_for_extraction
@@ -647,7 +647,7 @@ Channel
 
 process _004_add_EA_percent_identity {
 
-  publishDir "${intermediates_dir}/_004_add_EA_percent_identity/",mode:"copy"
+  publishDir "${intermediates_dir}/_004_add_EA_percent_identity/",mode:"symlink"
 
   input:
   file ea_extrended_tsv from results_003_add_EA_extension_nucleotides

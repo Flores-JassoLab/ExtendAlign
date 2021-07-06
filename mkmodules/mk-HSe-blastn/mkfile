@@ -26,8 +26,8 @@ MKSHELL=/bin/bash
 		-db $BLAST_DATABASE \
 		-task blastn \
 		-reward 1 \
-		-penalty -1 \
-		-gapopen 2 \
+		-penalty -3 \
+		-gapopen 5 \
 		-gapextend 2 \
 		-word_size 7 \
 		-dust no \

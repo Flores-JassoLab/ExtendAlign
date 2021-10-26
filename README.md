@@ -16,13 +16,14 @@ and also the refinement provided by a query-based end-to-end alignment in report
 ---
 
 #### Features
-**- v 0.2.2**
+**- v 0.2.3**
 
 * ExtandAlign supports DNA, RNA, or DNA  vs RNA alignments.
 * Results include information about unaligned queries.
 * ExtendAlign percent identity recalculation is reported relative to query length.
 * Easy integration with SGE or Condor Cluster environments.
 * Scalability and reproducibility via a Nextflow-based framework.
+* Final EA process creates a donut plot summarizing changes in pident
 
 ---
 

@@ -706,7 +706,7 @@ process _006_generate_EA_report {
   file mk_files from mkfiles_006
 
   output:
-  file "*_EA_report.tsv"
+  file "*_EA_report.*"
 
   """
   bash runmk.sh

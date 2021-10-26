@@ -13,30 +13,4 @@ MKSHELL=/bin/bash
 ## Parse ExtendAlign table with awk.
 %_EA_report.tsv: %.fa.with_nohits.tsv
 	## Extract columns of interest, which are: query id, subject id, query length, total mismatch, total match, blastn percent identity, EA percent identity
-	awk '
-		###
-		## Definition of input and output field separator as TAB
-		BEGIN {OFS=FS="\t"}
-		## Replace header
-		NR == 1 { print "query_name", "subject_name", "query_length", "EA_total_mismatch", "EA_total_match", "EA_pident", "blastn_pident" }
-		## Summarize results
-		NR > 1 {
-			## Define important columns
-				query_name= $2
-				subject_name= $4
-				query_length= $1
-				EA_total_mismatch= $45
-				EA_pident= $46
-				blastn_pident= $5
-			##
-			## Restart value
-				EA_total_match="ERR"
-			# Calculate number of matches using query length minus EA total mismatch
-			# TODO (iaguilar) it is posible to precalculate this and print it as a column in the mk-mismatch_recalculation module
-				EA_total_match= query_length - EA_total_mismatch
-			##
-			# Print summarized line
-			print query_name, subject_name, query_length, EA_total_mismatch, EA_total_match, EA_pident, blastn_pident
-		}
-	' $prereq > $target.build \
-	&& mv $target.build $target
+	Rscript --vanilla format.R $prereq $target

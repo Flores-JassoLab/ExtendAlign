@@ -30,17 +30,18 @@ and also the refinement provided by a query-based end-to-end alignment in report
 #### Compatible OS*:
 * [Ubuntu 16.04 LTS](http://releases.ubuntu.com/16.04/)
 * [Ubuntu 18.04 LTS](http://releases.ubuntu.com/18.04/)
+* [Ubuntu 20.04 LTS](http://releases.ubuntu.com/20.04/)
 
 \* ExtendAlign may run in other UNIX based OS and versions, but testing is required.
 
 #### Software:
 | Requirement | Version  | Required Commands * |
 |:---------:|:--------:|:-------------------:|
-| [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.25.0 | bedtools |
-| [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.2.31+ | makeblastdb , blastn |
-| [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) | 19.01 | nextflow |
-| [Plan9 port](https://github.com/9fans/plan9port) | Latest (as of 10/10/2019 ) | mk \** |
-| [Seqkit](https://github.com/shenwei356/seqkit) | v0.10.1 | seqkit |
+| [Bedtools](https://bedtools.readthedocs.io/en/latest/content/installation.html) | v2.30.0 | bedtools |
+| [BLAST](https://www.ncbi.nlm.nih.gov/books/NBK52640/) | 2.9.0+ | makeblastdb , blastn |
+| [Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) | 21.04.1.5556 | nextflow |
+| [Plan9 port](https://github.com/9fans/plan9port) | Latest (as of July 2021 ) | mk \** |
+| [Seqkit](https://github.com/shenwei356/seqkit) | v2.0.0 | seqkit |
 
 \* These commands must be accessible from your `$PATH` (*i.e.* you should be able to invoke them from your command line).  
 
@@ -62,7 +63,7 @@ To test if requirements are installed and ExtendAlign's execution using test dat
 ./runtest.sh
 ```
 
-If requirements are correctly installed, your console should print the Nextflow log for the run, once every process has been submitted, 
+If requirements are correctly installed, your console should print the Nextflow log for the run, once every process has been submitted,
 the following message will appear:
 ```
 ======
@@ -159,10 +160,10 @@ ExtendAlign						## Pipeline main directory.
 ├── dev_notes					## Developers notes directory
 │   └── Workflow.png				## Flow diagram
 ├── extend_align.nf				## Flow control script of this pipeline.
-├── mkmodules					## Directory for submodule organization 
+├── mkmodules					## Directory for submodule organization
 │   ├── mk-append_nohits			## Submodule to add rows with information for querys that had no hit in ExtendAlign
 │   ├── mk-bedtools_getfasta		## Submodule to add extended nucleotide sequences to ExtendAlign
-│   ├── mk-create_blastdb			## Submodule to create a blastn database from an ExtendAlign fasta file 
+│   ├── mk-create_blastdb			## Submodule to create a blastn database from an ExtendAlign fasta file
 │   ├── mk-create_EAfasta			## Submodule to transform a fasta file into an ExtendAlign fasta file
 │   ├── mk-EA_report				## Submodule to generate a summarized ExtendAlign results table
 │   ├── mk-get_best_hit				## Submodule to extract the best hit for every query in ExtendAlign results
@@ -180,7 +181,7 @@ ExtendAlign						## Pipeline main directory.
     └── requirements				## Directory to test pipeline dependencies
         ├── bedtools					## Directory to test bedtools correct installation
         ├── blastn					## Directory to test blastn correct installation
-        ├── dependency_checker.sh 		## Script to verify dependencies installation 
+        ├── dependency_checker.sh 		## Script to verify dependencies installation
         ├── makeblastdb				## Directory to test makeblastdb correct installation
         ├── mk						## Directory to test mk correct installation
         └── nextflow					## Directory to test nextflow correct installation
@@ -190,7 +191,7 @@ ExtendAlign						## Pipeline main directory.
 ### Citation
 If you find ExtendAlign helpful for your research, please include the following citation in your work:  
 
-* Flores-Torres, M., Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2019) 
+* Flores-Torres, M., Romero-Gomez, L., Haase-Hernandez, J.I., Aguilar-Ordoñez, I., Tovar, H., Avendano-Vazquez, S.E., Flores-Jasso, C.F. (2019)
 ExtendAlign: the post-analysis tool to correct and improve the alignment of dissimilar short sequences.  
 
 Preprint version can be found at:

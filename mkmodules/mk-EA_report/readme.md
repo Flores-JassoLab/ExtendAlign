@@ -1,6 +1,6 @@
 # mk-EA_report  
 **Author(s):** Mariana Flores-Torres (mariana.flo.tor@gmail.com), Israel Aguilar-Ordoñez (iaguilaror@gmail.com)  
-**Date:** February-2019  
+**Date:** October 2021  
 
 ## TODO:
 *( iaguilar )* update example lines for output
@@ -12,7 +12,7 @@ Generate a summarized ExtendAlign results table.
 
 2. This module extracts only the columns that are ultimately informative to the user.
 
-3. During this first versions, this sumarized report includes the `HSe-blastn` only calculated `pident`, to make contrast with the Extend Align recalculated `pident`.
+3. This module creates a PNG subfile summarizing the changes in pident by comparing EA vs blastn results.
 
 ## Module Dependencies:
 NONE
@@ -34,21 +34,24 @@ qlength qseqid slength sseqid pident length mismatch gaps qstart qend sstart sen
 Input File Column Descriptions: see readme.md in `module mk-append_nohits`.
 
 ### Output:
+An ExtendAlign PNG summary, donut plot in PNG format.
 An ExtendAlign analysis summary, TAB separated file.
 
 Example line(s):  
 ```
-query_name subject_name query_length EA_alignment_length EA_total_mismatch EA_total_match EA_pident blastn_pident
-hsa-miR-1226-5p.MIMAT0005576 mmu-mir-6927.MI0022774 26 26 6 20 76.9231 76.923
-hsa-miR-8083.MIMAT0031010 NO_HIT . . . 0 . .
+qseqid  sseqid  qmismatch_in_gap        query_mismatch  extended_5end_mismatch  extended_3end_mismatch    query_overhang_5end_mismatch    query_overhang_3end_mismatch    total_mismatch  qlength extend_align_pident       EA_total_match
+hsa-miR-3189-5p.MIMAT0019217    mmu-let-7k.MI0022352    0       6       1       0       0       0725      72      18
+tail -n1 test/results/sample_query_EA_report.tsv
+hsa-miR-9901.MIMAT0039321       NO_HIT  .       .       .       .       .       .       .       .       .       .
 ```
 
 **Note(s):**
 * For this example, TABs were replaced by simple white spaces.  
-* Do note the difference between the `hsa-miR-1226-5p.MIMAT0005576` hit and the `hsa-miR-8083.MIMAT0031010` **NO_HIT** line.  
+* Do note the difference between the `hsa-miR-3189-5p.MIMAT0019217` hit and the `hsa-miR-9901.MIMAT0039321` **NO_HIT** line.  
 
 Output File Column Descriptions:  
 
+TO-DO: update column order and description below
 `query_name`: Name or ID of the sequence used as query for alignment.  
 `subject_name`: Name or ID of the sequence where a hit was found.  
 `query_length`: Length of the query.  

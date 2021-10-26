@@ -9,7 +9,7 @@ mkdir -p test/results
 echo "[>>.] results will be created in test/results"
 ## Execute runmk.sh, it will find the basic example in test/data ; -a arg forces target creation even if results are up to date
 ## Move results from test/data to test/results
-## files are *_EA_report.tsv files
+## files are *_EA_report.* files
 bash runmk.sh -a \
-&& mv test/data/*_EA_report.tsv test/results \
+&& mv test/data/*_EA_report.* test/results \
 && echo "[>>>] Module Test Successful"

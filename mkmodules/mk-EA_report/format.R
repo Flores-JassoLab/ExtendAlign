@@ -66,6 +66,7 @@ donut <- ggplot( data = donut_data,
 
 # clean DF to only useful columns ====
 selected <- EAdata %>% 
+  mutate( EA_total_match = qlength - total_mismatch ) %>%
   select( qseqid,
           sseqid,
           qmismatch_in_gap,
@@ -77,10 +78,11 @@ selected <- EAdata %>%
           total_mismatch,
           qlength,
           # pident,
+          EA_total_match
           extend_align_pident
           ) %>% 
-  mutate( EA_total_match = qlength - total_mismatch ) %>%
-  rename( query_gap = qmismatch_in_gap )
+  rename( query_gap = qmismatch_in_gap,
+          EA_pident = extend_align_pident )
 
 # Save outputs
 # save table

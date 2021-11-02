@@ -78,7 +78,7 @@ selected <- EAdata %>%
           total_mismatch,
           qlength,
           # pident,
-          EA_total_match
+          EA_total_match,
           extend_align_pident
           ) %>% 
   rename( query_gap = qmismatch_in_gap,

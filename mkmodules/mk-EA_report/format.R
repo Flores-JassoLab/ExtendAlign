@@ -44,7 +44,6 @@ donut_data <- data.frame( category = c("higher", "same", "lower", "nohit"),
   mutate( proportion = counts / sum( counts ),
           # percent = percent( proportion, accuracy = 0.1 ),   # Commented due to incompatibility with R version 3.3
          percent = paste(round(proportion * 100, digits = 2), "%"),
-         percent = "TEST",
           tag = paste( category, percent ) )
 
 donut <- ggplot( data = donut_data,
